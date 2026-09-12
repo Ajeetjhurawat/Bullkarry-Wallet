@@ -50,6 +50,7 @@
 </head>
 <body class="h-screen flex overflow-hidden bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-50 transition-colors duration-200">
 
+    <!-- Left Sidebar -->
     <div class="w-64 bg-white dark:bg-darkSidebar border-r border-slate-200 dark:border-darkSidebarBorder flex flex-col p-6 hidden md:flex z-10 transition-colors">
         <div class="flex items-center gap-3 mb-10">
             <div class="bg-blue-600 w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-blue-500/30">B</div>
@@ -92,16 +93,19 @@
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors">
         
+        <!-- Header -->
         <div class="flex justify-between items-center p-6 md:p-8 pb-4">
             <div>
                 <h1 id="greeting" class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Good afternoon</h1>
                 <p id="pageSubtitle" class="text-slate-500 dark:text-slate-400 text-xs mt-1">Here is what's happening with your account today</p>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="toggleTheme()" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center shadow-sm">
-                    <i id="themeIcon" class="fa-solid fa-sun text-lg"></i>
+                <!-- Compact Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="w-9 h-9 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center shadow-sm">
+                    <i id="themeIcon" class="fa-solid fa-sun text-[15px]"></i>
                 </button>
 
                 <div class="hidden sm:flex items-center gap-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-700 dark:text-white">
@@ -109,11 +113,13 @@
                     <span>Arc Testnet</span>
                 </div>
                 
+                <!-- Profile & Connect Wallet with Dropdown -->
                 <div class="relative inline-block" id="profileMenuContainer">
-                    <button id="connectBtn" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 text-sm shadow-sm">
+                    <button id="connectBtn" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-4 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 text-sm shadow-sm">
                         <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] text-white"><i class="fa-solid fa-user"></i></div>
                         <span id="walletAddress" class="font-mono font-semibold">Connect Wallet</span>
                     </button>
+                    <!-- Dropdown Menu -->
                     <div id="profileDropdown" class="hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl shadow-xl z-50 overflow-hidden transition-all origin-top-right">
                         <button onclick="copyHeaderAddress()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
                             <i class="fa-regular fa-copy w-4 text-lg"></i> Copy Address
@@ -131,9 +137,12 @@
             </div>
         </div>
 
+        <!-- VIEW 1: DASHBOARD -->
         <div id="dashboardView" class="p-6 md:p-8 pt-2 block space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column -->
                 <div class="lg:col-span-2 space-y-6">
+                    <!-- Balance Card -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-8 border border-slate-200 dark:border-darkBorder relative overflow-hidden shadow-sm dark:shadow-xl transition-colors">
                         <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-3">Total Balance</p>
                         <div class="flex items-end gap-3 mb-4">
@@ -149,6 +158,7 @@
                         </div>
                     </div>
 
+                    <!-- Quick Actions -->
                     <div>
                         <h3 class="text-base font-bold mb-3 text-slate-900 dark:text-white">Quick Actions</h3>
                         <div class="grid grid-cols-5 gap-3">
@@ -186,15 +196,16 @@
                         </div>
                     </div>
 
+                    <!-- Recent Activity -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <div>
                                 <h3 class="text-base font-bold text-slate-900 dark:text-white">Recent Activity</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">Real on-chain transfers on Arc Testnet</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Real on-chain token transfers</p>
                             </div>
                             <button onclick="switchView('transactions')" class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">View All</button>
                         </div>
-                        <div class="space-y-3" id="dashTxList">
+                        <div class="space-y-0" id="dashTxList">
                             <div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
                                 Connect wallet to view activity
                             </div>
@@ -202,7 +213,9 @@
                     </div>
                 </div>
 
+                <!-- Right Column -->
                 <div class="space-y-6">
+                    <!-- Exchange Rates -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <div>
@@ -223,6 +236,7 @@
                         </div>
                     </div>
 
+                    <!-- Portfolio Allocation -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Allocation</h3>
@@ -262,8 +276,89 @@
                     </div>
                 </div>
             </div>
+
+            <!-- YOUR ASSETS SECTION (Added below the columns) -->
+            <div class="bg-white dark:bg-darkCard rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-darkBorder transition-colors mt-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Your Assets</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Assets currently held by your connected wallet.</p>
+                    </div>
+                    <a id="viewOnArcScan" href="https://testnet.arcscan.app/" target="_blank" class="text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-2">
+                        View on ArcScan <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <div class="min-w-[700px]">
+                        <div class="grid grid-cols-4 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider pb-4 border-b border-slate-200 dark:border-darkBorder mb-2">
+                            <div>Asset</div>
+                            <div>Balance</div>
+                            <div>Value</div>
+                            <div>Contract</div>
+                        </div>
+                        
+                        <div class="divide-y divide-slate-100 dark:divide-[#243048]">
+                            <!-- Asset 1 -->
+                            <div class="py-4 grid grid-cols-4 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 -mx-2 rounded-lg">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-lg shadow-sm">U</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900 dark:text-white text-sm">USD Coin</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">USDC • Native</p>
+                                    </div>
+                                </div>
+                                <div class="font-semibold text-slate-900 dark:text-white text-sm" id="tableBalUsdc">39.9029 USDC</div>
+                                <div class="font-semibold text-slate-900 dark:text-white text-sm" id="tableValUsdc">$39.9</div>
+                                <div class="text-slate-500 dark:text-slate-400 text-sm font-mono text-xs">Native asset</div>
+                            </div>
+                            <!-- Asset 2 -->
+                            <div class="py-4 grid grid-cols-4 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 -mx-2 rounded-lg">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-lg shadow-sm">B</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900 dark:text-white text-sm">Bullkarry Demo USD</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">BUSD</p>
+                                    </div>
+                                </div>
+                                <div class="font-semibold text-slate-900 dark:text-white text-sm" id="tableBalBusd">1,000,000 BUSD</div>
+                                <div class="font-semibold text-slate-500 dark:text-slate-400 text-sm">—</div>
+                                <a href="https://testnet.arcscan.app/address/0xf42c56e47362CECB426B95a65AeCC87d8007ec97" target="_blank" class="text-slate-500 dark:text-slate-400 text-sm font-mono text-xs flex items-center gap-2 hover:text-blue-400 transition">0xf42c56...ec97 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>
+                            </div>
+                            <!-- Asset 3 -->
+                            <div class="py-4 grid grid-cols-4 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 -mx-2 rounded-lg">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-blue-600 border border-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-sm"><i class="fa-solid fa-euro-sign"></i></div>
+                                    <div>
+                                        <p class="font-bold text-slate-900 dark:text-white text-sm">EURC</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">EURC</p>
+                                    </div>
+                                </div>
+                                <div class="font-semibold text-slate-900 dark:text-white text-sm" id="tableBalEurc">20 EURC</div>
+                                <div class="font-semibold text-slate-500 dark:text-slate-400 text-sm">—</div>
+                                <a href="https://testnet.arcscan.app/address/0x89B508...D72a" target="_blank" class="text-slate-500 dark:text-slate-400 text-sm font-mono text-xs flex items-center gap-2 hover:text-blue-400 transition">0x89B508...D72a <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>
+                            </div>
+                            <!-- Asset 4 -->
+                            <div class="py-4 grid grid-cols-4 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 -mx-2 rounded-lg">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-lg shadow-sm">C</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900 dark:text-white text-sm">Circle Wrapped Bitcoin</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">cirBTC</p>
+                                    </div>
+                                </div>
+                                <div class="font-semibold text-slate-900 dark:text-white text-sm" id="tableBalBtc">0.0002 cirBTC</div>
+                                <div class="font-semibold text-slate-500 dark:text-slate-400 text-sm">—</div>
+                                <a href="https://testnet.arcscan.app/address/0xf0C4a4...32BF" target="_blank" class="text-slate-500 dark:text-slate-400 text-sm font-mono text-xs flex items-center gap-2 hover:text-blue-400 transition">0xf0C4a4...32BF <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
+        <!-- VIEW 2: CREATE PAYMENT LINK (Add Money) -->
         <div id="paymentLinkView" class="p-6 md:p-8 pt-2 hidden">
             <button onclick="switchView('dashboard')" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 flex items-center gap-2 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg w-fit transition">
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
@@ -333,6 +428,7 @@
             </div>
         </div>
 
+        <!-- VIEW 3: FAUCET -->
         <div id="faucetView" class="p-6 md:p-8 pt-2 hidden max-w-3xl mx-auto w-full mt-6">
             <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl">
                 <div class="grid grid-cols-1 md:grid-cols-2">
@@ -353,6 +449,7 @@
             </div>
         </div>
 
+        <!-- VIEW 4: TRANSACTIONS -->
         <div id="transactionsView" class="p-6 md:p-8 pt-2 hidden">
             <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">All On-Chain Transactions</h2>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm">
@@ -368,6 +465,7 @@
             </div>
         </div>
 
+        <!-- VIEW 5: STORE -->
         <div id="merchantView" class="p-6 md:p-8 pt-2 hidden">
             <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Store</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Explore digital goods and exclusive assets</p>
@@ -414,7 +512,7 @@
             <button onclick="closeModal('receiveModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-1 text-slate-900 dark:text-white">Receive Crypto</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Scan QR to pay into your wallet</p>
-            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-sm border border-slate-300 dark:border-slate-700">
+            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-md border border-slate-300 dark:border-slate-700">
                 <img id="myRecQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet" class="w-40 h-40">
             </div>
             <div class="flex items-center gap-2">
@@ -672,8 +770,13 @@
             
             let usdcStr = usdcBalance > 0 ? usdcBalance.toFixed(2) : "0.00";
             let busdStr = usdcBalance > 0 ? "1,000,000" : "0.00";
+            
             document.getElementById('allocUsdc').innerText = usdcStr + " USDC";
             document.getElementById('allocBusd').innerText = busdStr + " BUSD";
+            
+            if (userAccount) {
+                document.getElementById('viewOnArcScan').href = "https://testnet.arcscan.app/address/" + userAccount + "?tab=internal_txns";
+            }
         }
 
         function updateBalances() {
@@ -686,29 +789,33 @@
         }
 
         const transactions = [
-            { hash: '0x123abc', type: 'Contract Deployment', token: '', amount: 'Arc Alpha Agent', from: '0xf42c...ec97', color: 'text-purple-500 dark:text-purple-400', icon: 'fa-file-code' },
-            { hash: '0x456def', type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' },
-            { hash: '0x789ghi', type: 'Received', token: 'cirBTC', amount: '+0.0001 BTC', from: '0xd844...9b3d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' },
-            { hash: '0x111aaa', type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' },
-            { hash: '0x222bbb', type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: 'Contract Mint', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' },
-            { hash: '0x333ccc', type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-red-500 dark:text-red-400', icon: 'fa-arrow-up' },
-            { hash: '0x444ddd', type: 'Received', token: 'USDC', amount: '+50 USDC', from: '0x1A2b...3C4d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' }
+            { hash: '0x123abc', type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-[#00d182]', icon: 'fa-arrow-down-left', time: '1h ago' },
+            { hash: '0x456def', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0xd844...9b3d', color: 'text-[#00d182]', icon: 'fa-arrow-down-left', time: '1h ago' },
+            { hash: '0x111aaa', type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-[#00d182]', icon: 'fa-arrow-down-left', time: '1h ago' },
+            { hash: '0x222bbb', type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: '0x0000...0000', color: 'text-[#00d182]', icon: 'fa-arrow-down-left', time: '2h ago' },
+            { hash: '0x333ccc', type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-red-500', icon: 'fa-arrow-up-right', time: '5h ago' },
+            { hash: '0x789ghi', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0x70e3...af8e', color: 'text-[#00d182]', icon: 'fa-arrow-down-left', time: '15h ago' }
         ];
 
         function loadTransactions() {
             let dashHtml = ''; let fullHtml = '';
+            
             transactions.slice(0, 5).forEach(t => {
-                dashHtml += '<a href="https://testnet.explorer.arc.network/tx/' + t.hash + '" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition rounded-xl">' +
-                            '<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-[#0f1624] rounded-xl border border-slate-100 dark:border-[#243048]">' +
-                                '<div class="flex items-center gap-3">' +
-                                    '<div class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center text-xs"><i class="fa-solid ' + t.icon + '"></i></div>' +
-                                    '<div><p class="text-xs font-bold text-slate-900 dark:text-white">' + t.type + ' ' + t.token + '</p><p class="text-[10px] text-slate-500 font-mono">' + t.from + '</p></div>' +
-                                '</div><span class="text-xs font-bold ' + t.color + '">' + t.amount + '</span>' +
+                const isSent = t.type === 'Sent';
+                const bgIcon = isSent ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-[#0f1624] text-[#00d182] border border-[#243048]';
+                
+                dashHtml += '<a href="https://testnet.arcscan.app/tx/' + t.hash + '" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition rounded-xl">' +
+                            '<div class="flex justify-between items-center p-3 bg-white dark:bg-transparent rounded-xl border-b border-slate-100 dark:border-[#243048]">' +
+                                '<div class="flex items-center gap-4">' +
+                                    '<div class="w-10 h-10 rounded-xl ' + bgIcon + ' flex items-center justify-center text-sm shadow-sm"><i class="fa-solid ' + t.icon + '"></i></div>' +
+                                    '<div><p class="text-sm font-bold text-slate-900 dark:text-white">' + t.type + '</p><p class="text-[10px] text-slate-500 font-mono mt-0.5">' + t.from + '</p></div>' +
+                                '</div>' +
+                                '<div class="text-right"><p class="text-sm font-bold ' + t.color + '">' + t.amount + '</p><p class="text-[10px] text-slate-500 mt-0.5">' + t.time + '</p></div>' +
                             '</div></a>';
             });
 
             transactions.forEach(t => {
-                fullHtml += '<a href="https://testnet.explorer.arc.network/tx/' + t.hash + '" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition">' +
+                fullHtml += '<a href="https://testnet.arcscan.app/tx/' + t.hash + '" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition">' +
                             '<div class="p-4 grid grid-cols-4 items-center text-xs">' +
                                 '<span class="font-bold text-slate-900 dark:text-white">' + t.type + '</span>' +
                                 '<span class="' + t.color + ' font-bold">' + t.amount + '</span>' +
