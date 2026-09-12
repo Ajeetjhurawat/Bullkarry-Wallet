@@ -383,7 +383,7 @@
                     </div>
 
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Amount</label>
-                    <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-2 focus-within:border-blue-500 transition">
+                    <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-2 focus-within:border-blue-50 transition">
                         <input type="number" id="payAmount" placeholder="0.00" class="bg-transparent w-full p-2 text-2xl font-bold focus:outline-none text-slate-900 dark:text-white">
                         <select id="payToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
                             <option value="USDC">USDC</option>
@@ -465,7 +465,6 @@
                 </div>
             </div>
 
-            <!-- Video Faucet Info -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl">
                     <i class="fa-solid fa-droplet text-blue-500 mb-2 text-lg"></i>
@@ -694,8 +693,19 @@
         </div>
     </div>
 
+    <!-- Success Modal -->
+    <div id="successModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[110]">
+        <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-6 text-center relative shadow-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 scale-95 transform transition-all">
+            <div class="w-16 h-16 bg-[#00d182] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
+                <i class="fa-solid fa-check text-3xl text-white"></i>
+            </div>
+            <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Transaction Successful!</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6" id="successModalMsg">Successfully sent tokens.</p>
+            <button onclick="closeModal('successModal')" class="w-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl text-sm transition">Done</button>
+        </div>
+    </div>
+
     <script>
-        // Actual ARC Testnet token contracts
         const TOKEN_CONTRACTS = {
             BUSD: "0xf42c56e47362CECB426B95a65AeCC87d8007ec97",
             EURC: "0x89B508A89A6A12902CA4a51e60A444C3FDaD72a",
@@ -766,14 +776,12 @@
         async function fetchBalancesFromArcScan() {
             if (!userAccount || !isWalletConnected) return;
             try {
-                // Fetch Native USDC Balance directly from Blockchain via REST API
                 const nativeRes = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}`);
                 if(nativeRes.ok) {
                     const nativeData = await nativeRes.json();
                     usdcBalance = parseFloat(ethers.utils.formatEther(nativeData.coin_balance || "0"));
                 }
 
-                // Fetch real Token Balances via REST API
                 const tokenRes = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}/token-balances`);
                 if(tokenRes.ok) {
                     const tokenData = await tokenRes.json();
@@ -803,7 +811,6 @@
         async function fetchOnChainArcScanHistory() {
             if (!userAccount) return;
             try {
-                // Fetch real Transaction History from Blockscout V2 API
                 const res = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}/transactions`);
                 if(res.ok) {
                     const data = await res.json();
@@ -817,7 +824,6 @@
                                 let decimals = 18;
                                 let amountVal = tx.value || "0";
                                 
-                                // Handling Token Transfers
                                 if (tx.token_transfers && tx.token_transfers.length > 0) {
                                     const transfer = tx.token_transfers.find(t => t.to?.hash?.toLowerCase() === userAccount.toLowerCase() || t.from?.hash?.toLowerCase() === userAccount.toLowerCase()) || tx.token_transfers[0];
                                     symbol = transfer.token?.symbol || 'Token';
@@ -856,7 +862,6 @@
                     }
                 }
                 
-                // Fallback to V1 API
                 const [nativeRes, tokenRes] = await Promise.all([
                     fetch(`https://testnet.arcscan.app/api?module=account&action=txlist&address=${userAccount}&sort=desc`).catch(()=>null),
                     fetch(`https://testnet.arcscan.app/api?module=account&action=tokentx&address=${userAccount}&sort=desc`).catch(()=>null)
@@ -1228,10 +1233,10 @@
                 }
 
                 await tx.wait();
-                await fetchBalancesFromArcScan();
-                await fetchOnChainArcScanHistory();
                 
-                alert("Successfully sent " + amt + " " + tokenSymbol + " to " + to);
+                document.getElementById('successModalMsg').innerText = `Sent ${amt} ${tokenSymbol} to ${to.substring(0,6)}...${to.substring(to.length-4)}`;
+                openModal('successModal');
+                
                 closeModal('sendModal');
             } catch(e) {
                 console.error(e);
@@ -1260,7 +1265,9 @@
                     value: parsedAmt
                 });
                 await tx.wait();
-                alert(`Successfully purchased ${itemName} for ${price} USDC`);
+                
+                document.getElementById('successModalMsg').innerText = `Successfully purchased ${itemName} for ${price} USDC`;
+                openModal('successModal');
             } catch(e) {
                 console.error(e);
                 alert("Purchase Failed or Rejected by User");
