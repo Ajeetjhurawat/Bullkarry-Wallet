@@ -646,8 +646,22 @@
         let isWalletConnected = false;
         let usdcBalance = 39.90;
         let isINR = false;
-        
-        let transactions = [];
+
+        async function updateLiveEthersBalance() {
+            if (!userAccount) return;
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const balanceWei = await provider.getBalance(userAccount);
+                // Demo mapping: use ETH balance on Arc testnet as USDC placeholder for live update effect
+                const ethBalance = ethers.utils.formatEther(balanceWei);
+                if (parseFloat(ethBalance) > 0) {
+                    usdcBalance = parseFloat(ethBalance);
+                }
+                updateBalancesCore();
+            } catch(e) {
+                console.log("Could not fetch live balance", e);
+            }
+        }
 
         function toggleCurrency() {
             isINR = !isINR;
@@ -728,13 +742,14 @@
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     userAccount = accounts[0];
                     isWalletConnected = true;
-                    usdcBalance = 39.90;
                     
                     const shortAddr = userAccount.substring(0, 6) + "..." + userAccount.substring(38);
                     document.getElementById('walletAddress').innerText = shortAddr;
                     document.getElementById('payWalletAddress').innerText = shortAddr;
                     document.getElementById('myRecAddr').value = userAccount;
                     document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
+
+                    await updateLiveEthersBalance();
 
                     transactions = [
                         { hash: '0xa1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0', type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
@@ -795,22 +810,26 @@
             }
         }
 
-        function refreshDashboard() {
+        async function refreshDashboard() {
             if(!isWalletConnected) return alert("Please connect wallet first");
             const btn = document.getElementById('refreshDashIcon');
             if(btn) btn.classList.add('fa-spin');
+            
+            await updateLiveEthersBalance();
+            loadTransactions();
+            
             setTimeout(() => {
-                updateBalancesCore();
-                loadTransactions();
                 if(btn) btn.classList.remove('fa-spin');
             }, 1000);
         }
 
-        function updateBalances() {
+        async function updateBalances() {
             const btn = document.getElementById('refreshFaucetBtn');
             if(btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Refreshing';
+            
+            await updateLiveEthersBalance();
+            
             setTimeout(() => {
-                updateBalancesCore();
                 if(btn) btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance';
             }, 1000);
         }
@@ -872,20 +891,19 @@
             try {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
-                const contractAddress = "0xf42c56e47362CECB426B95a65AeCC87d8007ec97";
-                const abi = ["function transfer(address to, uint amount) returns (bool)"];
-                const contract = new ethers.Contract(contractAddress, abi, signer);
-                const parsedAmt = ethers.utils.parseUnits(amt.toString(), 18);
                 
-                const tx = await contract.transfer(to, parsedAmt);
+                let tx;
+                // Demo logic: use real ETH transfer to simulate on-chain transaction
+                const parsedAmt = ethers.utils.parseEther(amt.toString());
+                tx = await signer.sendTransaction({
+                    to: to,
+                    value: parsedAmt
+                });
+
                 await tx.wait();
                 
-                if(tokenSymbol === 'USDC' && usdcBalance >= parseFloat(amt)) {
-                    usdcBalance -= parseFloat(amt);
-                }
-                
                 transactions.unshift({
-                    hash: tx.hash || '0x' + Math.random().toString(16).slice(2, 42) + Math.random().toString(16).slice(2, 26),
+                    hash: tx.hash,
                     type: 'Sent',
                     token: tokenSymbol,
                     amount: '-' + parseFloat(amt).toFixed(2) + ' ' + tokenSymbol,
@@ -895,7 +913,7 @@
                     time: 'Just now'
                 });
 
-                updateBalancesCore();
+                await updateLiveEthersBalance();
                 loadTransactions();
                 
                 alert("Successfully sent " + amt + " " + tokenSymbol + " to " + to);
@@ -921,11 +939,12 @@
             try {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
-                const contractAddress = "0xf42c56e47362CECB426B95a65AeCC87d8007ec97";
-                const abi = ["function transfer(address to, uint amount) returns (bool)"];
-                const contract = new ethers.Contract(contractAddress, abi, signer);
-                const parsedAmt = ethers.utils.parseUnits(price.toString(), 18);
-                const tx = await contract.transfer("0x000000000000000000000000000000000000dEaD", parsedAmt);
+                // Demo logic: real ETH transfer to a dead address
+                const parsedAmt = ethers.utils.parseEther((price/1000).toString()); // Scaled down for demo
+                const tx = await signer.sendTransaction({
+                    to: "0x000000000000000000000000000000000000dEaD",
+                    value: parsedAmt
+                });
                 await tx.wait();
                 alert(`Successfully purchased ${itemName} for ${price} USDC`);
             } catch(e) {
