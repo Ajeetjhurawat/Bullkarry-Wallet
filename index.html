@@ -383,7 +383,7 @@
                     </div>
 
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Amount</label>
-                    <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-2 focus-within:border-blue-50 transition">
+                    <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-2 focus-within:border-blue-500 transition">
                         <input type="number" id="payAmount" placeholder="0.00" class="bg-transparent w-full p-2 text-2xl font-bold focus:outline-none text-slate-900 dark:text-white">
                         <select id="payToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
                             <option value="USDC">USDC</option>
@@ -699,7 +699,7 @@
             <div class="w-16 h-16 bg-[#00d182] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
                 <i class="fa-solid fa-check text-3xl text-white"></i>
             </div>
-            <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Transaction Successful!</h2>
+            <h2 id="successModalTitle" class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Transaction Successful!</h2>
             <p class="text-sm text-slate-500 dark:text-slate-400 mb-6" id="successModalMsg">Successfully sent tokens.</p>
             <button onclick="closeModal('successModal')" class="w-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl text-sm transition">Done</button>
         </div>
@@ -726,6 +726,9 @@
         let isINR = false;
         let transactions = [];
         let autoSyncInterval;
+        
+        let knownTxHashes = new Set();
+        let isFirstTxLoad = true;
 
         window.addEventListener('DOMContentLoaded', async () => {
             const savedAccount = localStorage.getItem('bullkarry_account');
@@ -776,13 +779,14 @@
         async function fetchBalancesFromArcScan() {
             if (!userAccount || !isWalletConnected) return;
             try {
-                const nativeRes = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}`);
+                const ts = Date.now();
+                const nativeRes = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}?_t=${ts}`);
                 if(nativeRes.ok) {
                     const nativeData = await nativeRes.json();
                     usdcBalance = parseFloat(ethers.utils.formatEther(nativeData.coin_balance || "0"));
                 }
 
-                const tokenRes = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}/token-balances`);
+                const tokenRes = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}/token-balances?_t=${ts}`);
                 if(tokenRes.ok) {
                     const tokenData = await tokenRes.json();
                     
@@ -811,60 +815,10 @@
         async function fetchOnChainArcScanHistory() {
             if (!userAccount) return;
             try {
-                const res = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}/transactions`);
-                if(res.ok) {
-                    const data = await res.json();
-                    if (data && data.items && Array.isArray(data.items)) {
-                        const allTx = data.items;
-                        if (allTx.length > 0) {
-                            transactions = allTx.slice(0, 15).map(tx => {
-                                const isSent = tx.from?.hash?.toLowerCase() === userAccount.toLowerCase();
-                                
-                                let symbol = 'USDC';
-                                let decimals = 18;
-                                let amountVal = tx.value || "0";
-                                
-                                if (tx.token_transfers && tx.token_transfers.length > 0) {
-                                    const transfer = tx.token_transfers.find(t => t.to?.hash?.toLowerCase() === userAccount.toLowerCase() || t.from?.hash?.toLowerCase() === userAccount.toLowerCase()) || tx.token_transfers[0];
-                                    symbol = transfer.token?.symbol || 'Token';
-                                    decimals = parseInt(transfer.token?.decimals || "18");
-                                    amountVal = transfer.total?.value || "0";
-                                }
-                                
-                                const amount = parseFloat(ethers.utils.formatUnits(amountVal, decimals));
-                                const formattedAmount = amount > 0 ? amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 }) : amount.toString();
-
-                                const txTimeStr = tx.timestamp || Date.now();
-                                const timeDiff = Math.floor(Date.now() / 1000) - Math.floor(new Date(txTimeStr).getTime() / 1000);
-                                let timeStr = 'Just now';
-                                if (timeDiff > 86400) timeStr = Math.floor(timeDiff / 86400) + 'd ago';
-                                else if (timeDiff > 3600) timeStr = Math.floor(timeDiff / 3600) + 'h ago';
-                                else if (timeDiff > 60) timeStr = Math.floor(timeDiff / 60) + 'm ago';
-
-                                const counterpart = isSent ? (tx.to?.hash || 'Contract') : (tx.from?.hash || 'Contract');
-
-                                return {
-                                    hash: tx.hash,
-                                    type: isSent ? 'Sent' : 'Received',
-                                    token: symbol,
-                                    amount: (isSent ? '-' : '+') + formattedAmount + ' ' + symbol,
-                                    from: counterpart.substring(0, 6) + '...' + counterpart.substring(counterpart.length - 4),
-                                    color: isSent ? 'text-red-500' : 'text-[#00d182]',
-                                    isSent: isSent,
-                                    time: timeStr
-                                };
-                            });
-                        } else {
-                            transactions = [];
-                        }
-                        loadTransactions();
-                        return;
-                    }
-                }
-                
+                const ts = Date.now();
                 const [nativeRes, tokenRes] = await Promise.all([
-                    fetch(`https://testnet.arcscan.app/api?module=account&action=txlist&address=${userAccount}&sort=desc`).catch(()=>null),
-                    fetch(`https://testnet.arcscan.app/api?module=account&action=tokentx&address=${userAccount}&sort=desc`).catch(()=>null)
+                    fetch(`https://testnet.arcscan.app/api?module=account&action=txlist&address=${userAccount}&sort=desc&_t=${ts}`).catch(()=>null),
+                    fetch(`https://testnet.arcscan.app/api?module=account&action=tokentx&address=${userAccount}&sort=desc&_t=${ts}`).catch(()=>null)
                 ]);
 
                 let allTx = [];
@@ -884,7 +838,7 @@
                 allTx.sort((a, b) => parseInt(b.timeStamp || 0) - parseInt(a.timeStamp || 0));
 
                 if (allTx.length > 0) {
-                    transactions = allTx.slice(0, 15).map(tx => {
+                    let formattedTxs = allTx.slice(0, 15).map(tx => {
                         const isSent = tx.from.toLowerCase() === userAccount.toLowerCase();
                         const symbol = tx.isNative ? 'USDC' : (tx.tokenSymbol || 'Token');
                         const decimals = tx.isNative ? 18 : parseInt(tx.tokenDecimal || 18);
@@ -908,6 +862,21 @@
                             time: timeStr
                         };
                     });
+
+                    // Background Check for New "Received" Transactions
+                    if (!isFirstTxLoad) {
+                        const newReceives = formattedTxs.filter(tx => tx.type === 'Received' && !knownTxHashes.has(tx.hash));
+                        if (newReceives.length > 0) {
+                            const latest = newReceives[0];
+                            document.getElementById('successModalTitle').innerText = "Funds Received!";
+                            document.getElementById('successModalMsg').innerText = `You received ${latest.amount.replace('+', '')} from ${latest.from}`;
+                            openModal('successModal');
+                        }
+                    }
+
+                    formattedTxs.forEach(tx => knownTxHashes.add(tx.hash));
+                    isFirstTxLoad = false;
+                    transactions = formattedTxs;
                 } else {
                     transactions = [];
                 }
@@ -1061,6 +1030,9 @@
             isWalletConnected = false;
             localStorage.removeItem('bullkarry_account');
             if (autoSyncInterval) clearInterval(autoSyncInterval);
+            
+            knownTxHashes.clear();
+            isFirstTxLoad = true;
 
             document.getElementById('walletAddress').innerText = "Connect Wallet";
             document.getElementById('payWalletAddress').innerText = "Not Connected";
@@ -1234,6 +1206,7 @@
 
                 await tx.wait();
                 
+                document.getElementById('successModalTitle').innerText = "Transaction Successful!";
                 document.getElementById('successModalMsg').innerText = `Sent ${amt} ${tokenSymbol} to ${to.substring(0,6)}...${to.substring(to.length-4)}`;
                 openModal('successModal');
                 
@@ -1266,6 +1239,7 @@
                 });
                 await tx.wait();
                 
+                document.getElementById('successModalTitle').innerText = "Purchase Successful!";
                 document.getElementById('successModalMsg').innerText = `Successfully purchased ${itemName} for ${price} USDC`;
                 openModal('successModal');
             } catch(e) {
