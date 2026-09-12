@@ -94,7 +94,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg">
+    <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors">
         
         <!-- Header -->
         <div class="flex justify-between items-center p-6 md:p-8 pb-4">
@@ -104,22 +104,33 @@
             </div>
             <div class="flex items-center gap-3">
                 <!-- Theme Toggle Button -->
-                <button onclick="toggleTheme()" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition shadow-sm">
+                <button onclick="toggleTheme()" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center shadow-sm">
                     <i id="themeIcon" class="fa-solid fa-sun text-lg"></i>
                 </button>
 
-                <!-- Connect Button with Wallet Address & Copy & X Connect -->
-                <div class="flex items-center bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl p-1 shadow-sm">
-                    <button id="connectBtn" class="px-3 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition flex items-center gap-2 text-sm">
+                <div class="hidden sm:flex items-center gap-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-700 dark:text-white">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
+                    <span>Arc Testnet</span>
+                </div>
+                
+                <!-- Profile & Connect Wallet with Dropdown -->
+                <div class="relative">
+                    <button id="connectBtn" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 text-sm shadow-sm">
                         <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] text-white"><i class="fa-solid fa-user"></i></div>
-                        <span id="walletAddress" class="font-mono font-semibold text-slate-900 dark:text-white">Connect Wallet</span>
+                        <span id="walletAddress" class="font-mono font-semibold">Connect Wallet</span>
                     </button>
-                    <button id="copyTopAddrBtn" onclick="copyHeaderAddress()" class="px-2.5 py-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white transition hidden" title="Copy Address">
-                        <i class="fa-regular fa-copy"></i>
-                    </button>
-                    <button id="connectXBtn" onclick="connectXAccount()" class="px-3 py-1.5 bg-black text-white rounded-lg text-xs font-bold hover:bg-zinc-800 transition hidden ml-1">
-                        <i class="fa-brands fa-x-twitter"></i> Connect X
-                    </button>
+                    <!-- Dropdown Menu -->
+                    <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl shadow-xl z-50 overflow-hidden transition-all">
+                        <button onclick="copyHeaderAddress()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50">
+                            <i class="fa-regular fa-copy"></i> Copy Address
+                        </button>
+                        <button onclick="connectXAccount()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50">
+                            <i class="fa-brands fa-x-twitter"></i> Connect X Account
+                        </button>
+                        <button onclick="disconnectWallet()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition flex items-center gap-2">
+                            <i class="fa-solid fa-right-from-bracket"></i> Disconnect
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -130,17 +141,17 @@
                 <!-- Left Column -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Balance Card -->
-                    <div class="bg-white dark:bg-darkCard rounded-3xl p-8 border border-slate-200 dark:border-darkBorder relative overflow-hidden shadow-sm dark:shadow-xl">
+                    <div class="bg-white dark:bg-darkCard rounded-3xl p-8 border border-slate-200 dark:border-darkBorder relative overflow-hidden shadow-sm dark:shadow-xl transition-colors">
                         <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-3">Total Balance</p>
                         <div class="flex items-end gap-3 mb-4">
                             <h2 id="balanceDisplay" class="text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">0.00</h2>
-                            <span class="text-2xl text-blue-600 dark:text-blue-400 mb-1 flex items-center gap-2 cursor-pointer hover:text-blue-700 transition" onclick="toggleCurrency()">
+                            <span class="text-2xl text-blue-600 dark:text-blue-400 mb-1 flex items-center gap-2 cursor-pointer hover:text-blue-700 dark:hover:text-white transition" onclick="toggleCurrency()">
                                 <span id="currencyLabel">USDC</span> <i class="fa-solid fa-chevron-down text-xs"></i>
                             </span>
                         </div>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Available: <span class="text-slate-900 dark:text-white font-medium" id="availBal">0.00 USDC</span></p>
                         
-                        <div class="absolute top-8 right-8 w-16 h-16 bg-slate-100 dark:bg-[#f4f2ec] rounded-2xl flex items-center justify-center shadow-lg">
+                        <div class="absolute top-8 right-8 w-16 h-16 bg-slate-100 dark:bg-[#f4f2ec] rounded-2xl flex items-center justify-center shadow-lg border border-slate-200 dark:border-none">
                             <span class="text-3xl font-extrabold text-slate-900 dark:text-[#0c111d]">B</span>
                         </div>
                     </div>
@@ -150,31 +161,32 @@
                         <h3 class="text-base font-bold mb-3 text-slate-900 dark:text-white">Quick Actions</h3>
                         <div class="grid grid-cols-5 gap-3">
                             <button onclick="openModal('sendModal')" class="flex flex-col items-center justify-center gap-2 group">
-                                <div class="w-14 h-14 bg-blue-50 dark:bg-[#f4f2ec] border border-blue-100 dark:border-none rounded-2xl flex items-center justify-center text-lg text-blue-600 dark:text-[#0c111d] shadow-sm transition transform group-hover:scale-105">
+                                <div class="w-14 h-14 bg-blue-50 dark:bg-[#f4f2ec] border border-blue-100 dark:border-none rounded-2xl flex items-center justify-center text-lg text-blue-600 dark:text-[#0c111d] shadow-sm dark:shadow-md transition transform group-hover:scale-105">
                                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                 </div>
                                 <span class="text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Send</span>
                             </button>
                             <button onclick="openModal('receiveModal')" class="flex flex-col items-center justify-center gap-2 group">
-                                <div class="w-14 h-14 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-2xl flex items-center justify-center text-lg transition transform group-hover:scale-105 shadow-sm">
+                                <div class="w-14 h-14 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-2xl flex items-center justify-center text-lg transition transform group-hover:scale-105 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm">
                                     <i class="fa-solid fa-arrow-down"></i>
                                 </div>
                                 <span class="text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Receive</span>
                             </button>
                             <button onclick="openModal('scanModal')" class="flex flex-col items-center justify-center gap-2 group">
-                                <div class="w-14 h-14 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-2xl flex items-center justify-center text-lg transition transform group-hover:scale-105 shadow-sm">
+                                <div class="w-14 h-14 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-2xl flex items-center justify-center text-lg transition transform group-hover:scale-105 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm">
                                     <i class="fa-solid fa-qrcode"></i>
                                 </div>
                                 <span class="text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Scan QR</span>
                             </button>
                             <button onclick="switchView('paymentLink')" class="flex flex-col items-center justify-center gap-2 group">
-                                <div class="w-14 h-14 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-2xl flex items-center justify-center text-lg transition transform group-hover:scale-105 shadow-sm">
+                                <div class="w-14 h-14 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-2xl flex items-center justify-center text-lg transition transform group-hover:scale-105 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm">
                                     <i class="fa-solid fa-link"></i>
                                 </div>
                                 <span class="text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Add Money</span>
                             </button>
-                            <button onclick="openModal('convertModal')" class="flex flex-col items-center justify-center gap-2 group">
-                                <div class="w-14 h-14 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center text-lg transition transform group-hover:scale-105 shadow-sm">
+                            <button onclick="openModal('convertModal')" class="flex flex-col items-center justify-center gap-2 group relative">
+                                <div class="absolute -top-2 -right-1 bg-purple-500 text-[8px] font-bold px-1.5 py-0.5 rounded text-white z-10 shadow-sm">NEW</div>
+                                <div class="w-14 h-14 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center text-lg transition transform group-hover:scale-105 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm">
                                     <i class="fa-solid fa-right-left"></i>
                                 </div>
                                 <span class="text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Swap</span>
@@ -182,14 +194,14 @@
                         </div>
                     </div>
 
-                    <!-- Recent Activity (Min 5 items on dashboard) -->
-                    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder">
+                    <!-- Recent Activity -->
+                    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <div>
                                 <h3 class="text-base font-bold text-slate-900 dark:text-white">Recent Activity</h3>
                                 <p class="text-xs text-slate-500 dark:text-slate-400">Real on-chain transfers on Arc Testnet</p>
                             </div>
-                            <button onclick="switchView('transactions')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium">View All</button>
+                            <button onclick="switchView('transactions')" class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">View All</button>
                         </div>
                         <div class="space-y-3" id="dashTxList">
                             <div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
@@ -202,7 +214,7 @@
                 <!-- Right Column -->
                 <div class="space-y-6">
                     <!-- Exchange Rates -->
-                    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder">
+                    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <div>
                                 <h3 class="text-base font-bold text-slate-900 dark:text-white">Exchange Rates</h3>
@@ -223,14 +235,14 @@
                     </div>
 
                     <!-- Portfolio Allocation -->
-                    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder">
+                    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Allocation</h3>
                             <span class="text-xs text-slate-500 dark:text-slate-400">Arc Testnet</span>
                         </div>
                         <div class="flex justify-center mb-6">
                             <div class="w-36 h-36 donut-chart">
-                                <div id="donutInner" class="donut-inner bg-white dark:bg-[#161f30]">
+                                <div id="donutInner" class="donut-inner donut-inner-light dark:donut-inner-dark transition-colors">
                                     <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Total</span>
                                     <span class="text-lg font-bold text-slate-900 dark:text-white" id="ringTotal">$0.00</span>
                                 </div>
@@ -264,12 +276,13 @@
             </div>
         </div>
 
-        <!-- VIEW 2: CREATE PAYMENT LINK -->
+        <!-- VIEW 2: CREATE PAYMENT LINK (Add Money) -->
         <div id="paymentLinkView" class="p-6 md:p-8 pt-2 hidden">
             <button onclick="switchView('dashboard')" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 flex items-center gap-2 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg w-fit transition">
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
             </button>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-200 dark:bg-[#243048] border border-slate-200 dark:border-[#243048] rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl">
+                
                 <div class="bg-white dark:bg-darkCard p-8">
                     <div class="bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] p-4 rounded-xl flex justify-between items-center mb-6">
                         <div class="flex items-center gap-3">
@@ -283,6 +296,7 @@
                         </div>
                         <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-100 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/20">Connected</span>
                     </div>
+
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Amount</label>
                     <div class="flex items-center bg-white dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-2 focus-within:border-blue-500 transition">
                         <input type="number" id="payAmount" placeholder="0.00" class="bg-transparent w-full p-2 text-2xl font-bold focus:outline-none text-slate-900 dark:text-white">
@@ -292,10 +306,12 @@
                         </select>
                     </div>
                     <p class="text-[10px] text-slate-500 mb-6">Standard web3 wallet transfer format</p>
-                    <button onclick="generateLink()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-md">
+                    
+                    <button onclick="generateLink()" class="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-md">
                         Create Payment Link <i class="fa-solid fa-arrow-right text-xs"></i>
                     </button>
                 </div>
+
                 <div class="bg-slate-50 dark:bg-[#121927] p-8 flex flex-col justify-center">
                     <div id="previewEmpty" class="border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center p-8 text-center min-h-[340px]">
                         <div class="w-12 h-12 bg-white dark:bg-darkCard rounded-xl flex items-center justify-center mb-3 text-blue-500 border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -304,6 +320,7 @@
                         <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">Your payment link will appear here</h4>
                         <p class="text-xs text-slate-500 max-w-[220px]">Enter an amount to generate a direct wallet QR</p>
                     </div>
+
                     <div id="previewGenerated" class="hidden flex flex-col gap-4">
                         <div class="flex items-center gap-2">
                             <div class="w-5 h-5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-[10px]">
@@ -315,10 +332,10 @@
                             <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Request</span>
                             <span class="text-2xl font-bold text-slate-900 dark:text-white"><span id="genAmount">0</span> <span class="text-xs text-blue-600 dark:text-blue-400" id="genToken">USDC</span></span>
                         </div>
-                        <div class="bg-white p-4 rounded-2xl flex justify-center items-center shadow-sm border border-slate-100 dark:border-none">
+                        <div class="bg-white p-4 rounded-2xl flex justify-center items-center shadow-md border border-slate-300 dark:border-slate-700">
                             <img id="genQR" src="" alt="Payment QR" class="w-44 h-44">
                         </div>
-                        <div class="bg-white dark:bg-[#0f1624] p-3.5 rounded-xl border border-slate-200 dark:border-[#243048] cursor-pointer hover:bg-slate-50 transition shadow-sm" onclick="copyGenLink()">
+                        <div class="bg-white dark:bg-[#0f1624] p-3.5 rounded-xl border border-slate-200 dark:border-[#243048] cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm" onclick="copyGenLink()">
                             <p class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold mb-1 flex justify-between items-center">
                                 Direct Web3 URI <i class="fa-regular fa-copy"></i>
                             </p>
@@ -339,10 +356,10 @@
                         <span class="bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] px-3 py-1 rounded-lg text-xs text-slate-600 dark:text-slate-300 w-fit">USDC on Arc</span>
                     </div>
                     <div class="p-8 flex flex-col justify-center gap-3">
-                        <a href="https://faucet.circle.com" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition text-center text-sm shadow-md">
+                        <a href="https://faucet.arc.network" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition text-center text-sm shadow-md">
                             <i class="fa-solid fa-droplet mr-2"></i> Claim Free USDC
                         </a>
-                        <button id="refreshFaucetBtn" onclick="updateBalances()" class="w-full bg-slate-50 dark:bg-[#0f1624] hover:bg-slate-100 border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition text-sm">
+                        <button id="refreshFaucetBtn" onclick="updateBalances()" class="w-full bg-slate-50 dark:bg-[#0f1624] hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition text-sm">
                             <i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance
                         </button>
                     </div>
@@ -350,9 +367,8 @@
             </div>
         </div>
 
-        <!-- VIEW 4: TRANSACTIONS (Infinite Scroll Support) -->
+        <!-- VIEW 4: TRANSACTIONS -->
         <div id="transactionsView" class="p-6 md:p-8 pt-2 hidden">
-            <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">All On-Chain Transactions</h2>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm">
                 <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">
                     <div>Type</div>
@@ -366,10 +382,8 @@
             </div>
         </div>
 
-        <!-- VIEW 5: STORE (Renamed from Merchant) -->
+        <!-- VIEW 5: STORE -->
         <div id="merchantView" class="p-6 md:p-8 pt-2 hidden">
-            <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Store</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Explore digital goods and exclusive assets</p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-4 rounded-2xl text-center shadow-sm">
                     <div class="h-28 bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 flex items-center justify-center"><i class="fa-solid fa-shirt text-3xl text-blue-500"></i></div>
@@ -394,10 +408,12 @@
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
             <button onclick="closeModal('sendModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Send Tokens</h2>
-            <input type="text" id="directSendTo" placeholder="Recipient address (0x...)" class="w-full bg-slate-50 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-3 text-xs text-slate-900 dark:text-white mb-3 font-mono focus:outline-none focus:border-blue-500">
-            <div class="flex items-center bg-slate-50 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-6 focus-within:border-blue-500 transition">
+            
+            <input type="text" id="directSendTo" placeholder="Recipient address (0x...)" class="w-full bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-3 text-xs text-slate-900 dark:text-white mb-3 font-mono focus:outline-none focus:border-blue-500">
+            
+            <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-6 focus-within:border-blue-500 transition">
                 <input type="number" id="directSendAmt" placeholder="0.00" class="bg-transparent w-full p-2 text-xl font-bold text-slate-900 dark:text-white focus:outline-none">
-                <select id="directSendToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none">
+                <select id="directSendToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
                     <option value="USDC">USDC</option>
                     <option value="BUSD">BUSD</option>
                     <option value="cirBTC">cirBTC</option>
@@ -407,17 +423,17 @@
         </div>
     </div>
 
-    <!-- Receive Modal with Copy Button -->
+    <!-- Receive Modal -->
     <div id="receiveModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl text-center">
             <button onclick="closeModal('receiveModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-1 text-slate-900 dark:text-white">Receive Crypto</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Scan QR to pay into your wallet</p>
-            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-sm border border-slate-100">
+            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-md border border-slate-300 dark:border-slate-700">
                 <img id="myRecQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet" class="w-40 h-40">
             </div>
             <div class="flex items-center gap-2">
-                <input type="text" id="myRecAddr" value="Connect wallet to view" readonly class="w-full bg-slate-50 dark:bg-darkBg border border-slate-200 dark:border-[#243048] rounded-xl p-3 text-xs font-mono text-center text-slate-700 dark:text-slate-300">
+                <input type="text" id="myRecAddr" value="Connect wallet to view" readonly class="w-full bg-slate-50 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-3 text-xs font-mono text-center text-slate-700 dark:text-slate-300">
                 <button onclick="copyReceiveAddress()" class="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition" title="Copy Address">
                     <i class="fa-regular fa-copy"></i>
                 </button>
@@ -444,34 +460,40 @@
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
             <button onclick="closeModal('convertModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Convert Tokens</h2>
+            
             <div class="p-4 bg-slate-50 dark:bg-darkBg border border-slate-200 dark:border-[#243048] rounded-xl mb-3 focus-within:border-blue-500 transition">
                 <div class="flex justify-between items-center">
                     <input type="number" id="convertFromAmt" oninput="calculateConvert()" placeholder="0.0" class="bg-transparent text-xl font-bold text-slate-900 dark:text-white w-2/3 focus:outline-none">
                     <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">USDC</span>
                 </div>
             </div>
-            <div class="text-center my-1 text-slate-400"><i class="fa-solid fa-arrow-down"></i></div>
+            
+            <div class="text-center my-1 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+            
             <div class="p-4 bg-slate-50 dark:bg-darkBg border border-slate-200 dark:border-[#243048] rounded-xl mb-6">
                 <div class="flex justify-between items-center">
                     <input type="number" id="convertToAmt" placeholder="0.0" readonly class="bg-transparent text-xl font-bold text-slate-500 dark:text-slate-400 w-2/3 focus:outline-none">
                     <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 rounded">INR</span>
                 </div>
             </div>
+            
             <button onclick="alert('Swap route executed!')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md">Convert Now</button>
         </div>
     </div>
 
     <script>
-        // Fast Theme Toggle Fix
         function toggleTheme() {
             const html = document.documentElement;
-            const icon = document.getElementById('themeIndex') || document.getElementById('themeIcon');
+            const icon = document.getElementById('themeIcon');
+            const donut = document.getElementById('donutInner');
             if(html.classList.contains('dark')) {
                 html.classList.remove('dark');
                 if(icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
+                if(donut) { donut.classList.remove('donut-inner-dark'); donut.classList.add('donut-inner-light'); }
             } else {
                 html.classList.add('dark');
                 if(icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+                if(donut) { donut.classList.remove('donut-inner-light'); donut.classList.add('donut-inner-dark'); }
             }
         }
 
@@ -541,6 +563,7 @@
         }
 
         let userAccount = null;
+        let isWalletConnected = false;
         let usdcBalance = 39.90;
         let isINR = false;
 
@@ -587,8 +610,7 @@
         }
 
         function copyReceiveAddress() {
-            const addrBox = document.getElementById('myRecAddr');
-            if(addrBox && userAccount) {
+            if(userAccount) {
                 navigator.clipboard.writeText(userAccount);
                 alert("Address copied!");
             }
@@ -596,23 +618,44 @@
 
         function connectXAccount() {
             alert("Redirecting to X (Twitter) OAuth authorization...");
+            document.getElementById('profileDropdown').classList.add('hidden');
+        }
+
+        function disconnectWallet() {
+            userAccount = null;
+            isWalletConnected = false;
+            document.getElementById('walletAddress').innerText = "Connect Wallet";
+            document.getElementById('payWalletAddress').innerText = "Not Connected";
+            document.getElementById('myRecAddr').value = "Connect wallet to view";
+            document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet";
+            
+            usdcBalance = 0.00;
+            updateBalancesCore();
+            document.getElementById('dashTxList').innerHTML = '<div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">Connect wallet to view activity</div>';
+            document.getElementById('fullTxHistory').innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">Connect wallet to view history</div>';
+            
+            document.getElementById('profileDropdown').classList.add('hidden');
+            alert("Wallet disconnected successfully");
         }
 
         document.getElementById('connectBtn').addEventListener('click', async () => {
+            if(isWalletConnected) {
+                document.getElementById('profileDropdown').classList.toggle('hidden');
+                return;
+            }
+
             if (typeof window.ethereum !== 'undefined') {
                 try {
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     userAccount = accounts[0];
+                    isWalletConnected = true;
+                    usdcBalance = 39.90;
+                    
                     const shortAddr = userAccount.substring(0, 6) + "..." + userAccount.substring(38);
-
                     document.getElementById('walletAddress').innerText = shortAddr;
                     document.getElementById('payWalletAddress').innerText = shortAddr;
                     document.getElementById('myRecAddr').value = userAccount;
-                    document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + userAccount;
-
-                    // Show copy and X connect buttons
-                    document.getElementById('copyTopAddrBtn').classList.remove('hidden');
-                    document.getElementById('connectXBtn').classList.remove('hidden');
+                    document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
 
                     updateBalancesCore();
                     loadTransactions();
@@ -620,13 +663,24 @@
             } else { alert("MetaMask not found"); }
         });
 
+        // Hide dropdown when clicking outside
+        window.addEventListener('click', (e) => {
+            if(!document.getElementById('connectBtn').contains(e.target) && !document.getElementById('profileDropdown').contains(e.target)) {
+                const dropdown = document.getElementById('profileDropdown');
+                if(dropdown) dropdown.classList.add('hidden');
+            }
+        });
+
         function updateBalancesCore() {
             document.getElementById('balanceDisplay').innerText = usdcBalance.toFixed(2);
             document.getElementById('availBal').innerText = usdcBalance.toFixed(2) + " USDC";
             document.getElementById('ringTotal').innerText = "$" + usdcBalance.toFixed(2);
             document.getElementById('faucetBalance').innerHTML = usdcBalance.toFixed(4) + ' <span class="text-xl text-blue-600 dark:text-blue-400">USDC</span>';
-            document.getElementById('allocUsdc').innerText = usdcBalance.toFixed(2) + " USDC";
-            document.getElementById('allocBusd').innerText = "1,000,000 BUSD";
+            
+            let usdcStr = usdcBalance > 0 ? usdcBalance.toFixed(2) : "0.00";
+            let busdStr = usdcBalance > 0 ? "1,000,000" : "0.00";
+            document.getElementById('allocUsdc').innerText = usdcStr + " USDC";
+            document.getElementById('allocBusd').innerText = busdStr + " BUSD";
         }
 
         function updateBalances() {
@@ -638,20 +692,18 @@
             }, 1000);
         }
 
-        // Expanded transaction list to ensure min 5 items on dashboard and infinite load simulation
         const transactions = [
             { type: 'Contract Deployment', token: '', amount: 'Arc Alpha Agent', from: '0xf42c...ec97', color: 'text-purple-500 dark:text-purple-400', icon: 'fa-file-code' },
             { type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
             { type: 'Received', token: 'cirBTC', amount: '+0.0001 BTC', from: '0xd844...9b3d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
             { type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
             { type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: 'Contract Mint', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
-            { type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-slate-400', icon: 'fa-arrow-up' },
+            { type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-slate-500 dark:text-slate-400', icon: 'fa-arrow-up' },
             { type: 'Received', token: 'USDC', amount: '+50 USDC', from: '0x1A2b...3C4d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' }
         ];
 
         function loadTransactions() {
             let dashHtml = ''; let fullHtml = '';
-            // Display 5 recent items on dashboard
             transactions.slice(0, 5).forEach(t => {
                 dashHtml += '<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-[#0f1624] rounded-xl border border-slate-100 dark:border-[#243048]">' +
                                 '<div class="flex items-center gap-3">' +
@@ -673,7 +725,6 @@
             document.getElementById('fullTxHistory').innerHTML = fullHtml;
         }
 
-        // Smart Contract Interaction Fix
         async function executeDirectSend() {
             const to = document.getElementById('directSendTo').value;
             const amt = document.getElementById('directSendAmt').value;
