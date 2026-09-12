@@ -50,7 +50,6 @@
 </head>
 <body class="h-screen flex overflow-hidden bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-50 transition-colors duration-200">
 
-    <!-- Left Sidebar -->
     <div class="w-64 bg-white dark:bg-darkSidebar border-r border-slate-200 dark:border-darkSidebarBorder flex flex-col p-6 hidden md:flex z-10 transition-colors">
         <div class="flex items-center gap-3 mb-10">
             <div class="bg-blue-600 w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-blue-500/30">B</div>
@@ -93,10 +92,8 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors">
         
-        <!-- Header -->
         <div class="flex justify-between items-center p-6 md:p-8 pb-4">
             <div>
                 <h1 id="greeting" class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Good afternoon</h1>
@@ -117,7 +114,6 @@
                         <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] text-white"><i class="fa-solid fa-user"></i></div>
                         <span id="walletAddress" class="font-mono font-semibold">Connect Wallet</span>
                     </button>
-                    <!-- Dropdown Menu -->
                     <div id="profileDropdown" class="hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl shadow-xl z-50 overflow-hidden transition-all origin-top-right">
                         <button onclick="copyHeaderAddress()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
                             <i class="fa-regular fa-copy w-4 text-lg"></i> Copy Address
@@ -135,12 +131,9 @@
             </div>
         </div>
 
-        <!-- VIEW 1: DASHBOARD -->
         <div id="dashboardView" class="p-6 md:p-8 pt-2 block space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Left Column -->
                 <div class="lg:col-span-2 space-y-6">
-                    <!-- Balance Card -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-8 border border-slate-200 dark:border-darkBorder relative overflow-hidden shadow-sm dark:shadow-xl transition-colors">
                         <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-3">Total Balance</p>
                         <div class="flex items-end gap-3 mb-4">
@@ -151,7 +144,6 @@
                         </div>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Available: <span class="text-slate-900 dark:text-white font-medium" id="availBal">0.00 USDC</span></p>
                         
-                        <!-- Premium Dollar Icon with Clean Refresh Button beneath it -->
                         <div class="absolute top-8 right-8 flex flex-col items-center gap-1.5 z-10">
                             <div class="w-16 h-16 bg-slate-100 dark:bg-[#f4f2ec] rounded-2xl flex items-center justify-center shadow-lg border border-slate-200 dark:border-none">
                                 <i class="fa-solid fa-dollar-sign text-3xl text-slate-900 dark:text-[#0c111d]"></i>
@@ -162,7 +154,6 @@
                         </div>
                     </div>
 
-                    <!-- Quick Actions -->
                     <div>
                         <h3 class="text-base font-bold mb-3 text-slate-900 dark:text-white">Quick Actions</h3>
                         <div class="grid grid-cols-5 gap-3">
@@ -200,7 +191,6 @@
                         </div>
                     </div>
 
-                    <!-- Recent Activity -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <div>
@@ -217,9 +207,7 @@
                     </div>
                 </div>
 
-                <!-- Right Column -->
                 <div class="space-y-6">
-                    <!-- Exchange Rates -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <div>
@@ -240,7 +228,6 @@
                         </div>
                     </div>
 
-                    <!-- Portfolio Allocation -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Allocation</h3>
@@ -281,7 +268,6 @@
                 </div>
             </div>
 
-            <!-- YOUR ASSETS SECTION (Responsive & Fixed Links) -->
             <div class="bg-white dark:bg-darkCard rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-darkBorder transition-colors mt-6">
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -293,7 +279,11 @@
                     </a>
                 </div>
                 
-                <div class="w-full">
+                <div id="assetsPlaceholder" class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
+                    Connect wallet to view your on-chain assets
+                </div>
+
+                <div id="assetsTable" class="w-full hidden">
                     <div class="grid grid-cols-12 text-[10px] font-bold text-slate-400 uppercase tracking-wider pb-2 border-b border-slate-200 dark:border-darkBorder px-2">
                         <div class="col-span-5 md:col-span-4">Asset</div>
                         <div class="col-span-4 md:col-span-3">Balance</div>
@@ -326,7 +316,7 @@
                             <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white" id="tableBalBusd">0.00 BUSD</div>
                             <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
                             <div class="col-span-3 text-right">
-                                <a href="https://testnet.arcscan.app/address/0xf42c56e47362CECB426B95a65AeCC87d8007ec97" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">0xf42c...ec97</a>
+                                <a href="https://testnet.arcscan.app/token/0xf42c56e47362CECB426B95a65AeCC87d8007ec97" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">0xf42c...ec97</a>
                             </div>
                         </div>
                         
@@ -365,7 +355,6 @@
 
         </div>
 
-        <!-- VIEW 2: CREATE PAYMENT LINK (Add Money) -->
         <div id="paymentLinkView" class="p-6 md:p-8 pt-2 hidden">
             <button onclick="switchView('dashboard')" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 flex items-center gap-2 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg w-fit transition">
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
@@ -435,7 +424,6 @@
             </div>
         </div>
 
-        <!-- VIEW 3: FAUCET -->
         <div id="faucetView" class="p-6 md:p-8 pt-2 hidden max-w-3xl mx-auto w-full mt-6">
             <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl">
                 <div class="grid grid-cols-1 md:grid-cols-2">
@@ -445,7 +433,6 @@
                         <span class="bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] px-3 py-1 rounded-lg text-xs text-slate-600 dark:text-slate-300 w-fit">USDC on Arc</span>
                     </div>
                     <div class="p-8 flex flex-col justify-center gap-3">
-                        <!-- Official Circle Faucet -->
                         <a href="https://faucet.circle.com" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition text-center text-sm shadow-md">
                             <i class="fa-solid fa-droplet mr-2"></i> Claim Free USDC
                         </a>
@@ -457,7 +444,6 @@
             </div>
         </div>
 
-        <!-- VIEW 4: TRANSACTIONS -->
         <div id="transactionsView" class="p-6 md:p-8 pt-2 hidden">
             <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">All On-Chain Transactions</h2>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm">
@@ -473,10 +459,9 @@
             </div>
         </div>
 
-        <!-- VIEW 5: STORE -->
         <div id="merchantView" class="p-6 md:p-8 pt-2 hidden">
             <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Store</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Explore digital goods and exclusive assets</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">On-chain Digital Product</p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-4 rounded-2xl text-center shadow-sm">
                     <div class="h-28 bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 flex items-center justify-center"><i class="fa-solid fa-shirt text-3xl text-blue-500"></i></div>
@@ -520,7 +505,7 @@
             <button onclick="closeModal('receiveModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-1 text-slate-900 dark:text-white">Receive Crypto</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Scan QR to pay into your wallet</p>
-            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-md border border-slate-300 dark:border-slate-700">
+            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-sm border border-slate-300 dark:border-slate-700">
                 <img id="myRecQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet" class="w-40 h-40">
             </div>
             <div class="flex items-center gap-2">
@@ -695,13 +680,6 @@
             document.getElementById('genQR').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentWeb3URI);
         }
 
-        function copyGenLink() {
-            if(currentWeb3URI) {
-                navigator.clipboard.writeText(currentWeb3URI);
-                alert("Payment URI copied");
-            }
-        }
-
         function copyHeaderAddress() {
             if(userAccount) {
                 navigator.clipboard.writeText(userAccount);
@@ -758,15 +736,17 @@
                     document.getElementById('myRecAddr').value = userAccount;
                     document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
 
-                    // Load default transactions for demo when connected
                     transactions = [
                         { hash: '0xa1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0', type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
                         { hash: '0xb2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef01', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0xd844...9b3d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
                         { hash: '0xc3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef012', type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
                         { hash: '0xd4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0123', type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: '0x0000...0000', color: 'text-[#00d182]', isSent: false, time: '2h ago' },
-                        { hash: '0xe5f67890123456789abcdef0123456789abcdef0123456789abcdef01234', type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-red-500', isSent: true, time: '5h ago' },
-                        { hash: '0xf67890123456789abcdef0123456789abcdef0123456789abcdef012345', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0x70e3...af8e', color: 'text-[#00d182]', isSent: false, time: '15h ago' }
+                        { hash: '0xe5f67890123456789abcdef0123456789abcdef0123456789abcdef01234', type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-red-500', isSent: true, time: '5h ago' }
                     ];
+                    
+                    transactions.forEach(tx => {
+                        if(!tx.isSent) tx.from = userAccount.substring(0,6) + '...' + userAccount.substring(38);
+                    });
 
                     updateBalancesCore();
                     loadTransactions();
@@ -804,9 +784,13 @@
             document.getElementById('tableBalEurc').innerText = eurcStr + " EURC";
             document.getElementById('tableBalBtc').innerText = btcStr + " cirBTC";
             
-            if (userAccount) {
+            if (isWalletConnected) {
+                document.getElementById('assetsPlaceholder').classList.add('hidden');
+                document.getElementById('assetsTable').classList.remove('hidden');
                 document.getElementById('viewOnArcScan').href = "https://testnet.arcscan.app/address/" + userAccount + "?tab=internal_txns";
             } else {
+                document.getElementById('assetsPlaceholder').classList.remove('hidden');
+                document.getElementById('assetsTable').classList.add('hidden');
                 document.getElementById('viewOnArcScan').href = "https://testnet.arcscan.app/";
             }
         }
@@ -896,7 +880,6 @@
                 const tx = await contract.transfer(to, parsedAmt);
                 await tx.wait();
                 
-                // Update Local Demo State
                 if(tokenSymbol === 'USDC' && usdcBalance >= parseFloat(amt)) {
                     usdcBalance -= parseFloat(amt);
                 }
