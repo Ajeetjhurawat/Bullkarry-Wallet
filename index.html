@@ -48,10 +48,9 @@
         .dark ::-webkit-scrollbar-thumb { background: #334155; }
     </style>
 </head>
-<body class="h-screen flex overflow-hidden bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-50 transition-colors duration-200">
+<body class="h-screen flex overflow-hidden bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-50">
 
-    <!-- Left Sidebar -->
-    <div class="w-64 bg-white dark:bg-darkSidebar border-r border-slate-200 dark:border-darkSidebarBorder flex flex-col p-6 hidden md:flex z-10">
+    <div class="w-64 bg-white dark:bg-darkSidebar border-r border-slate-200 dark:border-darkSidebarBorder flex flex-col p-6 hidden md:flex z-10 transition-colors">
         <div class="flex items-center gap-3 mb-10">
             <div class="bg-blue-600 w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-blue-500/30">B</div>
             <span class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Bullkarry</span>
@@ -78,7 +77,7 @@
             </button>
         </nav>
 
-        <div class="mt-auto bg-slate-50 dark:bg-[#121927] p-4 rounded-2xl border border-slate-200 dark:border-darkSidebarBorder">
+        <div class="mt-auto bg-slate-50 dark:bg-[#121927] p-4 rounded-2xl border border-slate-200 dark:border-darkSidebarBorder transition-colors">
             <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-2">Network</p>
             <div class="flex items-center gap-2 mb-2">
                 <div class="w-5 h-5 bg-gradient-to-tr from-blue-500 to-purple-600 rounded flex items-center justify-center shadow-sm">
@@ -93,18 +92,15 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors">
         
-        <!-- Header -->
         <div class="flex justify-between items-center p-6 md:p-8 pb-4">
             <div>
                 <h1 id="greeting" class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Good afternoon</h1>
                 <p id="pageSubtitle" class="text-slate-500 dark:text-slate-400 text-xs mt-1">Here is what's happening with your account today</p>
             </div>
             <div class="flex items-center gap-3">
-                <!-- Theme Toggle Button -->
-                <button onclick="toggleTheme()" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition shadow-sm">
+                <button onclick="toggleTheme()" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center shadow-sm">
                     <i id="themeIcon" class="fa-solid fa-sun text-lg"></i>
                 </button>
 
@@ -113,19 +109,17 @@
                     <span>Arc Testnet</span>
                 </div>
                 
-                <!-- Profile & Connect Wallet with Dropdown -->
                 <div class="relative inline-block" id="profileMenuContainer">
                     <button id="connectBtn" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 text-sm shadow-sm">
                         <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] text-white"><i class="fa-solid fa-user"></i></div>
                         <span id="walletAddress" class="font-mono font-semibold">Connect Wallet</span>
                     </button>
-                    <!-- Dropdown Menu (Perfectly Aligned Below) -->
                     <div id="profileDropdown" class="hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl shadow-xl z-50 overflow-hidden transition-all origin-top-right">
                         <button onclick="copyHeaderAddress()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
                             <i class="fa-regular fa-copy w-4"></i> Copy Address
                         </button>
                         <button onclick="connectXAccount()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
-                            <i class="fa-brands fa-x-twitter w-4"></i> Connect
+                            <i class="fa-brands fa-x-twitter w-4 text-lg"></i> Connect X
                         </button>
                         <button onclick="disconnectWallet()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition flex items-center gap-3">
                             <i class="fa-solid fa-right-from-bracket w-4"></i> Disconnect
@@ -135,12 +129,9 @@
             </div>
         </div>
 
-        <!-- VIEW 1: DASHBOARD -->
         <div id="dashboardView" class="p-6 md:p-8 pt-2 block space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Left Column -->
                 <div class="lg:col-span-2 space-y-6">
-                    <!-- Balance Card -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-8 border border-slate-200 dark:border-darkBorder relative overflow-hidden shadow-sm dark:shadow-xl transition-colors">
                         <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-3">Total Balance</p>
                         <div class="flex items-end gap-3 mb-4">
@@ -152,11 +143,10 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Available: <span class="text-slate-900 dark:text-white font-medium" id="availBal">0.00 USDC</span></p>
                         
                         <div class="absolute top-8 right-8 w-16 h-16 bg-slate-100 dark:bg-[#f4f2ec] rounded-2xl flex items-center justify-center shadow-lg border border-slate-200 dark:border-none">
-                            <span class="text-3xl font-extrabold text-slate-900 dark:text-[#0c111d]">B</span>
+                            <i class="fa-solid fa-dollar-sign text-3xl text-slate-900 dark:text-[#0c111d]"></i>
                         </div>
                     </div>
 
-                    <!-- Quick Actions -->
                     <div>
                         <h3 class="text-base font-bold mb-3 text-slate-900 dark:text-white">Quick Actions</h3>
                         <div class="grid grid-cols-5 gap-3">
@@ -194,7 +184,6 @@
                         </div>
                     </div>
 
-                    <!-- Recent Activity -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <div>
@@ -211,9 +200,7 @@
                     </div>
                 </div>
 
-                <!-- Right Column -->
                 <div class="space-y-6">
-                    <!-- Exchange Rates -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <div>
@@ -234,7 +221,6 @@
                         </div>
                     </div>
 
-                    <!-- Portfolio Allocation -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Allocation</h3>
@@ -242,7 +228,7 @@
                         </div>
                         <div class="flex justify-center mb-6">
                             <div class="w-36 h-36 donut-chart">
-                                <div id="donutInner" class="donut-inner bg-white dark:bg-[#161f30]">
+                                <div id="donutInner" class="donut-inner donut-inner-light dark:donut-inner-dark transition-colors">
                                     <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Total</span>
                                     <span class="text-lg font-bold text-slate-900 dark:text-white" id="ringTotal">$0.00</span>
                                 </div>
@@ -276,7 +262,6 @@
             </div>
         </div>
 
-        <!-- VIEW 2: CREATE PAYMENT LINK (Add Money) -->
         <div id="paymentLinkView" class="p-6 md:p-8 pt-2 hidden">
             <button onclick="switchView('dashboard')" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 flex items-center gap-2 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg w-fit transition">
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
@@ -298,14 +283,14 @@
                     </div>
 
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Amount</label>
-                    <div class="flex items-center bg-white dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-2 focus-within:border-blue-500 transition">
+                    <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-2 focus-within:border-blue-500 transition">
                         <input type="number" id="payAmount" placeholder="0.00" class="bg-transparent w-full p-2 text-2xl font-bold focus:outline-none text-slate-900 dark:text-white">
-                        <select id="payToken" class="bg-slate-50 dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none">
+                        <select id="payToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
                             <option value="USDC">USDC</option>
                             <option value="BUSD">BUSD</option>
                         </select>
                     </div>
-                    <p class="text-[10px] text-slate-500 mb-6">Generates EIP-681 Web3 standard transaction link</p>
+                    <p class="text-[10px] text-slate-500 mb-6">Standard web3 wallet transfer format</p>
                     
                     <button onclick="generateLink()" class="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-md">
                         Create Payment Link <i class="fa-solid fa-arrow-right text-xs"></i>
@@ -335,7 +320,6 @@
                         <div class="bg-white p-4 rounded-2xl flex justify-center items-center shadow-sm border border-slate-100 dark:border-none">
                             <img id="genQR" src="" alt="Payment QR" class="w-44 h-44">
                         </div>
-                        <!-- Clicking this URL will try to open MetaMask/TrustWallet directly on mobile -->
                         <a id="genUrlLinkHref" href="#" target="_blank" class="bg-white dark:bg-[#0f1624] p-3.5 rounded-xl border border-slate-200 dark:border-[#243048] hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm block">
                             <p class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold mb-1 flex justify-between items-center">
                                 Direct Web3 URI (Click to Pay) <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -347,7 +331,6 @@
             </div>
         </div>
 
-        <!-- VIEW 3: FAUCET -->
         <div id="faucetView" class="p-6 md:p-8 pt-2 hidden max-w-3xl mx-auto w-full mt-6">
             <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl">
                 <div class="grid grid-cols-1 md:grid-cols-2">
@@ -368,8 +351,8 @@
             </div>
         </div>
 
-        <!-- VIEW 4: TRANSACTIONS -->
         <div id="transactionsView" class="p-6 md:p-8 pt-2 hidden">
+            <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">All On-Chain Transactions</h2>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm">
                 <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">
                     <div>Type</div>
@@ -383,20 +366,21 @@
             </div>
         </div>
 
-        <!-- VIEW 5: STORE -->
         <div id="merchantView" class="p-6 md:p-8 pt-2 hidden">
+            <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Store</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Explore digital goods and exclusive assets</p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-4 rounded-2xl text-center shadow-sm">
                     <div class="h-28 bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 flex items-center justify-center"><i class="fa-solid fa-shirt text-3xl text-blue-500"></i></div>
                     <h4 class="font-bold text-sm text-slate-900 dark:text-white">Bullkarry Tee</h4>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">20 USDC</p>
-                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-bold transition">Buy</button>
+                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">10 USDC</p>
+                    <button onclick="buyStoreItem('Bullkarry Tee', 10)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-bold transition">Buy</button>
                 </div>
                 <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-4 rounded-2xl text-center shadow-sm">
                     <div class="h-28 bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 flex items-center justify-center"><i class="fa-solid fa-image text-3xl text-purple-500"></i></div>
                     <h4 class="font-bold text-sm text-slate-900 dark:text-white">Genesis NFT</h4>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">50 USDC</p>
-                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-bold transition">Buy</button>
+                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">25 USDC</p>
+                    <button onclick="buyStoreItem('Genesis NFT', 25)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-bold transition">Buy</button>
                 </div>
             </div>
         </div>
@@ -404,14 +388,11 @@
     </div>
 
     <!-- Modals -->
-    <!-- Send Modal -->
     <div id="sendModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
             <button onclick="closeModal('sendModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Send Tokens</h2>
-            
             <input type="text" id="directSendTo" placeholder="Recipient address (0x...)" class="w-full bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-3 text-xs text-slate-900 dark:text-white mb-3 font-mono focus:outline-none focus:border-blue-500">
-            
             <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-6 focus-within:border-blue-500 transition">
                 <input type="number" id="directSendAmt" placeholder="0.00" class="bg-transparent w-full p-2 text-xl font-bold text-slate-900 dark:text-white focus:outline-none">
                 <select id="directSendToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
@@ -424,13 +405,12 @@
         </div>
     </div>
 
-    <!-- Receive Modal -->
     <div id="receiveModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl text-center">
             <button onclick="closeModal('receiveModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-1 text-slate-900 dark:text-white">Receive Crypto</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Scan QR to pay into your wallet</p>
-            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-md border border-slate-300 dark:border-slate-700">
+            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-sm border border-slate-300 dark:border-slate-700">
                 <img id="myRecQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet" class="w-40 h-40">
             </div>
             <div class="flex items-center gap-2">
@@ -442,7 +422,6 @@
         </div>
     </div>
 
-    <!-- Scan Modal -->
     <div id="scanModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl text-center">
             <button onclick="closeModal('scanModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -456,28 +435,23 @@
         </div>
     </div>
 
-    <!-- Convert Modal -->
     <div id="convertModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
             <button onclick="closeModal('convertModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Convert Tokens</h2>
-            
             <div class="p-4 bg-slate-50 dark:bg-darkBg border border-slate-200 dark:border-[#243048] rounded-xl mb-3 focus-within:border-blue-500 transition">
                 <div class="flex justify-between items-center">
                     <input type="number" id="convertFromAmt" oninput="calculateConvert()" placeholder="0.0" class="bg-transparent text-xl font-bold text-slate-900 dark:text-white w-2/3 focus:outline-none">
                     <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">USDC</span>
                 </div>
             </div>
-            
             <div class="text-center my-1 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
-            
             <div class="p-4 bg-slate-50 dark:bg-darkBg border border-slate-200 dark:border-[#243048] rounded-xl mb-6">
                 <div class="flex justify-between items-center">
                     <input type="number" id="convertToAmt" placeholder="0.0" readonly class="bg-transparent text-xl font-bold text-slate-500 dark:text-slate-400 w-2/3 focus:outline-none">
                     <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 rounded">INR</span>
                 </div>
             </div>
-            
             <button onclick="alert('Swap route executed!')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md">Convert Now</button>
         </div>
     </div>
@@ -591,16 +565,19 @@
             document.getElementById('genAmount').innerText = amt;
             document.getElementById('genToken').innerText = "USDC";
 
-            // Standardize Wei for Web3 URI so MetaMask/Mobile wallets auto-detect the amount
             const weiAmt = ethers.utils.parseUnits(amt.toString(), 18).toString();
-            
-            // Standard EIP-681 URI Format for native/payment standard
             currentWeb3URI = "ethereum:" + userAccount + "?value=" + weiAmt;
             
             document.getElementById('genUrlLink').innerText = currentWeb3URI;
-            document.getElementById('genUrlLinkHref').href = currentWeb3URI; // Click to pay link
-
+            document.getElementById('genUrlLinkHref').href = currentWeb3URI;
             document.getElementById('genQR').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentWeb3URI);
+        }
+
+        function copyGenLink() {
+            if(currentWeb3URI) {
+                navigator.clipboard.writeText(currentWeb3URI);
+                alert("Payment URI copied");
+            }
         }
 
         function copyHeaderAddress() {
@@ -665,7 +642,6 @@
             } else { alert("MetaMask not found"); }
         });
 
-        // Hide dropdown when clicking outside Container
         window.addEventListener('click', (e) => {
             const container = document.getElementById('profileMenuContainer');
             const dropdown = document.getElementById('profileDropdown');
@@ -696,33 +672,35 @@
         }
 
         const transactions = [
-            { type: 'Contract Deployment', token: '', amount: 'Arc Alpha Agent', from: '0xf42c...ec97', color: 'text-purple-500 dark:text-purple-400', icon: 'fa-file-code' },
-            { type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
-            { type: 'Received', token: 'cirBTC', amount: '+0.0001 BTC', from: '0xd844...9b3d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
-            { type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
-            { type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: 'Contract Mint', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
-            { type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-slate-400', icon: 'fa-arrow-up' },
-            { type: 'Received', token: 'USDC', amount: '+50 USDC', from: '0x1A2b...3C4d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' }
+            { hash: '0x123abc', type: 'Contract Deployment', token: '', amount: 'Arc Alpha Agent', from: '0xf42c...ec97', color: 'text-purple-500 dark:text-purple-400', icon: 'fa-file-code' },
+            { hash: '0x456def', type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' },
+            { hash: '0x789ghi', type: 'Received', token: 'cirBTC', amount: '+0.0001 BTC', from: '0xd844...9b3d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' },
+            { hash: '0x111aaa', type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' },
+            { hash: '0x222bbb', type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: 'Contract Mint', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' },
+            { hash: '0x333ccc', type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-red-500 dark:text-red-400', icon: 'fa-arrow-up' },
+            { hash: '0x444ddd', type: 'Received', token: 'USDC', amount: '+50 USDC', from: '0x1A2b...3C4d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-trend-down' }
         ];
 
         function loadTransactions() {
             let dashHtml = ''; let fullHtml = '';
             transactions.slice(0, 5).forEach(t => {
-                dashHtml += '<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-[#0f1624] rounded-xl border border-slate-100 dark:border-[#243048]">' +
+                dashHtml += '<a href="https://explorer.arc.network/tx/' + t.hash + '" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition rounded-xl">' +
+                            '<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-[#0f1624] rounded-xl border border-slate-100 dark:border-[#243048]">' +
                                 '<div class="flex items-center gap-3">' +
                                     '<div class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center text-xs"><i class="fa-solid ' + t.icon + '"></i></div>' +
                                     '<div><p class="text-xs font-bold text-slate-900 dark:text-white">' + t.type + ' ' + t.token + '</p><p class="text-[10px] text-slate-500 font-mono">' + t.from + '</p></div>' +
                                 '</div><span class="text-xs font-bold ' + t.color + '">' + t.amount + '</span>' +
-                            '</div>';
+                            '</div></a>';
             });
 
             transactions.forEach(t => {
-                fullHtml += '<div class="p-4 grid grid-cols-4 items-center text-xs">' +
+                fullHtml += '<a href="https://explorer.arc.network/tx/' + t.hash + '" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition">' +
+                            '<div class="p-4 grid grid-cols-4 items-center text-xs">' +
                                 '<span class="font-bold text-slate-900 dark:text-white">' + t.type + '</span>' +
                                 '<span class="' + t.color + ' font-bold">' + t.amount + '</span>' +
                                 '<span class="font-mono text-slate-500 dark:text-slate-400">' + t.from + '</span>' +
                                 '<span class="text-right text-emerald-500 dark:text-emerald-400">Confirmed</span>' +
-                            '</div>';
+                            '</div></a>';
             });
             document.getElementById('dashTxList').innerHTML = dashHtml;
             document.getElementById('fullTxHistory').innerHTML = fullHtml;
@@ -758,6 +736,31 @@
             }
 
             btn.innerHTML = 'Send Transaction';
+            btn.disabled = false;
+        }
+
+        async function buyStoreItem(itemName, price) {
+            if(!userAccount) return alert("Please connect wallet first");
+            const btn = event.currentTarget;
+            const originalText = btn.innerText;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const contractAddress = "0xf42c56e47362CECB426B95a65AeCC87d8007ec97";
+                const abi = ["function transfer(address to, uint amount) returns (bool)"];
+                const contract = new ethers.Contract(contractAddress, abi, signer);
+                const parsedAmt = ethers.utils.parseUnits(price.toString(), 18);
+                const tx = await contract.transfer("0x000000000000000000000000000000000000dEaD", parsedAmt);
+                await tx.wait();
+                alert(`Successfully purchased ${itemName} for ${price} USDC!`);
+            } catch(e) {
+                console.error(e);
+                alert("Purchase Failed or Rejected by User");
+            }
+            btn.innerText = originalText;
             btn.disabled = false;
         }
     </script>
