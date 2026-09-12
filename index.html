@@ -52,15 +52,9 @@
 
     <!-- Left Sidebar -->
     <div class="w-64 bg-white dark:bg-darkSidebar border-r border-slate-200 dark:border-darkSidebarBorder flex flex-col p-6 hidden md:flex z-10 transition-colors">
+        <!-- Logo Clickable to Dashboard -->
         <div class="flex items-center gap-3 mb-10 cursor-pointer" onclick="switchView('dashboard')">
-            <!-- Fast Loading Teal & Black BK Logo (SVG) -->
-            <div class="w-10 h-10 rounded-xl bg-black border border-teal-400/30 flex items-center justify-center shadow-lg shadow-teal-500/10 shrink-0">
-                <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 36H48C52.4 36 56 39.6 56 44C56 48.4 52.4 52 48 52H28V64H48C52.4 64 56 67.6 56 72C56 76.4 52.4 80 48 80H22V36Z" stroke="#00F5B8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M62 36V80" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
-                    <path d="M84 36L65 58L84 80" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
+            <img src="Black and Teal Modern Gym & Fitness YouTube Channel Logo (1).png" alt="Bullkarry" class="w-10 h-10 rounded-xl object-cover shadow-lg border border-slate-700/50 bg-black">
             <span class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Bullkarry</span>
         </div>
         
@@ -225,6 +219,7 @@
 
                 <!-- Right Column -->
                 <div class="space-y-6">
+                    <!-- Exchange Rates -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <div>
@@ -245,6 +240,7 @@
                         </div>
                     </div>
 
+                    <!-- Portfolio Allocation -->
                     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Allocation</h3>
@@ -258,6 +254,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Dynamic Portfolio List Container -->
                         <div class="space-y-3 bg-slate-50 dark:bg-[#0f1624] p-4 rounded-2xl border border-slate-100 dark:border-[#243048]" id="portfolioListContainer">
                             <div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>
                         </div>
@@ -288,7 +285,10 @@
                         <div class="hidden md:block col-span-2">Value</div>
                         <div class="col-span-3 text-right">Contract</div>
                     </div>
-                    <div class="divide-y divide-slate-100 dark:divide-[#243048] text-xs" id="assetsTableList"></div>
+                    
+                    <!-- Dynamic Assets List Container -->
+                    <div class="divide-y divide-slate-100 dark:divide-[#243048] text-xs" id="assetsTableList">
+                    </div>
                 </div>
             </div>
 
@@ -300,6 +300,7 @@
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
             </button>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-200 dark:bg-[#243048] border border-slate-200 dark:border-[#243048] rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl">
+                
                 <div class="bg-white dark:bg-darkCard p-8">
                     <div class="bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] p-4 rounded-xl flex justify-between items-center mb-6">
                         <div class="flex items-center gap-3">
@@ -398,6 +399,7 @@
                 </div>
             </div>
 
+            <!-- Info Boxes -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl">
                     <i class="fa-solid fa-droplet text-blue-500 mb-2 text-lg"></i>
@@ -463,7 +465,8 @@
 
     </div>
 
-    <!-- Reown Connect Wallet Replica Modal -->
+    <!-- Modals -->
+    <!-- Reown Connect Wallet Replica Modal (Compact Scale) -->
     <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[100]">
         <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-0 relative shadow-2xl text-slate-900 dark:text-white font-sans overflow-hidden border border-slate-200 dark:border-white/5 scale-95">
             <div class="flex justify-between items-center p-4 border-b border-slate-100 dark:border-white/5">
@@ -560,9 +563,6 @@
                 <input type="number" id="directSendAmt" placeholder="0.00" class="bg-transparent w-full p-2 text-xl font-bold text-slate-900 dark:text-white focus:outline-none">
                 <select id="directSendToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
                     <option value="USDC">USDC</option>
-                    <option value="BUSD">BUSD</option>
-                    <option value="EURC">EURC</option>
-                    <option value="cirBTC">cirBTC</option>
                 </select>
             </div>
             <button id="sendTxBtn" onclick="executeDirectSend()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md">Send Transaction</button>
@@ -627,7 +627,7 @@
         </div>
     </div>
 
-    <!-- Success Modal for Sending/Receiving -->
+    <!-- Send Success Modal -->
     <div id="successModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[110]">
         <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-6 text-center relative shadow-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 scale-95 transform transition-all">
             <div class="w-16 h-16 bg-[#00d182] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
@@ -639,14 +639,19 @@
         </div>
     </div>
 
-    <script>
-        // Exact On-Chain Contracts
-        const TOKEN_CONTRACTS = {
-            BUSD: { name: "Bullkarry Demo USD", symbol: "BUSD", address: "0xf42c56e47362CECB426B95a65AeCC87d8007ec97", decimals: 18, color: "bg-[#0f1624]" },
-            EURC: { name: "EURC", symbol: "EURC", address: "0x89B508A89A6A12902CA4a51e60A444C3FDaD72a", decimals: 18, color: "bg-blue-600" },
-            cirBTC: { name: "Circle Wrapped Bitcoin", symbol: "cirBTC", address: "0xf0C4a42E0d908c6A4C2533B8E1BcbB8544e332BF", decimals: 18, color: "bg-[#0f1624]" }
-        };
+    <!-- Receive Success Modal -->
+    <div id="receiveSuccessModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[110]">
+        <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-6 text-center relative shadow-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 scale-95 transform transition-all">
+            <div class="w-16 h-16 bg-[#00d182] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
+                <i class="fa-solid fa-arrow-down text-3xl text-white"></i>
+            </div>
+            <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Funds Received!</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6" id="receiveSuccessModalMsg">You received tokens.</p>
+            <button onclick="closeModal('receiveSuccessModal')" class="w-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl text-sm transition">Awesome</button>
+        </div>
+    </div>
 
+    <script>
         const ERC20_ABI = [
             "function balanceOf(address owner) view returns (uint256)",
             "function decimals() view returns (uint8)",
@@ -663,12 +668,16 @@
         let knownTxHashes = new Set();
         let isFirstTxLoad = true;
 
+        // Auto login on page refresh
         window.addEventListener('DOMContentLoaded', async () => {
-            if (typeof window.ethereum !== 'undefined') {
+            const savedAccount = localStorage.getItem('bullkarry_account');
+            if (savedAccount && typeof window.ethereum !== 'undefined') {
                 try {
                     const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                    if (accounts.length > 0) {
-                        await initializeWallet(accounts[0]);
+                    if (accounts.length > 0 && accounts[0].toLowerCase() === savedAccount.toLowerCase()) {
+                        await initializeWallet(savedAccount);
+                    } else {
+                        localStorage.removeItem('bullkarry_account');
                     }
                 } catch (e) {
                     console.error("Session auto-recall error", e);
@@ -691,68 +700,106 @@
             document.getElementById('assetsPlaceholder').classList.add('hidden');
             document.getElementById('assetsTable').classList.remove('hidden');
 
-            await syncAllOnChainData();
+            await syncData();
 
+            // Auto sync every 2 seconds
             if (autoSyncInterval) clearInterval(autoSyncInterval);
-            autoSyncInterval = setInterval(syncAllOnChainData, 2000);
+            autoSyncInterval = setInterval(syncData, 2000);
         }
 
-        async function syncAllOnChainData() {
-            if (!userAccount || !isWalletConnected || typeof window.ethereum === 'undefined') return;
-
+        async function syncData() {
+            if (!userAccount || !isWalletConnected) return;
+            const ts = Date.now(); // Cache Buster
             try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                // 1. Fetch Native USDC (Arc Testnet)
+                const nativeRes = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}?_t=${ts}`);
+                let nativeBalVal = 0;
+                if (nativeRes.ok) {
+                    const nativeData = await nativeRes.json();
+                    nativeBalVal = parseFloat(ethers.utils.formatEther(nativeData.coin_balance || "0"));
+                }
+                usdcBalance = nativeBalVal;
 
-                // 1. Direct RPC Call for Native USDC
-                const balanceWei = await provider.getBalance(userAccount).catch(() => ethers.BigNumber.from(0));
-                usdcBalance = parseFloat(ethers.utils.formatEther(balanceWei));
-
-                // 2. Direct Smart Contract Calls (100% Reliable, No CORS block)
-                const tokenKeys = Object.keys(TOKEN_CONTRACTS);
-                const updatedTokens = [];
-
-                for (let key of tokenKeys) {
-                    const t = TOKEN_CONTRACTS[key];
-                    try {
-                        const contract = new ethers.Contract(t.address, ERC20_ABI, provider);
-                        const rawBal = await contract.balanceOf(userAccount);
-                        const bal = parseFloat(ethers.utils.formatUnits(rawBal, t.decimals));
-                        updatedTokens.push({
-                            ...t,
-                            balance: bal
+                // 2. Fetch All ERC20 Tokens dynamically
+                let fetchedTokens = [];
+                const tokenRes = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${userAccount}/token-balances?_t=${ts}`);
+                if (tokenRes.ok) {
+                    const tokenData = await tokenRes.json();
+                    if (Array.isArray(tokenData)) {
+                        tokenData.forEach((item, index) => {
+                            const decimals = parseInt(item.token?.decimals || "18");
+                            const value = parseFloat(ethers.utils.formatUnits(item.value || "0", decimals));
+                            if (value > 0) {
+                                const sym = item.token?.symbol || 'TKN';
+                                const colors = ['bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-blue-400', 'bg-red-400'];
+                                fetchedTokens.push({
+                                    isNative: false,
+                                    symbol: sym,
+                                    name: item.token?.name || sym,
+                                    balance: value,
+                                    address: item.token?.address,
+                                    color: colors[index % colors.length],
+                                    initial: sym.charAt(0).toUpperCase()
+                                });
+                            }
                         });
-                    } catch (err) {
-                        updatedTokens.push({ ...t, balance: 0 });
                     }
                 }
-                liveTokens = updatedTokens;
+                liveTokens = fetchedTokens;
 
-                // 3. Update Visual Displays
-                renderBalancesAndAssets();
-
-                // 4. Fetch Real-time On-Chain History
-                await fetchLiveTransactions();
-
-            } catch (err) {
-                console.error("Critical Web3 Sync Error:", err);
+                // 3. Fetch Transactions (Native + Tokens)
+                await fetchTransactions(ts);
+                
+                // 4. Update entire UI
+                updateUI();
+            } catch (e) { 
+                console.error("Live Sync Error:", e); 
             }
         }
 
-        async function fetchLiveTransactions() {
-            if (!userAccount) return;
-            const ts = Date.now();
+        async function fetchTransactions(ts) {
             try {
-                // Fetch directly from ArcScan Explorer Public API with cache-buster
-                const res = await fetch(`https://testnet.arcscan.app/api?module=account&action=tokentx&address=${userAccount}&sort=desc&_t=${ts}`);
-                const data = await res.json();
+                // Using V1 API for reliable merged txlist & tokentx with no cursor limits
+                const [nativeRes, tokenRes] = await Promise.all([
+                    fetch(`https://testnet.arcscan.app/api?module=account&action=txlist&address=${userAccount}&sort=desc&_t=${ts}`).catch(()=>null),
+                    fetch(`https://testnet.arcscan.app/api?module=account&action=tokentx&address=${userAccount}&sort=desc&_t=${ts}`).catch(()=>null)
+                ]);
 
-                if (data && data.status === "1" && Array.isArray(data.result) && data.result.length > 0) {
-                    const formatted = data.result.slice(0, 15).map(tx => {
+                let allTx = [];
+                if (nativeRes && nativeRes.ok) {
+                    const nativeData = await nativeRes.json();
+                    if (nativeData.result && Array.isArray(nativeData.result)) {
+                        // Keep only successful transfers where value > 0
+                        allTx = allTx.concat(nativeData.result.filter(tx => tx.value !== "0" && tx.isError !== "1").map(tx => ({ ...tx, isNative: true })));
+                    }
+                }
+                if (tokenRes && tokenRes.ok) {
+                    const tokenData = await tokenRes.json();
+                    if (tokenData.result && Array.isArray(tokenData.result)) {
+                        allTx = allTx.concat(tokenData.result);
+                    }
+                }
+
+                // Sort by latest
+                allTx.sort((a, b) => parseInt(b.timeStamp || 0) - parseInt(a.timeStamp || 0));
+
+                // Deduplicate (some explorers return duplicates across native/token endpoints)
+                const uniqueTxs = [];
+                const seen = new Set();
+                for(const t of allTx) {
+                    if(!seen.has(t.hash)) {
+                        seen.add(t.hash);
+                        uniqueTxs.push(t);
+                    }
+                }
+
+                if (uniqueTxs.length > 0) {
+                    let formattedTxs = uniqueTxs.slice(0, 100).map(tx => {
                         const isSent = tx.from.toLowerCase() === userAccount.toLowerCase();
-                        const symbol = tx.tokenSymbol || 'USDC';
-                        const decimals = parseInt(tx.tokenDecimal || 18);
-                        const amount = parseFloat(ethers.utils.formatUnits(tx.value || 0, decimals));
-                        const formattedAmt = amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 });
+                        const symbol = tx.isNative ? 'USDC' : (tx.tokenSymbol || 'Token');
+                        const decimals = tx.isNative ? 18 : parseInt(tx.tokenDecimal || 18);
+                        const amount = parseFloat(ethers.utils.formatUnits(tx.value || "0", decimals));
+                        const formattedAmount = amount > 0 ? amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 }) : amount.toString();
 
                         const timeDiff = Math.floor(Date.now() / 1000) - parseInt(tx.timeStamp || Date.now() / 1000);
                         let timeStr = 'Just now';
@@ -760,13 +807,13 @@
                         else if (timeDiff > 3600) timeStr = Math.floor(timeDiff / 3600) + 'h ago';
                         else if (timeDiff > 60) timeStr = Math.floor(timeDiff / 60) + 'm ago';
 
-                        const counterpart = isSent ? tx.to : tx.from;
+                        const counterpart = isSent ? (tx.to || 'Contract') : (tx.from || 'Contract');
 
                         return {
                             hash: tx.hash,
                             type: isSent ? 'Sent' : 'Received',
                             token: symbol,
-                            amount: (isSent ? '-' : '+') + formattedAmt + ' ' + symbol,
+                            amount: (isSent ? '-' : '+') + formattedAmount + ' ' + symbol,
                             from: counterpart.substring(0, 6) + '...' + counterpart.substring(counterpart.length - 4),
                             color: isSent ? 'text-red-500' : 'text-[#00d182]',
                             isSent: isSent,
@@ -774,98 +821,98 @@
                         };
                     });
 
-                    // Trigger Popup on New Receive
+                    // Trigger Green Popup on New Received Funds
                     if (!isFirstTxLoad) {
-                        const newReceives = formatted.filter(t => t.type === 'Received' && !knownTxHashes.has(t.hash));
+                        const newReceives = formattedTxs.filter(tx => !tx.isSent && !knownTxHashes.has(tx.hash));
                         if (newReceives.length > 0) {
                             const latest = newReceives[0];
-                            document.getElementById('successModalTitle').innerText = "Funds Received!";
-                            document.getElementById('successModalMsg').innerText = `You received ${latest.amount.replace('+', '')} from ${latest.from}`;
-                            openModal('successModal');
+                            document.getElementById('receiveSuccessModalMsg').innerText = `You received ${latest.amount} from ${latest.from}`;
+                            openModal('receiveSuccessModal');
                         }
                     }
 
-                    formatted.forEach(t => knownTxHashes.add(t.hash));
+                    formattedTxs.forEach(tx => knownTxHashes.add(tx.hash));
                     isFirstTxLoad = false;
-                    transactions = formatted;
-                } else if (transactions.length === 0) {
-                    // Fallback On-chain matching records from your account
-                    transactions = [
-                        { hash: '0x92a54fb566378e90123456789abcdef0123456789abcdef0123456789aa64', type: 'Sent', token: 'USDC', amount: '-2.2 USDC', from: '0xa8f7...a55c', color: 'text-red-500', isSent: true, time: '3m ago' },
-                        { hash: '0x7ba13890123456789abcdef0123456789abcdef0123456789abcdef012a537', type: 'Sent', token: 'USDC', amount: '-3 USDC', from: '0xa8f7...a55c', color: 'text-red-500', isSent: true, time: '9m ago' },
-                        { hash: '0xd0a3c33752d123456789abcdef0123456789abcdef0123456789abcdef08a0b', type: 'Sent', token: 'USDC', amount: '-2 USDC', from: '0xa8f7...a55c', color: 'text-red-500', isSent: true, time: '14m ago' },
-                        { hash: '0xd4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0123', type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: '0x0000...0000', color: 'text-[#00d182]', isSent: false, time: '47m ago' },
-                        { hash: '0xe5f67890123456789abcdef0123456789abcdef0123456789abcdef01234', type: 'Sent', token: 'BUSD', amount: '-1 BUSD', from: '0xc137...0d07', color: 'text-red-500', isSent: true, time: '53m ago' }
-                    ];
+                    transactions = formattedTxs;
+                } else {
+                    transactions = [];
                 }
-                renderTransactionLists();
-            } catch (err) {
-                console.error("Tx History API error:", err);
-                renderTransactionLists();
-            }
+            } catch (e) { console.error("Tx Fetch Error:", e); }
         }
 
-        function renderBalancesAndAssets() {
-            // Main Display
+        function updateUI() {
+            // Update Top Balance & Faucet
             document.getElementById('balanceDisplay').innerText = usdcBalance.toFixed(2);
             document.getElementById('availBal').innerText = usdcBalance.toFixed(2) + " USDC";
             document.getElementById('ringTotal').innerText = "$" + usdcBalance.toFixed(2);
             document.getElementById('faucetBalance').innerHTML = usdcBalance.toFixed(4) + ' <span class="text-xl text-blue-600 dark:text-blue-400">USDC</span>';
             document.getElementById('viewOnArcScan').href = "https://testnet.arcscan.app/address/" + userAccount + "?tab=internal_txns";
 
-            // Portfolio List Rendering
+            // Populate Send Dropdown dynamically
+            const selectToken = document.getElementById('directSendToken');
+            const previousSelection = selectToken.value;
+            selectToken.innerHTML = '<option value="USDC" data-symbol="USDC">USDC</option>';
+            liveTokens.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.address;
+                opt.text = t.symbol;
+                opt.setAttribute('data-symbol', t.symbol);
+                selectToken.appendChild(opt);
+            });
+            // Try to keep previous selection if it still exists
+            if([...selectToken.options].some(o => o.value === previousSelection)) selectToken.value = previousSelection;
+
+            // Render Portfolio List
             let portHtml = `
                 <div class="flex justify-between items-center text-xs">
                     <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span><span class="font-semibold text-slate-700 dark:text-slate-200">USDC</span></div>
-                    <span class="font-bold text-slate-900 dark:text-white">${usdcBalance.toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
-                </div>
-            `;
+                    <span class="font-bold text-slate-900 dark:text-white">${usdcBalance.toLocaleString(undefined, {maximumFractionDigits: 4})}</span>
+                </div>`;
             liveTokens.forEach(t => {
                 portHtml += `
-                    <div class="flex justify-between items-center text-xs mt-3">
-                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="font-semibold text-slate-700 dark:text-slate-200">${t.symbol}</span></div>
-                        <span class="font-bold text-slate-900 dark:text-white">${t.balance.toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
-                    </div>
-                `;
+                <div class="flex justify-between items-center text-xs mt-3">
+                    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full ${t.color}"></span><span class="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[80px]">${t.symbol}</span></div>
+                    <span class="font-bold text-slate-900 dark:text-white">${t.balance.toLocaleString(undefined, {maximumFractionDigits: 4})}</span>
+                </div>`;
             });
             document.getElementById('portfolioListContainer').innerHTML = portHtml;
 
-            // Assets Table Rendering
-            let assetHtml = `
+            // Render Assets Table
+            let assetsHtml = `
                 <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
                     <div class="col-span-5 md:col-span-4 flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-xs">U</div>
-                        <div>
-                            <p class="font-bold text-slate-900 dark:text-white">USD Coin</p>
-                            <p class="text-[10px] text-slate-400">USDC • Native</p>
+                        <div class="w-8 h-8 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-xs shrink-0">U</div>
+                        <div class="truncate pr-2">
+                            <p class="font-bold text-slate-900 dark:text-white truncate">USD Coin</p>
+                            <p class="text-[10px] text-slate-400 truncate">USDC • Native</p>
                         </div>
                     </div>
-                    <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white">${usdcBalance.toLocaleString(undefined, { maximumFractionDigits: 4 })} USDC</div>
+                    <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white truncate">${usdcBalance.toLocaleString(undefined, {maximumFractionDigits: 4})} USDC</div>
                     <div class="hidden md:block col-span-2 font-medium text-slate-900 dark:text-white">$${usdcBalance.toFixed(2)}</div>
                     <div class="col-span-3 text-right text-slate-400 text-[10px]">Native</div>
-                </div>
-            `;
+                </div>`;
             liveTokens.forEach(t => {
-                const initial = t.symbol.charAt(0);
-                const shortAddr = t.address.substring(0, 6) + '...' + t.address.substring(t.address.length - 4);
-                assetHtml += `
-                    <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
-                        <div class="col-span-5 md:col-span-4 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full ${t.color} flex items-center justify-center text-white font-bold text-xs shrink-0">${initial}</div>
-                            <div class="truncate pr-2">
-                                <p class="font-bold text-slate-900 dark:text-white truncate">${t.name}</p>
-                                <p class="text-[10px] text-slate-400">${t.symbol}</p>
-                            </div>
-                        </div>
-                        <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white">${t.balance.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${t.symbol}</div>
-                        <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
-                        <div class="col-span-3 text-right">
-                            <a href="https://testnet.arcscan.app/token/${t.address}" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">${shortAddr}</a>
+                const shortAddr = t.address.substring(0,6) + '...' + t.address.substring(t.address.length-4);
+                assetsHtml += `
+                <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
+                    <div class="col-span-5 md:col-span-4 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full ${t.color} flex items-center justify-center text-white font-bold text-xs shrink-0">${t.initial}</div>
+                        <div class="truncate pr-2">
+                            <p class="font-bold text-slate-900 dark:text-white truncate">${t.name}</p>
+                            <p class="text-[10px] text-slate-400 truncate">${t.symbol}</p>
                         </div>
                     </div>
-                `;
+                    <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white truncate">${t.balance.toLocaleString(undefined, {maximumFractionDigits: 4})} ${t.symbol}</div>
+                    <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
+                    <div class="col-span-3 text-right">
+                        <a href="https://testnet.arcscan.app/token/${t.address}" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">${shortAddr}</a>
+                    </div>
+                </div>`;
             });
-            document.getElementById('assetsTableList').innerHTML = assetHtml;
+            document.getElementById('assetsTableList').innerHTML = assetsHtml;
+
+            // Render Transactions Lists
+            renderTransactionLists();
         }
 
         function renderTransactionLists() {
@@ -879,10 +926,11 @@
             const downArrowSvg = '<svg class="w-4 h-4 text-[#00d182]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>';
             const upArrowSvg = '<svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>';
 
+            // Top 5 for Dashboard
             transactions.slice(0, 5).forEach(t => {
                 const iconSvg = t.isSent ? upArrowSvg : downArrowSvg;
                 const bgBox = t.isSent ? 'bg-red-500/10 border border-red-500/20' : 'bg-[#0f1624] border border-[#243048]';
-
+                
                 dashHtml += `
                     <a href="https://testnet.arcscan.app/tx/${t.hash}" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/40 transition rounded-xl p-2">
                         <div class="flex justify-between items-center">
@@ -896,6 +944,7 @@
                 `;
             });
 
+            // All Transactions up to 100 for Transactions View
             transactions.forEach(t => {
                 const iconSvg = t.isSent ? upArrowSvg : downArrowSvg;
                 const bgBox = t.isSent ? 'bg-red-500/10 border border-red-500/20' : 'bg-[#0f1624] border border-[#243048]';
@@ -917,227 +966,35 @@
         }
 
         async function refreshDashboard() {
-            if (!isWalletConnected) return alert("Please connect wallet first");
+            if(!isWalletConnected) return alert("Please connect wallet first");
             const btn = document.getElementById('refreshDashIcon');
-            if (btn) btn.classList.add('fa-spin');
-
-            await syncAllOnChainData();
-
+            if(btn) btn.classList.add('fa-spin');
+            
+            await syncData();
+            
             setTimeout(() => {
-                if (btn) btn.classList.remove('fa-spin');
+                if(btn) btn.classList.remove('fa-spin');
             }, 600);
         }
 
         async function updateBalances() {
             const btn = document.getElementById('refreshFaucetBtn');
-            if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Refreshing';
-
-            await syncAllOnChainData();
-
+            if(btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Refreshing';
+            
+            await syncData();
+            
             setTimeout(() => {
-                if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance';
+                if(btn) btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance';
             }, 600);
         }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            const donut = document.getElementById('donutInner');
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                if (icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
-                if (donut) { donut.classList.remove('donut-inner-dark'); donut.classList.add('donut-inner-light'); }
-            } else {
-                html.classList.add('dark');
-                if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
-                if (donut) { donut.classList.remove('donut-inner-light'); donut.classList.add('donut-inner-dark'); }
-            }
-        }
-
-        function updateHeader(viewName) {
-            const currentHour = new Date().getHours();
-            let timeGreeting = "Good evening";
-            if (currentHour >= 5 && currentHour < 12) timeGreeting = "Good morning";
-            else if (currentHour >= 12 && currentHour < 17) timeGreeting = "Good afternoon";
-            else if (currentHour >= 17 && currentHour < 21) timeGreeting = "Good evening";
-            else timeGreeting = "Good night";
-
-            const greetingEl = document.getElementById('greeting');
-            const subEl = document.getElementById('pageSubtitle');
-            if (viewName === 'dashboard') {
-                greetingEl.innerText = timeGreeting;
-                subEl.innerText = "Here is what's happening with your account today";
-            } else {
-                const titles = {
-                    'paymentLink': ['Create Payment Link', 'Request crypto securely'],
-                    'faucet': ['Arc Faucet', 'Claim testnet tokens'],
-                    'transactions': ['Transactions', 'Your on-chain history'],
-                    'merchant': ['Store', 'On-chain Digital Product']
-                };
-                if (titles[viewName]) {
-                    greetingEl.innerText = titles[viewName][0];
-                    subEl.innerText = titles[viewName][1];
-                }
-            }
-        }
-        updateHeader('dashboard');
-
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-        function calculateConvert() {
-            const fromVal = document.getElementById('convertFromAmt').value;
-            const toInput = document.getElementById('convertToAmt');
-            if (fromVal && fromVal > 0) {
-                toInput.value = (parseFloat(fromVal) * 83.45).toFixed(2);
-            } else {
-                toInput.value = '';
-            }
-        }
-
-        function simulateScan() {
-            closeModal('scanModal');
-            openModal('sendModal');
-            document.getElementById('directSendTo').value = "0x8F9a43212b...2B4c";
-        }
-
-        function switchView(viewName) {
-            ['dashboardView', 'paymentLinkView', 'faucetView', 'transactionsView', 'merchantView'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
-            ['dashboard', 'transactions', 'faucet', 'merchant'].forEach(id => {
-                const el = document.getElementById('nav-' + id);
-                if (el) {
-                    el.classList.remove('bg-blue-50', 'dark:bg-blue-600/15', 'text-blue-600', 'dark:text-blue-400', 'border-blue-200', 'dark:border-blue-500/20');
-                    el.classList.add('text-slate-500', 'dark:text-slate-400');
-                }
-            });
-
-            const targetView = document.getElementById(viewName + 'View');
-            if (targetView) targetView.classList.remove('hidden');
-
-            const activeNav = document.getElementById('nav-' + viewName);
-            if (activeNav) {
-                activeNav.classList.remove('text-slate-500', 'dark:text-slate-400');
-                activeNav.classList.add('bg-blue-50', 'dark:bg-blue-600/15', 'text-blue-600', 'dark:text-blue-400', 'border-blue-200', 'dark:border-blue-500/20');
-            }
-            updateHeader(viewName);
-        }
-
-        function toggleCurrency() {
-            isINR = !isINR;
-            const display = document.getElementById("balanceDisplay");
-            const label = document.getElementById("currencyLabel");
-            if (isINR) {
-                display.innerText = (usdcBalance * 83.45).toFixed(2);
-                label.innerText = "INR";
-            } else {
-                display.innerText = usdcBalance.toFixed(2);
-                label.innerText = "USDC";
-            }
-        }
-
-        let currentWeb3URI = "";
-        function generateLink() {
-            const amt = document.getElementById('payAmount').value;
-            if (!amt || !userAccount) return alert("Connect wallet and enter an amount");
-
-            document.getElementById('previewEmpty').classList.add('hidden');
-            document.getElementById('previewGenerated').classList.remove('hidden');
-            document.getElementById('genAmount').innerText = amt;
-            document.getElementById('genToken').innerText = "USDC";
-
-            const weiAmt = ethers.utils.parseUnits(amt.toString(), 18).toString();
-            currentWeb3URI = "ethereum:" + userAccount + "?value=" + weiAmt;
-
-            document.getElementById('genUrlLink').innerText = currentWeb3URI;
-            document.getElementById('genUrlLinkHref').href = currentWeb3URI;
-            document.getElementById('genQR').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentWeb3URI);
-        }
-
-        function copyHeaderAddress() {
-            if (userAccount) {
-                navigator.clipboard.writeText(userAccount);
-                alert("Wallet address copied to clipboard");
-            }
-            document.getElementById('profileDropdown').classList.add('hidden');
-        }
-
-        function copyReceiveAddress() {
-            if (userAccount) {
-                navigator.clipboard.writeText(userAccount);
-                alert("Address copied");
-            }
-        }
-
-        function connectXAccount() {
-            alert("Redirecting to X OAuth authorization");
-            document.getElementById('profileDropdown').classList.add('hidden');
-        }
-
-        function disconnectWallet() {
-            userAccount = null;
-            isWalletConnected = false;
-            localStorage.removeItem('bullkarry_account');
-            if (autoSyncInterval) clearInterval(autoSyncInterval);
-
-            knownTxHashes.clear();
-            isFirstTxLoad = true;
-            liveTokens = [];
-
-            document.getElementById('walletAddress').innerText = "Connect Wallet";
-            document.getElementById('payWalletAddress').innerText = "Not Connected";
-            document.getElementById('faucetWalletAddress').innerText = "Not Connected";
-            document.getElementById('myRecAddr').value = "Connect wallet to view";
-            document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet";
-
-            usdcBalance = 0;
-            transactions = [];
-
-            document.getElementById('assetsPlaceholder').classList.remove('hidden');
-            document.getElementById('assetsTable').classList.add('hidden');
-            document.getElementById('portfolioListContainer').innerHTML = '<div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>';
-
-            renderBalancesAndAssets();
-            renderTransactionLists();
-
-            document.getElementById('profileDropdown').classList.add('hidden');
-            alert("Wallet disconnected successfully");
-        }
-
-        document.getElementById('connectBtn').addEventListener('click', () => {
-            if (isWalletConnected) {
-                document.getElementById('profileDropdown').classList.toggle('hidden');
-            } else {
-                openModal('connectWalletModal');
-            }
-        });
-
-        async function connectWalletProvider() {
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    if (accounts.length > 0) {
-                        closeModal('connectWalletModal');
-                        await initializeWallet(accounts[0]);
-                    }
-                } catch (e) { console.error(e); }
-            } else { alert("MetaMask or Web3 Wallet not found"); }
-        }
-
-        window.addEventListener('click', (e) => {
-            const container = document.getElementById('profileMenuContainer');
-            const dropdown = document.getElementById('profileDropdown');
-            if (container && !container.contains(e.target)) {
-                if (dropdown) dropdown.classList.add('hidden');
-            }
-        });
 
         async function executeDirectSend() {
             const to = document.getElementById('directSendTo').value;
             const amt = document.getElementById('directSendAmt').value;
-            const tokenSymbol = document.getElementById('directSendToken').value;
+            const selectToken = document.getElementById('directSendToken');
+            const selectedOption = selectToken.options[selectToken.selectedIndex];
+            const tokenSymbol = selectedOption.getAttribute('data-symbol');
+            const tokenAddress = selectedOption.value;
             const btn = document.getElementById('sendTxBtn');
 
             if (!to || !amt) return alert("Please enter recipient address and amount");
@@ -1151,18 +1008,17 @@
                 const signer = provider.getSigner();
 
                 let tx;
-                if (tokenSymbol === 'USDC') {
+                if (tokenAddress === 'USDC') {
                     const parsedAmt = ethers.utils.parseEther(amt.toString());
                     tx = await signer.sendTransaction({ to: to, value: parsedAmt });
                 } else {
-                    const contractAddr = TOKEN_CONTRACTS[tokenSymbol].address;
-                    const contract = new ethers.Contract(contractAddr, ERC20_ABI, signer);
-                    const parsedAmt = ethers.utils.parseUnits(amt.toString(), 18);
+                    const contract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
+                    const parsedAmt = ethers.utils.parseUnits(amt.toString(), 18); // assuming 18 for demo
                     tx = await contract.transfer(to, parsedAmt);
                 }
 
                 await tx.wait();
-                await syncAllOnChainData();
+                await syncData();
 
                 document.getElementById('successModalTitle').innerText = "Transaction Successful!";
                 document.getElementById('successModalMsg').innerText = `Sent ${amt} ${tokenSymbol} to ${to.substring(0, 6)}...${to.substring(to.length - 4)}`;
@@ -1178,34 +1034,6 @@
             btn.disabled = false;
             document.getElementById('directSendTo').value = '';
             document.getElementById('directSendAmt').value = '';
-        }
-
-        async function buyStoreItem(itemName, price) {
-            if (!userAccount) return alert("Please connect wallet first");
-            const btn = event.currentTarget;
-            const originalText = btn.innerText;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            btn.disabled = true;
-
-            try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-                const parsedAmt = ethers.utils.parseEther((price / 1000).toString());
-                const tx = await signer.sendTransaction({
-                    to: "0x000000000000000000000000000000000000dEaD",
-                    value: parsedAmt
-                });
-                await tx.wait();
-
-                document.getElementById('successModalTitle').innerText = "Purchase Successful!";
-                document.getElementById('successModalMsg').innerText = `Successfully purchased ${itemName} for ${price} USDC`;
-                openModal('successModal');
-            } catch (e) {
-                console.error(e);
-                alert("Purchase Failed or Rejected by User");
-            }
-            btn.innerText = originalText;
-            btn.disabled = false;
         }
     </script>
 </body>
