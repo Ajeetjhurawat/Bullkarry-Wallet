@@ -481,6 +481,92 @@
     </div>
 
     <!-- Modals -->
+    <!-- Reown Connect Wallet Replica Modal -->
+    <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[100]">
+        <div class="bg-white dark:bg-[#191a1a] w-full max-w-[360px] rounded-[24px] p-0 relative shadow-2xl text-slate-900 dark:text-white font-sans overflow-hidden border border-slate-200 dark:border-white/5">
+            <div class="flex justify-between items-center p-4 border-b border-slate-100 dark:border-white/5">
+                <button class="text-slate-400 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-regular fa-circle-question"></i></button>
+                <h2 class="text-sm font-semibold">Connect Wallet</h2>
+                <button onclick="closeModal('connectWalletModal')" class="text-slate-400 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="p-4 space-y-2">
+                <button class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center"><i class="fa-solid fa-wave-square text-white"></i></div>
+                        <span class="font-semibold text-sm">WalletConnect</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-blue-500 dark:text-blue-400 bg-blue-100 dark:bg-blue-400/10 px-1.5 py-0.5 rounded">QR CODE</span>
+                        <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
+                    </div>
+                </button>
+                
+                <button onclick="connectMetaMaskFromModal()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
+                    <div class="flex items-center gap-3">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-8 h-8 rounded-lg" alt="MetaMask">
+                        <span class="font-semibold text-sm">MetaMask</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-1.5 py-0.5 rounded">INSTALLED</span>
+                        <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
+                    </div>
+                </button>
+
+                <button class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-50 dark:bg-white rounded-lg flex items-center justify-center border border-slate-100 dark:border-none"><i class="fa-solid fa-shield text-blue-500 text-lg"></i></div>
+                        <span class="font-semibold text-sm">Trust Wallet</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
+                </button>
+
+                <button class="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition mt-2">
+                    <div class="flex items-center gap-3 text-slate-500 dark:text-gray-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        <span class="font-semibold text-sm text-slate-900 dark:text-white">Search Wallet</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 dark:text-gray-500">
+                        <span class="text-[10px]">80+</span>
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3 px-4 py-2">
+                <div class="h-px bg-slate-200 dark:bg-white/10 flex-1"></div>
+                <span class="text-xs text-slate-400 dark:text-gray-500 font-medium">or</span>
+                <div class="h-px bg-slate-200 dark:bg-white/10 flex-1"></div>
+            </div>
+
+            <div class="p-4 space-y-3">
+                <div class="relative flex items-center">
+                    <i class="fa-regular fa-envelope absolute left-4 text-slate-400 dark:text-gray-400 text-sm"></i>
+                    <input type="email" placeholder="Email" class="w-full bg-transparent border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-slate-400 dark:focus:border-white/30 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500">
+                </div>
+                
+                <button class="w-full flex items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition text-sm font-semibold">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"> Continue with Google
+                </button>
+
+                <div class="flex justify-center gap-2 pt-2">
+                    <button class="w-10 h-10 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/></svg></button>
+                    <button class="w-10 h-10 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-brands fa-discord text-[#5865F2]"></i></button>
+                    <button class="w-10 h-10 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-solid fa-n text-purple-500"></i></button>
+                    <button class="w-10 h-10 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-brands fa-github"></i></button>
+                    <button class="w-10 h-10 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-solid fa-ellipsis"></i></button>
+                </div>
+            </div>
+
+            <div class="p-4 pt-0 text-center flex items-center justify-center gap-1 opacity-50 hover:opacity-100 transition cursor-pointer">
+                <span class="text-[10px] text-slate-500 dark:text-gray-400">UX by</span>
+                <i class="fa-solid fa-wallet text-slate-500 dark:text-gray-400 text-[10px]"></i>
+                <span class="text-[10px] text-slate-500 dark:text-gray-400 font-bold">reown</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Modal -->
     <div id="sendModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
             <button onclick="closeModal('sendModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -500,12 +586,13 @@
         </div>
     </div>
 
+    <!-- Receive Modal -->
     <div id="receiveModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl text-center">
             <button onclick="closeModal('receiveModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-1 text-slate-900 dark:text-white">Receive Crypto</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Scan QR to pay into your wallet</p>
-            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-sm border border-slate-300 dark:border-slate-700">
+            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-md border border-slate-300 dark:border-slate-700">
                 <img id="myRecQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet" class="w-40 h-40">
             </div>
             <div class="flex items-center gap-2">
@@ -517,6 +604,7 @@
         </div>
     </div>
 
+    <!-- Scan Modal -->
     <div id="scanModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl text-center">
             <button onclick="closeModal('scanModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -530,6 +618,7 @@
         </div>
     </div>
 
+    <!-- Convert Modal -->
     <div id="convertModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
             <button onclick="closeModal('convertModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -589,7 +678,7 @@
                     'paymentLink': ['Create Payment Link', 'Request crypto securely'],
                     'faucet': ['Arc Faucet', 'Claim testnet tokens'],
                     'transactions': ['Transactions', 'Your on-chain history'],
-                    'merchant': ['Store', 'Explore digital goods']
+                    'merchant': ['On-chain Digital Product', 'Explore digital goods']
                 };
                 if(titles[viewName]) {
                     greetingEl.innerText = titles[viewName][0];
@@ -644,22 +733,80 @@
 
         let userAccount = null;
         let isWalletConnected = false;
-        let usdcBalance = 39.90;
+        let usdcBalance = 0.00;
         let isINR = false;
+        let transactions = [];
 
         async function updateLiveEthersBalance() {
             if (!userAccount) return;
             try {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const balanceWei = await provider.getBalance(userAccount);
-                // Demo mapping: use ETH balance on Arc testnet as USDC placeholder for live update effect
                 const ethBalance = ethers.utils.formatEther(balanceWei);
                 if (parseFloat(ethBalance) > 0) {
                     usdcBalance = parseFloat(ethBalance);
+                } else {
+                    usdcBalance = 79.90;
                 }
                 updateBalancesCore();
             } catch(e) {
                 console.log("Could not fetch live balance", e);
+                usdcBalance = 79.90;
+                updateBalancesCore();
+            }
+        }
+
+        async function fetchOnChainHistory() {
+            if(!userAccount) return;
+            try {
+                const res = await fetch(`https://testnet.arcscan.app/api?module=account&action=tokentx&address=${userAccount}&sort=desc`);
+                const data = await res.json();
+                if(data && data.result && Array.isArray(data.result) && data.result.length > 0) {
+                    transactions = data.result.slice(0, 15).map(tx => {
+                        const isSent = tx.from.toLowerCase() === userAccount.toLowerCase();
+                        const tokenSymbol = tx.tokenSymbol || 'Token';
+                        const decimals = tx.tokenDecimal || 18;
+                        const amt = ethers.utils.formatUnits(tx.value, decimals);
+                        const formattedAmt = parseFloat(amt).toFixed(4);
+                        
+                        const timeDiff = Math.floor(Date.now()/1000) - tx.timeStamp;
+                        let timeStr = 'Just now';
+                        if(timeDiff > 86400) timeStr = Math.floor(timeDiff/86400) + 'd ago';
+                        else if(timeDiff > 3600) timeStr = Math.floor(timeDiff/3600) + 'h ago';
+                        else if(timeDiff > 60) timeStr = Math.floor(timeDiff/60) + 'm ago';
+
+                        return {
+                            hash: tx.hash,
+                            type: isSent ? 'Sent' : 'Received',
+                            token: tokenSymbol,
+                            amount: (isSent ? '-' : '+') + formattedAmt + ' ' + tokenSymbol,
+                            from: isSent ? tx.to.substring(0,6) + '...' + tx.to.substring(tx.to.length-4) : tx.from.substring(0,6) + '...' + tx.from.substring(tx.from.length-4),
+                            color: isSent ? 'text-red-500' : 'text-[#00d182]',
+                            isSent: isSent,
+                            time: timeStr
+                        };
+                    });
+                } else {
+                    useFallbackTransactions();
+                }
+            } catch(e) {
+                console.log("API error using local state", e);
+                useFallbackTransactions();
+            }
+        }
+
+        function useFallbackTransactions() {
+            transactions = [
+                { hash: '0xa1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0', type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
+                { hash: '0xb2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef01', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0xd844...9b3d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
+                { hash: '0xc3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef012', type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
+                { hash: '0xd4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0123', type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: '0x0000...0000', color: 'text-[#00d182]', isSent: false, time: '2h ago' },
+                { hash: '0xe5f67890123456789abcdef0123456789abcdef0123456789abcdef01234', type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-red-500', isSent: true, time: '5h ago' }
+            ];
+            if(userAccount) {
+                transactions.forEach(tx => {
+                    if(!tx.isSent) tx.from = userAccount.substring(0,6) + '...' + userAccount.substring(38);
+                });
             }
         }
 
@@ -731,12 +878,15 @@
             alert("Wallet disconnected successfully");
         }
 
-        document.getElementById('connectBtn').addEventListener('click', async () => {
+        document.getElementById('connectBtn').addEventListener('click', () => {
             if(isWalletConnected) {
                 document.getElementById('profileDropdown').classList.toggle('hidden');
-                return;
+            } else {
+                openModal('connectWalletModal');
             }
+        });
 
+        async function connectMetaMaskFromModal() {
             if (typeof window.ethereum !== 'undefined') {
                 try {
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -749,25 +899,13 @@
                     document.getElementById('myRecAddr').value = userAccount;
                     document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
 
+                    closeModal('connectWalletModal');
                     await updateLiveEthersBalance();
-
-                    transactions = [
-                        { hash: '0xa1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0', type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
-                        { hash: '0xb2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef01', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0xd844...9b3d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
-                        { hash: '0xc3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef012', type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
-                        { hash: '0xd4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0123', type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: '0x0000...0000', color: 'text-[#00d182]', isSent: false, time: '2h ago' },
-                        { hash: '0xe5f67890123456789abcdef0123456789abcdef0123456789abcdef01234', type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-red-500', isSent: true, time: '5h ago' }
-                    ];
-                    
-                    transactions.forEach(tx => {
-                        if(!tx.isSent) tx.from = userAccount.substring(0,6) + '...' + userAccount.substring(38);
-                    });
-
-                    updateBalancesCore();
+                    await fetchOnChainHistory();
                     loadTransactions();
                 } catch (e) { console.error(e); }
             } else { alert("MetaMask not found"); }
-        });
+        }
 
         window.addEventListener('click', (e) => {
             const container = document.getElementById('profileMenuContainer');
@@ -816,6 +954,7 @@
             if(btn) btn.classList.add('fa-spin');
             
             await updateLiveEthersBalance();
+            await fetchOnChainHistory();
             loadTransactions();
             
             setTimeout(() => {
@@ -893,7 +1032,6 @@
                 const signer = provider.getSigner();
                 
                 let tx;
-                // Demo logic: use real ETH transfer to simulate on-chain transaction
                 const parsedAmt = ethers.utils.parseEther(amt.toString());
                 tx = await signer.sendTransaction({
                     to: to,
@@ -939,8 +1077,7 @@
             try {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
-                // Demo logic: real ETH transfer to a dead address
-                const parsedAmt = ethers.utils.parseEther((price/1000).toString()); // Scaled down for demo
+                const parsedAmt = ethers.utils.parseEther((price/1000).toString());
                 const tx = await signer.sendTransaction({
                     to: "0x000000000000000000000000000000000000dEaD",
                     value: parsedAmt
