@@ -355,7 +355,6 @@
 
         </div>
 
-        <!-- VIEW 2: CREATE PAYMENT LINK -->
         <div id="paymentLinkView" class="p-6 md:p-8 pt-2 hidden">
             <button onclick="switchView('dashboard')" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 flex items-center gap-2 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg w-fit transition">
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
@@ -425,7 +424,6 @@
             </div>
         </div>
 
-        <!-- VIEW 3: FAUCET -->
         <div id="faucetView" class="p-6 md:p-8 pt-2 hidden max-w-3xl mx-auto w-full mt-6">
             <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl">
                 <div class="grid grid-cols-1 md:grid-cols-2">
@@ -446,7 +444,6 @@
             </div>
         </div>
 
-        <!-- VIEW 4: TRANSACTIONS -->
         <div id="transactionsView" class="p-6 md:p-8 pt-2 hidden">
             <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">All On-Chain Transactions</h2>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm">
@@ -462,7 +459,6 @@
             </div>
         </div>
 
-        <!-- VIEW 5: STORE -->
         <div id="merchantView" class="p-6 md:p-8 pt-2 hidden">
             <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Store</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">On-chain Digital Product</p>
@@ -593,7 +589,7 @@
             <button onclick="closeModal('receiveModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-1 text-slate-900 dark:text-white">Receive Crypto</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Scan QR to pay into your wallet</p>
-            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-sm border border-slate-300 dark:border-slate-700">
+            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-md border border-slate-300 dark:border-slate-700">
                 <img id="myRecQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet" class="w-40 h-40">
             </div>
             <div class="flex items-center gap-2">
@@ -666,19 +662,23 @@
         let autoSyncInterval;
 
         window.addEventListener('DOMContentLoaded', async () => {
-            const savedAccount = localStorage.getItem('bullkarry_account');
-            if (savedAccount) {
-                userAccount = savedAccount;
-                isWalletConnected = true;
-                
-                const shortAddr = userAccount.substring(0, 6) + "..." + userAccount.substring(38);
-                document.getElementById('walletAddress').innerText = shortAddr;
-                document.getElementById('payWalletAddress').innerText = shortAddr;
-                document.getElementById('myRecAddr').value = userAccount;
-                document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        userAccount = accounts[0];
+                        isWalletConnected = true;
+                        
+                        const shortAddr = userAccount.substring(0, 6) + "..." + userAccount.substring(38);
+                        document.getElementById('walletAddress').innerText = shortAddr;
+                        document.getElementById('payWalletAddress').innerText = shortAddr;
+                        document.getElementById('myRecAddr').value = userAccount;
+                        document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
 
-                await syncBlockchainData();
-                autoSyncInterval = setInterval(syncBlockchainData, 10000);
+                        await syncBlockchainData();
+                        autoSyncInterval = setInterval(syncBlockchainData, 2000);
+                    }
+                } catch (e) { console.error(e); }
             }
         });
 
@@ -688,11 +688,9 @@
                 if (typeof window.ethereum === 'undefined') return;
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 
-                // Fetch Native USDC Balance
                 const nativeBal = await provider.getBalance(userAccount).catch(()=>ethers.BigNumber.from(0));
                 usdcBalance = parseFloat(ethers.utils.formatEther(nativeBal));
                 
-                // Fetch ERC20 Token Balances
                 const busdContract = new ethers.Contract(TOKEN_CONTRACTS.BUSD, ERC20_ABI, provider);
                 const eurcContract = new ethers.Contract(TOKEN_CONTRACTS.EURC, ERC20_ABI, provider);
                 const btcContract = new ethers.Contract(TOKEN_CONTRACTS.cirBTC, ERC20_ABI, provider);
@@ -705,11 +703,10 @@
                 
                 busdBalance = parseFloat(ethers.utils.formatUnits(busdRaw, 18));
                 eurcBalance = parseFloat(ethers.utils.formatUnits(eurcRaw, 18));
-                btcBalance = parseFloat(ethers.utils.formatUnits(btcRaw, 18)); // Assumed 18, fallback if cirBTC uses 8 
+                btcBalance = parseFloat(ethers.utils.formatUnits(btcRaw, 18)); 
 
                 updateBalancesCore();
                 
-                // Fetch Real Transactions
                 await fetchRealTransactions();
             } catch (error) {
                 console.error("Auto-sync failed:", error);
@@ -907,7 +904,6 @@
         function disconnectWallet() {
             userAccount = null;
             isWalletConnected = false;
-            localStorage.removeItem('bullkarry_account');
             clearInterval(autoSyncInterval);
             
             document.getElementById('walletAddress').innerText = "Connect Wallet";
@@ -938,7 +934,6 @@
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     userAccount = accounts[0];
                     isWalletConnected = true;
-                    localStorage.setItem('bullkarry_account', userAccount);
                     
                     const shortAddr = userAccount.substring(0, 6) + "..." + userAccount.substring(38);
                     document.getElementById('walletAddress').innerText = shortAddr;
@@ -950,7 +945,7 @@
                     
                     await syncBlockchainData();
                     
-                    autoSyncInterval = setInterval(syncBlockchainData, 10000);
+                    autoSyncInterval = setInterval(syncBlockchainData, 2000);
                 } catch (e) { console.error(e); }
             } else { alert("MetaMask not found"); }
         }
@@ -1003,7 +998,9 @@
             
             await syncBlockchainData();
             
-            if(btn) btn.classList.remove('fa-spin');
+            setTimeout(() => {
+                if(btn) btn.classList.remove('fa-spin');
+            }, 800);
         }
 
         async function updateBalances() {
@@ -1012,7 +1009,9 @@
             
             await syncBlockchainData();
             
-            if(btn) btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance';
+            setTimeout(() => {
+                if(btn) btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance';
+            }, 800);
         }
 
         function loadTransactions() {
