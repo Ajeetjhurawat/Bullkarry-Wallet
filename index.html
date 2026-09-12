@@ -263,6 +263,13 @@
                                 </div>
                                 <span class="font-bold text-slate-900 dark:text-white" id="allocEurc">0.00</span>
                             </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                                    <span class="font-semibold text-slate-700 dark:text-slate-200">cirBTC</span>
+                                </div>
+                                <span class="font-bold text-slate-900 dark:text-white" id="allocBtc">0.00</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -424,13 +431,21 @@
             </div>
         </div>
 
-        <div id="faucetView" class="p-6 md:p-8 pt-2 hidden max-w-3xl mx-auto w-full mt-6">
-            <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl">
+        <div id="faucetView" class="p-6 md:p-8 pt-2 hidden max-w-4xl mx-auto w-full mt-2">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full text-xs text-blue-400 font-semibold mb-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Arc Testnet
+                </div>
+                <h1 class="text-4xl font-extrabold mb-2 text-slate-900 dark:text-white">Arc Testnet Faucet</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Get free USDC on Arc Testnet to test Bullkarry features and transactions.</p>
+            </div>
+
+            <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-2">
                     <div class="p-8 border-b md:border-b-0 md:border-r border-slate-200 dark:border-[#243048] flex flex-col justify-center">
                         <p class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold mb-1">Your Balance</p>
                         <h2 class="text-4xl font-extrabold mb-4 text-slate-900 dark:text-white" id="faucetBalance">0.00 <span class="text-xl text-blue-600 dark:text-blue-400">USDC</span></h2>
-                        <span class="bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] px-3 py-1 rounded-lg text-xs text-slate-600 dark:text-slate-300 w-fit">USDC on Arc</span>
+                        <span class="bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] px-3 py-1 rounded-lg text-xs text-slate-600 dark:text-slate-300 w-fit">USDC on Arc Testnet</span>
                     </div>
                     <div class="p-8 flex flex-col justify-center gap-3">
                         <a href="https://faucet.circle.com" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition text-center text-sm shadow-md">
@@ -440,6 +455,41 @@
                             <i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance
                         </button>
                     </div>
+                </div>
+                <div class="bg-slate-50 dark:bg-[#0f1624] px-8 py-3 border-t border-slate-200 dark:border-[#243048] flex justify-between items-center text-xs">
+                    <div>
+                        <span class="text-slate-400">Connected Wallet: </span>
+                        <span id="faucetWalletAddress" class="font-mono text-slate-300">Not Connected</span>
+                    </div>
+                    <span class="text-slate-400">Arc Testnet</span>
+                </div>
+            </div>
+
+            <!-- Video Faucet 3-Columns Section -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl">
+                    <i class="fa-solid fa-droplet text-blue-500 mb-2 text-lg"></i>
+                    <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">Free Testnet Tokens</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Get free USDC to try out Bullkarry on Arc Testnet.</p>
+                </div>
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl">
+                    <i class="fa-solid fa-bolt text-yellow-500 mb-2 text-lg"></i>
+                    <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">Fast & Reliable</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Tokens are sent directly to your connected wallet.</p>
+                </div>
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl">
+                    <i class="fa-solid fa-shield-halved text-blue-400 mb-2 text-lg"></i>
+                    <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">For Testing Only</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Testnet tokens have no real-world value.</p>
+                </div>
+            </div>
+
+            <!-- Important Info Banner -->
+            <div class="bg-blue-50 dark:bg-[#0f1624] border border-blue-200 dark:border-blue-900/40 p-4 rounded-2xl flex items-start gap-3">
+                <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
+                <div>
+                    <h5 class="font-bold text-xs text-slate-900 dark:text-white">Important</h5>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Claim ke baad yahan aake Refresh Balance dabayein. Network me Arc Testnet selected hona chahiye.</p>
                 </div>
             </div>
         </div>
@@ -480,7 +530,7 @@
 
     </div>
 
-    <!-- Modals -->
+    <!-- Reown Modal Compact -->
     <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[100]">
         <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-0 relative shadow-2xl text-slate-900 dark:text-white font-sans overflow-hidden border border-slate-200 dark:border-white/5 scale-95">
             <div class="flex justify-between items-center p-4 border-b border-slate-100 dark:border-white/5">
@@ -490,7 +540,7 @@
             </div>
             
             <div class="p-3 space-y-2">
-                <button onclick="connectWalletDemo()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
+                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center"><i class="fa-solid fa-wave-square text-white"></i></div>
                         <span class="font-semibold text-sm">WalletConnect</span>
@@ -501,7 +551,7 @@
                     </div>
                 </button>
                 
-                <button onclick="connectWalletDemo()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
+                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
                     <div class="flex items-center gap-3">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-8 h-8 rounded-lg" alt="MetaMask">
                         <span class="font-semibold text-sm">MetaMask</span>
@@ -512,7 +562,7 @@
                     </div>
                 </button>
 
-                <button onclick="connectWalletDemo()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
+                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 bg-blue-50 dark:bg-white rounded-lg flex items-center justify-center border border-slate-100 dark:border-none"><i class="fa-solid fa-shield text-blue-500 text-lg"></i></div>
                         <span class="font-semibold text-sm">Trust Wallet</span>
@@ -520,7 +570,7 @@
                     <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
                 </button>
 
-                <button onclick="connectWalletDemo()" class="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition mt-2">
+                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition mt-2">
                     <div class="flex items-center gap-3 text-slate-500 dark:text-gray-400">
                         <i class="fa-solid fa-magnifying-glass text-xs"></i>
                         <span class="font-semibold text-sm text-slate-900 dark:text-white">Search Wallet</span>
@@ -544,16 +594,16 @@
                     <input type="email" placeholder="Email" class="w-full bg-transparent border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-slate-400 dark:focus:border-white/30 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500">
                 </div>
                 
-                <button onclick="connectWalletDemo()" class="w-full flex items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition text-sm font-semibold">
+                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition text-sm font-semibold">
                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"> Continue with Google
                 </button>
 
                 <div class="flex justify-center gap-2 pt-2">
-                    <button onclick="connectWalletDemo()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/></svg></button>
-                    <button onclick="connectWalletDemo()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-brands fa-discord text-[#5865F2]"></i></button>
-                    <button onclick="connectWalletDemo()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-solid fa-n text-purple-500"></i></button>
-                    <button onclick="connectWalletDemo()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-brands fa-github"></i></button>
-                    <button onclick="connectWalletDemo()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-solid fa-ellipsis"></i></button>
+                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/></svg></button>
+                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-brands fa-discord text-[#5865F2]"></i></button>
+                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-solid fa-n text-purple-500"></i></button>
+                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-brands fa-github"></i></button>
+                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
             </div>
 
@@ -565,6 +615,7 @@
         </div>
     </div>
 
+    <!-- Send Modal -->
     <div id="sendModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
             <button onclick="closeModal('sendModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -577,6 +628,7 @@
                 <select id="directSendToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
                     <option value="USDC">USDC</option>
                     <option value="BUSD">BUSD</option>
+                    <option value="EURC">EURC</option>
                     <option value="cirBTC">cirBTC</option>
                 </select>
             </div>
@@ -584,6 +636,7 @@
         </div>
     </div>
 
+    <!-- Receive Modal -->
     <div id="receiveModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl text-center">
             <button onclick="closeModal('receiveModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -601,6 +654,7 @@
         </div>
     </div>
 
+    <!-- Scan Modal -->
     <div id="scanModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl text-center">
             <button onclick="closeModal('scanModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -614,6 +668,7 @@
         </div>
     </div>
 
+    <!-- Convert Modal -->
     <div id="convertModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
             <button onclick="closeModal('convertModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -640,7 +695,7 @@
     </div>
 
     <script>
-        // Constants & Config
+        // Actual ARC Testnet token contracts
         const TOKEN_CONTRACTS = {
             BUSD: "0xf42c56e47362CECB426B95a65AeCC87d8007ec97",
             EURC: "0x89B508A89A6A12902CA4a51e60A444C3FDaD72a",
@@ -648,7 +703,8 @@
         };
         const ERC20_ABI = [
             "function balanceOf(address owner) view returns (uint256)",
-            "function decimals() view returns (uint8)"
+            "function decimals() view returns (uint8)",
+            "function transfer(address to, uint amount) returns (bool)"
         ];
 
         let userAccount = null;
@@ -666,101 +722,114 @@
                 try {
                     const accounts = await window.ethereum.request({ method: 'eth_accounts' });
                     if (accounts.length > 0) {
-                        userAccount = accounts[0];
-                        isWalletConnected = true;
-                        
-                        const shortAddr = userAccount.substring(0, 6) + "..." + userAccount.substring(38);
-                        document.getElementById('walletAddress').innerText = shortAddr;
-                        document.getElementById('payWalletAddress').innerText = shortAddr;
-                        document.getElementById('myRecAddr').value = userAccount;
-                        document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
-
-                        await syncBlockchainData();
-                        autoSyncInterval = setInterval(syncBlockchainData, 2000);
+                        await initializeWallet(accounts[0]);
                     }
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error("Auto session recall error", e);
+                }
             }
         });
 
-        async function syncBlockchainData() {
-            if (!userAccount || !isWalletConnected) return;
+        async function initializeWallet(account) {
+            userAccount = account;
+            isWalletConnected = true;
+            localStorage.setItem('bullkarry_account', userAccount);
+
+            const shortAddr = userAccount.substring(0, 6) + "..." + userAccount.substring(38);
+            document.getElementById('walletAddress').innerText = shortAddr;
+            document.getElementById('payWalletAddress').innerText = shortAddr;
+            document.getElementById('faucetWalletAddress').innerText = shortAddr;
+            document.getElementById('myRecAddr').value = userAccount;
+            document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
+
+            await syncLiveBlockchainData();
+
+            if (autoSyncInterval) clearInterval(autoSyncInterval);
+            autoSyncInterval = setInterval(syncLiveBlockchainData, 2000);
+        }
+
+        async function syncLiveBlockchainData() {
+            if (!userAccount || !isWalletConnected || typeof window.ethereum === 'undefined') return;
+
             try {
-                if (typeof window.ethereum === 'undefined') return;
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
-                
-                const nativeBal = await provider.getBalance(userAccount).catch(()=>ethers.BigNumber.from(0));
+
+                // Fetch Native token (USDC on Arc)
+                const nativeBal = await provider.getBalance(userAccount).catch(() => ethers.BigNumber.from(0));
                 usdcBalance = parseFloat(ethers.utils.formatEther(nativeBal));
-                
+
+                // Fetch real token contracts balances
                 const busdContract = new ethers.Contract(TOKEN_CONTRACTS.BUSD, ERC20_ABI, provider);
                 const eurcContract = new ethers.Contract(TOKEN_CONTRACTS.EURC, ERC20_ABI, provider);
                 const btcContract = new ethers.Contract(TOKEN_CONTRACTS.cirBTC, ERC20_ABI, provider);
-                
+
                 const [busdRaw, eurcRaw, btcRaw] = await Promise.all([
-                    busdContract.balanceOf(userAccount).catch(()=>ethers.BigNumber.from(0)),
-                    eurcContract.balanceOf(userAccount).catch(()=>ethers.BigNumber.from(0)),
-                    btcContract.balanceOf(userAccount).catch(()=>ethers.BigNumber.from(0))
+                    busdContract.balanceOf(userAccount).catch(() => ethers.BigNumber.from(0)),
+                    eurcContract.balanceOf(userAccount).catch(() => ethers.BigNumber.from(0)),
+                    btcContract.balanceOf(userAccount).catch(() => ethers.BigNumber.from(0))
                 ]);
-                
+
                 busdBalance = parseFloat(ethers.utils.formatUnits(busdRaw, 18));
                 eurcBalance = parseFloat(ethers.utils.formatUnits(eurcRaw, 18));
-                btcBalance = parseFloat(ethers.utils.formatUnits(btcRaw, 18)); 
+                btcBalance = parseFloat(ethers.utils.formatUnits(btcRaw, 18));
 
                 updateBalancesCore();
-                
-                await fetchRealTransactions();
-            } catch (error) {
-                console.error("Auto-sync failed:", error);
+                await fetchOnChainArcScanHistory();
+            } catch (err) {
+                console.error("Live onchain sync error:", err);
             }
         }
 
-        async function fetchRealTransactions() {
+        async function fetchOnChainArcScanHistory() {
+            if (!userAccount) return;
             try {
                 const [nativeRes, tokenRes] = await Promise.all([
                     fetch(`https://testnet.arcscan.app/api?module=account&action=txlist&address=${userAccount}&sort=desc`),
                     fetch(`https://testnet.arcscan.app/api?module=account&action=tokentx&address=${userAccount}&sort=desc`)
                 ]);
-                
+
                 const nativeData = await nativeRes.json();
                 const tokenData = await tokenRes.json();
-                
+
                 let allTx = [];
-                if(nativeData.result && Array.isArray(nativeData.result)) {
-                    allTx = allTx.concat(nativeData.result.map(tx => ({...tx, isNative: true})));
+                if (nativeData.result && Array.isArray(nativeData.result)) {
+                    allTx = allTx.concat(nativeData.result.map(tx => ({ ...tx, isNative: true })));
                 }
-                if(tokenData.result && Array.isArray(tokenData.result)) {
+                if (tokenData.result && Array.isArray(tokenData.result)) {
                     allTx = allTx.concat(tokenData.result);
                 }
-                
-                allTx.sort((a, b) => parseInt(b.timeStamp) - parseInt(a.timeStamp));
-                
-                transactions = allTx.slice(0, 15).map(tx => {
-                    const isSent = tx.from.toLowerCase() === userAccount.toLowerCase();
-                    const symbol = tx.isNative ? 'USDC' : (tx.tokenSymbol || 'Token');
-                    const decimals = tx.isNative ? 18 : parseInt(tx.tokenDecimal || 18);
-                    const amount = parseFloat(ethers.utils.formatUnits(tx.value || 0, decimals));
-                    const formattedAmount = amount > 0 ? amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 4}) : amount.toString();
-                    
-                    const timeDiff = Math.floor(Date.now()/1000) - parseInt(tx.timeStamp);
-                    let timeStr = 'Just now';
-                    if(timeDiff > 86400) timeStr = Math.floor(timeDiff/86400) + 'd ago';
-                    else if(timeDiff > 3600) timeStr = Math.floor(timeDiff/3600) + 'h ago';
-                    else if(timeDiff > 60) timeStr = Math.floor(timeDiff/60) + 'm ago';
 
-                    return {
-                        hash: tx.hash,
-                        type: isSent ? 'Sent' : 'Received',
-                        token: symbol,
-                        amount: (isSent ? '-' : '+') + formattedAmount + ' ' + symbol,
-                        from: isSent ? tx.to.substring(0,6) + '...' + tx.to.substring(tx.to.length-4) : tx.from.substring(0,6) + '...' + tx.from.substring(tx.from.length-4),
-                        color: isSent ? 'text-red-500' : 'text-[#00d182]',
-                        isSent: isSent,
-                        time: timeStr
-                    };
-                });
-                
+                allTx.sort((a, b) => parseInt(b.timeStamp || 0) - parseInt(a.timeStamp || 0));
+
+                if (allTx.length > 0) {
+                    transactions = allTx.slice(0, 15).map(tx => {
+                        const isSent = tx.from.toLowerCase() === userAccount.toLowerCase();
+                        const symbol = tx.isNative ? 'USDC' : (tx.tokenSymbol || 'Token');
+                        const decimals = tx.isNative ? 18 : parseInt(tx.tokenDecimal || 18);
+                        const amount = parseFloat(ethers.utils.formatUnits(tx.value || 0, decimals));
+                        const formattedAmount = amount > 0 ? amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 }) : amount.toString();
+
+                        const timeDiff = Math.floor(Date.now() / 1000) - parseInt(tx.timeStamp || Date.now() / 1000);
+                        let timeStr = 'Just now';
+                        if (timeDiff > 86400) timeStr = Math.floor(timeDiff / 86400) + 'd ago';
+                        else if (timeDiff > 3600) timeStr = Math.floor(timeDiff / 3600) + 'h ago';
+                        else if (timeDiff > 60) timeStr = Math.floor(timeDiff / 60) + 'm ago';
+
+                        return {
+                            hash: tx.hash,
+                            type: isSent ? 'Sent' : 'Received',
+                            token: symbol,
+                            amount: (isSent ? '-' : '+') + formattedAmount + ' ' + symbol,
+                            from: isSent ? (tx.to ? tx.to.substring(0, 6) + '...' + tx.to.substring(tx.to.length - 4) : 'Contract') : (tx.from ? tx.from.substring(0, 6) + '...' + tx.from.substring(tx.from.length - 4) : 'Contract'),
+                            color: isSent ? 'text-red-500' : 'text-[#00d182]',
+                            isSent: isSent,
+                            time: timeStr
+                        };
+                    });
+                }
                 loadTransactions();
             } catch (error) {
-                console.error("Tx sync failed:", error);
+                console.error("ArcScan API error:", error);
             }
         }
 
@@ -904,18 +973,20 @@
         function disconnectWallet() {
             userAccount = null;
             isWalletConnected = false;
-            clearInterval(autoSyncInterval);
-            
+            localStorage.removeItem('bullkarry_account');
+            if (autoSyncInterval) clearInterval(autoSyncInterval);
+
             document.getElementById('walletAddress').innerText = "Connect Wallet";
             document.getElementById('payWalletAddress').innerText = "Not Connected";
+            document.getElementById('faucetWalletAddress').innerText = "Not Connected";
             document.getElementById('myRecAddr').value = "Connect wallet to view";
             document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet";
-            
+
             usdcBalance = 0; busdBalance = 0; eurcBalance = 0; btcBalance = 0;
             transactions = [];
             updateBalancesCore();
             loadTransactions();
-            
+
             document.getElementById('profileDropdown').classList.add('hidden');
             alert("Wallet disconnected successfully");
         }
@@ -928,26 +999,16 @@
             }
         });
 
-        async function connectWalletDemo() {
+        async function connectWalletProvider() {
             if (typeof window.ethereum !== 'undefined') {
                 try {
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    userAccount = accounts[0];
-                    isWalletConnected = true;
-                    
-                    const shortAddr = userAccount.substring(0, 6) + "..." + userAccount.substring(38);
-                    document.getElementById('walletAddress').innerText = shortAddr;
-                    document.getElementById('payWalletAddress').innerText = shortAddr;
-                    document.getElementById('myRecAddr').value = userAccount;
-                    document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
-
-                    closeModal('connectWalletModal');
-                    
-                    await syncBlockchainData();
-                    
-                    autoSyncInterval = setInterval(syncBlockchainData, 2000);
+                    if (accounts.length > 0) {
+                        closeModal('connectWalletModal');
+                        await initializeWallet(accounts[0]);
+                    }
                 } catch (e) { console.error(e); }
-            } else { alert("MetaMask not found"); }
+            } else { alert("MetaMask or Web3 Wallet not found"); }
         }
 
         window.addEventListener('click', (e) => {
@@ -973,6 +1034,7 @@
             document.getElementById('allocUsdc').innerText = usdcStr + " USDC";
             document.getElementById('allocBusd').innerText = busdStr + " BUSD";
             document.getElementById('allocEurc').innerText = eurcStr + " EURC";
+            document.getElementById('allocBtc').innerText = btcStr + " cirBTC";
             
             document.getElementById('tableBalUsdc').innerText = usdcStr + " USDC";
             document.getElementById('tableValUsdc').innerText = usdcVal;
@@ -996,7 +1058,7 @@
             const btn = document.getElementById('refreshDashIcon');
             if(btn) btn.classList.add('fa-spin');
             
-            await syncBlockchainData();
+            await syncLiveBlockchainData();
             
             setTimeout(() => {
                 if(btn) btn.classList.remove('fa-spin');
@@ -1007,7 +1069,7 @@
             const btn = document.getElementById('refreshFaucetBtn');
             if(btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Refreshing';
             
-            await syncBlockchainData();
+            await syncLiveBlockchainData();
             
             setTimeout(() => {
                 if(btn) btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance';
@@ -1073,15 +1135,18 @@
                 const signer = provider.getSigner();
                 
                 let tx;
-                const parsedAmt = ethers.utils.parseEther(amt.toString());
-                tx = await signer.sendTransaction({
-                    to: to,
-                    value: parsedAmt
-                });
+                if(tokenSymbol === 'USDC') {
+                    const parsedAmt = ethers.utils.parseEther(amt.toString());
+                    tx = await signer.sendTransaction({ to: to, value: parsedAmt });
+                } else {
+                    const contractAddr = TOKEN_CONTRACTS[tokenSymbol];
+                    const contract = new ethers.Contract(contractAddr, ERC20_ABI, signer);
+                    const parsedAmt = ethers.utils.parseUnits(amt.toString(), 18);
+                    tx = await contract.transfer(to, parsedAmt);
+                }
 
                 await tx.wait();
-                
-                await syncBlockchainData();
+                await syncLiveBlockchainData();
                 
                 alert("Successfully sent " + amt + " " + tokenSymbol + " to " + to);
                 closeModal('sendModal');
