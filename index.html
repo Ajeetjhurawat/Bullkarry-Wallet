@@ -11,90 +11,99 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #0f0f0f; 
-            color: #f4f2ec; 
+            background-color: #0f172a; 
+            color: #f8fafc; 
         }
-        .bg-card { background-color: #1a1a1a; }
-        .bg-cream { background-color: #f4f2ec; color: #0f0f0f; }
-        .hover-bg-cream:hover { background-color: #f4f2ec; color: #0f0f0f; }
-        .modal { display: none; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); }
+        .bg-card { background-color: #1e293b; border-color: #334155; }
+        .bg-cream { background-color: #e2e8f0; color: #0f172a; }
+        .hover-bg-cream:hover { background-color: #e2e8f0; color: #0f172a; }
+        .glass-effect { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); }
+        .modal { display: none; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 100; }
         .modal.active { display: flex; }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden">
 
     <!-- Left Sidebar -->
-    <div class="w-64 bg-[#0f0f0f] border-r border-[#2a2a2a] flex flex-col p-6 hidden md:flex">
+    <div class="w-64 bg-[#0f172a] border-r border-[#334155] flex flex-col p-6 hidden md:flex z-10 shadow-xl">
         <div class="flex items-center gap-3 mb-10">
-            <div class="bg-cream w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xl">B</div>
-            <span class="text-xl font-bold tracking-tight">Bullkarry</span>
+            <div class="bg-gradient-to-tr from-indigo-500 to-purple-500 w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-indigo-500/30">B</div>
+            <span class="text-2xl font-extrabold tracking-tight">Bullkarry</span>
         </div>
         
         <nav class="flex-1 space-y-2">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-cream rounded-xl font-semibold transition">
+            <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 bg-indigo-500/10 text-indigo-400 rounded-xl font-semibold transition border border-indigo-500/20">
                 <i class="fa-solid fa-house"></i> Dashboard
-            </a>
-            <a href="#" onclick="openModal('sendModal')" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-xl font-semibold transition">
+            </button>
+            <button onclick="openModal('sendModal')" class="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl font-semibold transition">
                 <i class="fa-solid fa-arrow-up-right-from-square"></i> Send
-            </a>
-            <a href="#" onclick="openModal('receiveModal')" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-xl font-semibold transition">
+            </button>
+            <button onclick="openModal('receiveModal')" class="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl font-semibold transition">
                 <i class="fa-solid fa-arrow-down"></i> Receive
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-xl font-semibold transition">
+            </button>
+            <button class="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl font-semibold transition">
                 <i class="fa-solid fa-list"></i> Transactions
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-xl font-semibold transition">
+            </button>
+            <button onclick="switchView('merchant')" id="nav-merchant" class="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl font-semibold transition">
                 <i class="fa-solid fa-store"></i> Merchant
-            </a>
+            </button>
         </nav>
 
-        <div class="mt-auto bg-card p-4 rounded-2xl border border-[#2a2a2a]">
-            <p class="text-xs text-gray-400 mb-1">Built on</p>
+        <div class="mt-auto bg-card p-4 rounded-2xl border">
+            <p class="text-xs text-slate-400 mb-1">Built on</p>
             <div class="flex items-center gap-2 mb-3">
-                <i class="fa-solid fa-link text-white"></i>
+                <i class="fa-solid fa-link text-indigo-400"></i>
                 <span class="font-bold text-white">Arc Testnet</span>
             </div>
-            <div class="flex justify-between text-xs text-gray-400">
+            <div class="flex justify-between text-xs text-slate-400">
                 <span>Status</span>
-                <span class="text-green-500 font-medium">● Online</span>
+                <span class="text-emerald-400 font-medium">● Online</span>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col h-full overflow-y-auto p-6 md:p-10">
-        <!-- Top Header -->
-        <div class="flex justify-between items-center mb-10">
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-[#0B1120]">
+        
+        <!-- Top Header (Common) -->
+        <div class="flex justify-between items-center p-6 md:p-10 pb-0 mb-6">
             <div>
                 <h1 id="greeting" class="text-2xl md:text-3xl font-bold tracking-tight">Good afternoon</h1>
-                <p class="text-gray-400 text-sm mt-1">Here is what's happening with your account today</p>
+                <p class="text-slate-400 text-sm mt-1">Here is what's happening with your account</p>
             </div>
-            <button id="connectBtn" class="bg-[#1a1a1a] border border-[#2a2a2a] text-white px-5 py-2.5 rounded-full hover:bg-[#2a2a2a] transition flex items-center gap-2">
-                <div class="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-user"></i></div>
+            <button id="connectBtn" class="glass-effect border border-slate-600 text-white px-5 py-2.5 rounded-full hover:bg-slate-700 transition flex items-center gap-2 shadow-lg">
+                <div class="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center text-xs text-white"><i class="fa-solid fa-user"></i></div>
                 <span id="walletAddress" class="font-medium">Connect Wallet</span>
             </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Balance and Actions Section -->
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboardView" class="p-6 md:p-10 pt-0 grid grid-cols-1 lg:grid-cols-3 gap-6 block">
+            
             <div class="lg:col-span-2 space-y-6">
                 <!-- Balance Card -->
-                <div class="bg-card rounded-3xl p-8 border border-[#2a2a2a] relative overflow-hidden">
-                    <p class="text-gray-400 font-medium mb-3">Total Balance</p>
+                <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-3xl p-8 border border-slate-700 relative overflow-hidden shadow-2xl">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 blur-effect"></div>
+                    <p class="text-slate-400 font-medium mb-3">Total Balance</p>
                     <div class="flex items-end gap-3 mb-6">
-                        <h2 id="balanceDisplay" class="text-5xl font-extrabold tracking-tight">0.00</h2>
-                        <span class="text-2xl text-gray-400 mb-1 flex items-center gap-2 cursor-pointer hover:text-white" onclick="toggleCurrency()">
+                        <h2 id="balanceDisplay" class="text-5xl font-extrabold tracking-tight text-white">0.00</h2>
+                        <span class="text-2xl text-indigo-300 mb-1 flex items-center gap-2 cursor-pointer hover:text-white transition" onclick="toggleCurrency()">
                             <span id="currencyLabel">BUSD</span> <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </div>
-                    <p class="text-sm text-gray-400">Available: <span class="text-white">0.00 BUSD</span></p>
+                    <p class="text-sm text-slate-400">Available: <span class="text-white" id="availableBalance">0.00 BUSD</span></p>
                     
-                    <div class="absolute top-8 right-8 w-16 h-16 bg-cream rounded-2xl flex items-center justify-center opacity-90">
-                        <span class="text-3xl font-bold text-[#0f0f0f]">B</span>
+                    <div class="absolute top-8 right-8 w-16 h-16 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/40">
+                        <span class="text-3xl font-bold text-white">B</span>
                     </div>
                 </div>
 
@@ -103,79 +112,51 @@
                     <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
                     <div class="grid grid-cols-5 gap-3">
                         <button onclick="openModal('sendModal')" class="flex flex-col items-center justify-center gap-2 group">
-                            <div class="w-16 h-16 bg-cream rounded-2xl flex items-center justify-center text-xl shadow-lg transition transform group-hover:scale-105">
+                            <div class="w-16 h-16 bg-indigo-500 rounded-2xl flex items-center justify-center text-xl text-white shadow-lg shadow-indigo-500/30 transition transform group-hover:scale-105">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </div>
-                            <span class="text-xs font-medium text-gray-400 group-hover:text-white">Send</span>
+                            <span class="text-xs font-medium text-slate-400 group-hover:text-white">Send</span>
                         </button>
                         <button onclick="openModal('receiveModal')" class="flex flex-col items-center justify-center gap-2 group">
-                            <div class="w-16 h-16 bg-card border border-[#2a2a2a] text-white rounded-2xl flex items-center justify-center text-xl transition transform group-hover:scale-105 hover-bg-cream">
+                            <div class="w-16 h-16 bg-card border border-slate-700 text-white rounded-2xl flex items-center justify-center text-xl transition transform group-hover:scale-105 hover:bg-slate-700 hover:border-indigo-500/50">
                                 <i class="fa-solid fa-arrow-down"></i>
                             </div>
-                            <span class="text-xs font-medium text-gray-400 group-hover:text-white">Receive</span>
+                            <span class="text-xs font-medium text-slate-400 group-hover:text-white">Receive</span>
                         </button>
-                        <button class="flex flex-col items-center justify-center gap-2 group">
-                            <div class="w-16 h-16 bg-card border border-[#2a2a2a] text-white rounded-2xl flex items-center justify-center text-xl transition transform group-hover:scale-105 hover-bg-cream">
+                        <button onclick="openModal('receiveModal')" class="flex flex-col items-center justify-center gap-2 group">
+                            <div class="w-16 h-16 bg-card border border-slate-700 text-white rounded-2xl flex items-center justify-center text-xl transition transform group-hover:scale-105 hover:bg-slate-700 hover:border-indigo-500/50">
                                 <i class="fa-solid fa-qrcode"></i>
                             </div>
-                            <span class="text-xs font-medium text-gray-400 group-hover:text-white">Scan QR</span>
+                            <span class="text-xs font-medium text-slate-400 group-hover:text-white">Scan QR</span>
                         </button>
-                        <button class="flex flex-col items-center justify-center gap-2 group">
-                            <div class="w-16 h-16 bg-card border border-[#2a2a2a] text-white rounded-2xl flex items-center justify-center text-xl transition transform group-hover:scale-105 hover-bg-cream">
-                                <i class="fa-solid fa-dollar-sign"></i>
+                        <button onclick="openModal('convertModal')" class="flex flex-col items-center justify-center gap-2 group">
+                            <div class="w-16 h-16 bg-card border border-slate-700 text-white rounded-2xl flex items-center justify-center text-xl transition transform group-hover:scale-105 hover:bg-slate-700 hover:border-indigo-500/50">
+                                <i class="fa-solid fa-wallet"></i>
                             </div>
-                            <span class="text-xs font-medium text-gray-400 group-hover:text-white">Add Money</span>
+                            <span class="text-xs font-medium text-slate-400 group-hover:text-white">Add Money</span>
                         </button>
-                        <button class="flex flex-col items-center justify-center gap-2 group">
-                            <div class="w-16 h-16 bg-card border border-[#2a2a2a] text-white rounded-2xl flex items-center justify-center text-xl transition transform group-hover:scale-105 hover-bg-cream">
+                        <button onclick="openModal('convertModal')" class="flex flex-col items-center justify-center gap-2 group">
+                            <div class="w-16 h-16 bg-card border border-slate-700 text-white rounded-2xl flex items-center justify-center text-xl transition transform group-hover:scale-105 hover:bg-slate-700 hover:border-indigo-500/50">
                                 <i class="fa-solid fa-right-left"></i>
                             </div>
-                            <span class="text-xs font-medium text-gray-400 group-hover:text-white">Convert</span>
+                            <span class="text-xs font-medium text-slate-400 group-hover:text-white">Convert</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Recent Transactions -->
-                <div class="bg-card rounded-3xl p-6 border border-[#2a2a2a]">
+                <div class="bg-card rounded-3xl p-6 border border-slate-700 shadow-xl">
                     <div class="flex justify-between items-center mb-6">
                         <div>
                             <h3 class="text-lg font-bold">Recent Transactions</h3>
-                            <p class="text-xs text-gray-400">Latest activity on Arc Testnet</p>
+                            <p class="text-xs text-slate-400">Latest activity on Arc Testnet</p>
                         </div>
-                        <a href="#" class="text-sm text-gray-400 hover:text-white">View all</a>
+                        <a href="#" class="text-sm text-indigo-400 hover:text-indigo-300 font-medium">View all</a>
                     </div>
                     
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-4 bg-[#111111] rounded-2xl border border-[#2a2a2a]">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 bg-card rounded-xl flex items-center justify-center border border-[#2a2a2a]">
-                                    <i class="fa-solid fa-arrow-up text-white"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold">Sent BUSD</p>
-                                    <p class="text-xs text-gray-500">0x1D79...eB3B7</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-bold">-100.00 BUSD</p>
-                                <p class="text-xs text-green-500">Confirmed</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex justify-between items-center p-4 bg-[#111111] rounded-2xl border border-[#2a2a2a]">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 bg-[#e8f5e9] text-green-600 rounded-xl flex items-center justify-center">
-                                    <i class="fa-solid fa-arrow-down"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold">Received BUSD</p>
-                                    <p class="text-xs text-gray-500">0xAB5...79a4</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-bold text-green-500">+500.00 BUSD</p>
-                                <p class="text-xs text-green-500">Confirmed</p>
-                            </div>
+                    <div class="space-y-4" id="txHistory">
+                        <div class="p-6 text-center text-slate-500 text-sm border border-dashed border-slate-600 rounded-2xl">
+                            No recent transactions found Make a transfer to see history
                         </div>
                     </div>
                 </div>
@@ -184,44 +165,48 @@
             <!-- Right Sidebar Panel -->
             <div class="space-y-6">
                 <!-- Exchange Rates -->
-                <div class="bg-card rounded-3xl p-6 border border-[#2a2a2a]">
+                <div class="bg-card rounded-3xl p-6 border border-slate-700 shadow-xl">
                     <div class="flex justify-between items-center mb-6">
                         <div>
                             <h3 class="text-lg font-bold">Exchange Rates</h3>
-                            <p class="text-xs text-gray-400">Live rate</p>
+                            <p class="text-xs text-slate-400">Live testnet rate</p>
                         </div>
                         <div class="flex -space-x-2">
-                            <div class="w-6 h-6 rounded-full bg-blue-600 border-2 border-card flex items-center justify-center text-[8px] text-white">US</div>
-                            <div class="w-6 h-6 rounded-full bg-blue-800 border-2 border-card flex items-center justify-center text-[8px] text-white">EU</div>
+                            <div class="w-7 h-7 rounded-full bg-blue-600 border-2 border-slate-800 flex items-center justify-center text-[10px] font-bold text-white shadow-lg z-10">US</div>
+                            <div class="w-7 h-7 rounded-full bg-orange-500 border-2 border-slate-800 flex items-center justify-center text-[10px] font-bold text-white shadow-lg">IN</div>
                         </div>
                     </div>
-                    <div class="p-4 bg-[#111111] rounded-2xl border border-[#2a2a2a] flex justify-between items-center">
-                        <span class="font-bold text-gray-300">USD / INR</span>
+                    <div class="p-4 bg-slate-800/50 rounded-2xl border border-slate-700 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-money-bill-wave text-emerald-400"></i>
+                            <span class="font-bold text-slate-200">USDT / INR</span>
+                        </div>
                         <div class="text-right">
-                            <span class="text-xs text-green-500 block mb-1">● Live rate</span>
-                            <span class="font-bold">1 USD = 83.45 INR</span>
+                            <span class="text-[10px] text-emerald-400 block mb-1 font-medium">● Live rate</span>
+                            <span class="font-bold">1 USDT = 83.45 INR</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Portfolio -->
-                <div class="bg-card rounded-3xl p-6 border border-[#2a2a2a]">
+                <div class="bg-card rounded-3xl p-6 border border-slate-700 shadow-xl">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-bold">Portfolio</h3>
-                        <a href="#" class="text-sm text-gray-400 hover:text-white">Details</a>
+                        <a href="#" class="text-sm text-indigo-400 hover:text-indigo-300">Details</a>
                     </div>
                     <div class="flex justify-center mb-6">
-                        <div class="w-32 h-32 rounded-full border-8 border-cream flex items-center justify-center relative">
-                            <div class="text-center">
+                        <div class="w-32 h-32 rounded-full border-8 border-indigo-500/30 flex items-center justify-center relative shadow-inner">
+                            <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent border-r-transparent transform rotate-45"></div>
+                            <div class="text-center z-10">
                                 <span class="block font-bold text-xl" id="portfolioTotal">$0.00</span>
-                                <span class="text-xs text-gray-400">Total</span>
+                                <span class="text-xs text-slate-400">Total</span>
                             </div>
                         </div>
                     </div>
-                    <div class="space-y-3">
+                    <div class="space-y-3 bg-slate-800/50 p-4 rounded-2xl border border-slate-700">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
-                                <div class="w-2 h-2 rounded-full bg-cream"></div>
+                                <div class="w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]"></div>
                                 <span class="text-sm font-medium">BUSD</span>
                             </div>
                             <span class="text-sm font-bold">100%</span>
@@ -230,104 +215,281 @@
                 </div>
             </div>
         </div>
+
+        <!-- MERCHANT VIEW (Hidden by default) -->
+        <div id="merchantView" class="p-6 md:p-10 pt-0 hidden h-full overflow-y-auto">
+            <div class="bg-gradient-to-r from-indigo-900/50 to-purple-900/50 rounded-3xl p-8 mb-8 border border-indigo-500/30">
+                <h2 class="text-3xl font-extrabold mb-2 gradient-text">Web3 Merchant Store</h2>
+                <p class="text-indigo-200">Buy exclusive digital NFTs and physical merch using your BUSD balance directly onchain</p>
+            </div>
+
+            <!-- NFTs Section -->
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-image text-purple-400"></i> Exclusive NFTs</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <!-- NFT 1 -->
+                <div class="bg-card rounded-2xl border border-slate-700 overflow-hidden hover:border-purple-500/50 transition group">
+                    <div class="h-40 bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+                        <i class="fa-brands fa-ethereum text-5xl text-white opacity-50 group-hover:scale-110 transition"></i>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-xs text-purple-400 font-bold mb-1">Genesis Collection</p>
+                        <h4 class="font-bold text-lg mb-3">Bullkarry Alpha</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold">20 USDT</span>
+                            <button onclick="buyItem('Bullkarry Alpha', 20)" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- NFT 2 -->
+                <div class="bg-card rounded-2xl border border-slate-700 overflow-hidden hover:border-blue-500/50 transition group">
+                    <div class="h-40 bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                        <i class="fa-solid fa-bolt text-5xl text-white opacity-50 group-hover:scale-110 transition"></i>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-xs text-blue-400 font-bold mb-1">Utility Asset</p>
+                        <h4 class="font-bold text-lg mb-3">Speed Core</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold">30 USDT</span>
+                            <button onclick="buyItem('Speed Core', 30)" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- NFT 3 -->
+                <div class="bg-card rounded-2xl border border-slate-700 overflow-hidden hover:border-emerald-500/50 transition group">
+                    <div class="h-40 bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                        <i class="fa-solid fa-shield-halved text-5xl text-white opacity-50 group-hover:scale-110 transition"></i>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-xs text-emerald-400 font-bold mb-1">Security Badge</p>
+                        <h4 class="font-bold text-lg mb-3">Arc Guardian</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold">50 USDT</span>
+                            <button onclick="buyItem('Arc Guardian', 50)" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- NFT 4 -->
+                <div class="bg-card rounded-2xl border border-slate-700 overflow-hidden hover:border-amber-500/50 transition group">
+                    <div class="h-40 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                        <i class="fa-solid fa-crown text-5xl text-white opacity-50 group-hover:scale-110 transition"></i>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-xs text-amber-400 font-bold mb-1">Legendary</p>
+                        <h4 class="font-bold text-lg mb-3">The Founder</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold">80 USDT</span>
+                            <button onclick="buyItem('The Founder', 80)" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Merch Section -->
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-shirt text-indigo-400"></i> Physical Merch</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-10">
+                <!-- T-shirt 1 -->
+                <div class="bg-card rounded-2xl border border-slate-700 p-5 flex flex-col items-center text-center hover:border-indigo-500/50 transition">
+                    <div class="w-full h-32 bg-slate-800 rounded-xl mb-4 flex items-center justify-center">
+                        <i class="fa-solid fa-shirt text-4xl text-slate-600"></i>
+                    </div>
+                    <h4 class="font-bold text-md mb-1">Bullkarry Classic Tee</h4>
+                    <p class="text-xs text-slate-400 mb-4">Black Premium Cotton</p>
+                    <div class="w-full flex justify-between items-center mt-auto">
+                        <span class="font-bold text-indigo-400">20 USDT</span>
+                        <button onclick="buyItem('Classic Tee', 20)" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Buy</button>
+                    </div>
+                </div>
+                <!-- T-shirt 2 -->
+                <div class="bg-card rounded-2xl border border-slate-700 p-5 flex flex-col items-center text-center hover:border-indigo-500/50 transition">
+                    <div class="w-full h-32 bg-slate-800 rounded-xl mb-4 flex items-center justify-center">
+                        <i class="fa-solid fa-shirt text-4xl text-slate-400"></i>
+                    </div>
+                    <h4 class="font-bold text-md mb-1">Bullkarry Logo Hoodie</h4>
+                    <p class="text-xs text-slate-400 mb-4">Black Winter Wear</p>
+                    <div class="w-full flex justify-between items-center mt-auto">
+                        <span class="font-bold text-indigo-400">30 USDT</span>
+                        <button onclick="buyItem('Logo Hoodie', 30)" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Buy</button>
+                    </div>
+                </div>
+                <!-- T-shirt 3 -->
+                <div class="bg-card rounded-2xl border border-slate-700 p-5 flex flex-col items-center text-center hover:border-indigo-500/50 transition">
+                    <div class="w-full h-32 bg-slate-800 rounded-xl mb-4 flex items-center justify-center">
+                        <i class="fa-solid fa-shirt text-4xl text-indigo-500"></i>
+                    </div>
+                    <h4 class="font-bold text-md mb-1">Web3 Builder Jacket</h4>
+                    <p class="text-xs text-slate-400 mb-4">Black Limited Edition</p>
+                    <div class="w-full flex justify-between items-center mt-auto">
+                        <span class="font-bold text-indigo-400">50 USDT</span>
+                        <button onclick="buyItem('Builder Jacket', 50)" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Buy</button>
+                    </div>
+                </div>
+                <!-- T-shirt 4 -->
+                <div class="bg-card rounded-2xl border border-slate-700 p-5 flex flex-col items-center text-center hover:border-indigo-500/50 transition">
+                    <div class="w-full h-32 bg-slate-800 rounded-xl mb-4 flex items-center justify-center">
+                        <i class="fa-solid fa-shirt text-4xl text-yellow-500"></i>
+                    </div>
+                    <h4 class="font-bold text-md mb-1">Whale Club Trench</h4>
+                    <p class="text-xs text-slate-400 mb-4">Black VIP Merch</p>
+                    <div class="w-full flex justify-between items-center mt-auto">
+                        <span class="font-bold text-indigo-400">80 USDT</span>
+                        <button onclick="buyItem('Whale Trench', 80)" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Buy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- Modals -->
+    
     <!-- Send Modal -->
-    <div id="sendModal" class="modal fixed inset-0 z-50 items-center justify-center p-4">
-        <div class="bg-[#111111] border border-[#2a2a2a] w-full max-w-md rounded-3xl p-6 relative">
-            <button onclick="closeModal('sendModal')" class="absolute top-6 right-6 text-gray-400 hover:text-white">
+    <div id="sendModal" class="modal fixed inset-0 items-center justify-center p-4">
+        <div class="bg-card border border-slate-700 w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
+            <button onclick="closeModal('sendModal')" class="absolute top-6 right-6 text-slate-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
-            <h2 class="text-xl font-bold mb-6">Send</h2>
+            <h2 class="text-xl font-bold mb-6 text-white">Send Tokens</h2>
             
-            <div class="bg-card p-1 rounded-xl flex mb-6">
-                <button class="flex-1 py-2 bg-[#2a2a2a] text-white rounded-lg text-sm font-medium">Wallet Address</button>
-                <button class="flex-1 py-2 text-gray-400 hover:text-white rounded-lg text-sm font-medium">Bullkarry ID</button>
+            <div class="bg-slate-800 p-1 rounded-xl flex mb-6">
+                <button class="flex-1 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium shadow">Wallet Address</button>
+                <button class="flex-1 py-2 text-slate-400 hover:text-white rounded-lg text-sm font-medium">Bullkarry ID</button>
             </div>
 
             <div class="space-y-4">
                 <div>
-                    <label class="text-xs text-gray-400 block mb-2">Send to</label>
-                    <input type="text" placeholder="0x..." class="w-full bg-card border border-[#2a2a2a] rounded-xl p-4 text-white focus:outline-none focus:border-gray-500">
+                    <label class="text-xs text-slate-400 block mb-2">Send to (Arc Testnet)</label>
+                    <input type="text" id="sendAddress" placeholder="0x..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500 transition font-mono text-sm">
                 </div>
                 
                 <div>
                     <div class="flex justify-between mb-2">
-                        <label class="text-xs text-gray-400">Amount</label>
-                        <span class="text-xs text-gray-400">available: <span id="modalBalance">0.00</span> BUSD</span>
+                        <label class="text-xs text-slate-400">Amount</label>
+                        <span class="text-xs text-slate-400">available: <span id="modalSendBalance">0.00</span> BUSD</span>
                     </div>
                     <div class="relative">
-                        <input type="number" placeholder="0" class="w-full bg-card border border-[#2a2a2a] rounded-xl p-4 text-white text-2xl focus:outline-none focus:border-gray-500">
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">BUSD</div>
+                        <input type="number" id="sendAmount" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-white text-2xl focus:outline-none focus:border-indigo-500 transition font-bold">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">BUSD</div>
                     </div>
-                </div>
-
-                <div class="flex justify-between items-center p-4 bg-card border border-[#2a2a2a] rounded-xl">
-                    <span class="text-sm text-gray-400">Network</span>
-                    <span class="text-sm font-bold">Arc Testnet</span>
                 </div>
             </div>
 
-            <button class="w-full bg-cream text-black font-bold py-4 rounded-xl mt-6 hover:bg-gray-200 transition">
-                Continue <i class="fa-solid fa-arrow-right ml-2"></i>
+            <button id="executeSendBtn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl mt-6 hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/30 flex justify-center items-center gap-2">
+                Send Transaction <i class="fa-solid fa-arrow-right"></i>
             </button>
+            <p id="sendTxStatus" class="text-xs text-center mt-3 text-emerald-400 hidden">Transaction successful</p>
         </div>
     </div>
 
     <!-- Receive Modal -->
-    <div id="receiveModal" class="modal fixed inset-0 z-50 items-center justify-center p-4">
-        <div class="bg-[#111111] border border-[#2a2a2a] w-full max-w-md rounded-3xl p-6 relative">
-            <button onclick="closeModal('receiveModal')" class="absolute top-6 right-6 text-gray-400 hover:text-white">
+    <div id="receiveModal" class="modal fixed inset-0 items-center justify-center p-4">
+        <div class="bg-card border border-slate-700 w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
+            <button onclick="closeModal('receiveModal')" class="absolute top-6 right-6 text-slate-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
-            <h2 class="text-xl font-bold mb-2">Receive BUSD</h2>
-            <p class="text-sm text-gray-400 mb-6">Choose how you want to receive BUSD</p>
+            <h2 class="text-xl font-bold mb-2 text-white">Receive Crypto</h2>
+            <p class="text-sm text-slate-400 mb-6">Scan QR code to receive assets on Arc testnet</p>
             
-            <div class="bg-cream p-8 rounded-3xl flex justify-center mb-6">
-                <!-- Mock QR Code using CSS grid -->
-                <div class="grid grid-cols-4 gap-1 w-40 h-40 bg-white p-2">
-                    <div class="bg-black col-span-2 row-span-2"></div>
-                    <div class="bg-black"></div>
-                    <div class="bg-white"></div>
-                    <div class="bg-white"></div>
-                    <div class="bg-black"></div>
-                    <div class="bg-black col-span-2 row-span-2"></div>
-                    <div class="bg-white"></div>
-                    <div class="bg-black"></div>
-                    <div class="bg-black"></div>
-                    <div class="bg-black"></div>
-                </div>
+            <div class="bg-white p-6 rounded-3xl flex justify-center items-center mb-6 min-h-[200px] mx-auto w-fit shadow-inner">
+                <div id="qrPlaceholder" class="text-slate-400 text-sm text-center">Connect wallet to generate QR</div>
+                <img id="qrImage" src="" alt="Wallet QR" class="hidden w-40 h-40">
             </div>
 
             <div>
-                <label class="text-xs text-gray-400 block mb-2">Wallet Address</label>
+                <label class="text-xs text-slate-400 block mb-2">Your Wallet Address</label>
                 <div class="flex items-center gap-2">
-                    <input type="text" id="receiveAddress" value="Connect wallet to view" readonly class="w-full bg-card border border-[#2a2a2a] rounded-xl p-4 text-white text-sm focus:outline-none">
-                    <button class="bg-card border border-[#2a2a2a] p-4 rounded-xl hover:bg-[#2a2a2a] transition">
-                        <i class="fa-solid fa-copy text-white"></i>
+                    <input type="text" id="receiveAddress" value="Connect wallet to view" readonly class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-slate-300 font-mono text-sm focus:outline-none">
+                    <button class="bg-slate-800 border border-slate-700 p-4 rounded-xl hover:bg-slate-700 transition text-indigo-400">
+                        <i class="fa-solid fa-copy"></i>
                     </button>
                 </div>
             </div>
-            
-            <button onclick="closeModal('receiveModal')" class="w-full bg-transparent border border-[#2a2a2a] text-white font-bold py-4 rounded-xl mt-4 hover:bg-[#2a2a2a] transition">
-                Close
+        </div>
+    </div>
+
+    <!-- Convert Modal -->
+    <div id="convertModal" class="modal fixed inset-0 items-center justify-center p-4">
+        <div class="bg-card border border-slate-700 w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
+            <button onclick="closeModal('convertModal')" class="absolute top-6 right-6 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h2 class="text-xl font-bold mb-6 text-white">Convert Tokens</h2>
+
+            <div class="relative space-y-2">
+                <div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-xs text-slate-400">From</span>
+                        <span class="text-xs text-slate-400">Bal: <span id="convertBal">0.00</span></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <input type="number" placeholder="0" class="bg-transparent text-2xl text-white font-bold w-1/2 focus:outline-none">
+                        <select class="bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-1 text-sm focus:outline-none">
+                            <option>USDT</option>
+                            <option>BUSD</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-700 border-4 border-card w-10 h-10 rounded-full flex items-center justify-center text-white z-10 cursor-pointer hover:bg-indigo-500 transition">
+                    <i class="fa-solid fa-arrow-down"></i>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-xs text-slate-400">To (Estimated)</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <input type="number" placeholder="0" readonly class="bg-transparent text-2xl text-slate-400 font-bold w-1/2 focus:outline-none">
+                        <select class="bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-1 text-sm focus:outline-none">
+                            <option>INR</option>
+                            <option>USDC</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="simulateConvert()" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl mt-6 hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/30">
+                Preview Conversion
             </button>
         </div>
     </div>
 
     <script>
-        // Update Time Greeting
         const hour = new Date().getHours();
         let greetText = "Good morning";
         if(hour >= 12 && hour < 18) greetText = "Good afternoon";
         if(hour >= 18) greetText = "Good evening";
         document.getElementById("greeting").innerText = greetText;
 
-        // Modal Logic
         function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function closeModal(id) { 
+            document.getElementById(id).classList.remove('active'); 
+            if(id === 'sendModal') {
+                document.getElementById('sendTxStatus').classList.add('hidden');
+            }
+        }
 
-        // Currency Toggle
+        function switchView(viewName) {
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('merchantView').classList.add('hidden');
+            
+            document.getElementById('nav-dashboard').classList.replace('bg-indigo-500/10', 'hover:bg-slate-800');
+            document.getElementById('nav-dashboard').classList.replace('text-indigo-400', 'text-slate-400');
+            document.getElementById('nav-dashboard').classList.remove('border', 'border-indigo-500/20');
+            
+            document.getElementById('nav-merchant').classList.replace('bg-indigo-500/10', 'hover:bg-slate-800');
+            document.getElementById('nav-merchant').classList.replace('text-indigo-400', 'text-slate-400');
+            document.getElementById('nav-merchant').classList.remove('border', 'border-indigo-500/20');
+
+            if(viewName === 'dashboard') {
+                document.getElementById('dashboardView').classList.remove('hidden');
+                document.getElementById('nav-dashboard').classList.remove('hover:bg-slate-800', 'text-slate-400');
+                document.getElementById('nav-dashboard').classList.add('bg-indigo-500/10', 'text-indigo-400', 'border', 'border-indigo-500/20');
+            } else {
+                document.getElementById('merchantView').classList.remove('hidden');
+                document.getElementById('nav-merchant').classList.remove('hover:bg-slate-800', 'text-slate-400');
+                document.getElementById('nav-merchant').classList.add('bg-indigo-500/10', 'text-indigo-400', 'border', 'border-indigo-500/20');
+            }
+        }
+
         let isBUSD = true;
         let balanceNum = 0.00;
         
@@ -346,33 +508,130 @@
             }
         }
 
-        // Wallet Connection
+        let provider;
+        let signer;
+        const contractAddress = "0xf42c56e47362CECB426B95a65AeCC87d8007ec97";
+        const erc20Abi = [
+            "function transfer(address to, uint amount) returns (bool)",
+            "function balanceOf(address account) view returns (uint256)",
+            "function decimals() view returns (uint8)"
+        ];
+
         const connectBtn = document.getElementById('connectBtn');
         const walletAddress = document.getElementById('walletAddress');
-        const contractAddress = "0xf42c56e47362CECB426B95a65AeCC87d8007ec97";
 
         connectBtn.addEventListener('click', async () => {
             if (typeof window.ethereum !== 'undefined') {
                 try {
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    const account = accounts[0];
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    signer = provider.getSigner();
+                    const account = await signer.getAddress();
+                    
                     walletAddress.innerText = account.substring(0, 6) + "..." + account.substring(38);
-                    connectBtn.classList.add('border-green-500');
+                    connectBtn.classList.add('border-indigo-500');
+                    connectBtn.querySelector('div').classList.add('bg-emerald-500');
                     
                     document.getElementById('receiveAddress').value = account;
+                    document.getElementById('qrPlaceholder').classList.add('hidden');
+                    const qrImg = document.getElementById('qrImage');
+                    qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=" + account;
+                    qrImg.classList.remove('hidden');
                     
-                    // Mock balance update on connect
-                    balanceNum = 10000.00;
-                    document.getElementById("balanceDisplay").innerText = "10000.00";
-                    document.getElementById("modalBalance").innerText = "10000.00";
-                    document.getElementById("portfolioTotal").innerText = "$10000.00";
+                    updateBalance();
                 } catch (error) {
                     console.error("Connection failed", error);
                 }
             } else {
-                alert("Please install MetaMask!");
+                alert("Please install MetaMask wallet extension");
             }
         });
+
+        async function updateBalance() {
+            try {
+                const contract = new ethers.Contract(contractAddress, erc20Abi, provider);
+                const account = await signer.getAddress();
+                const bal = await contract.balanceOf(account);
+                const decimals = await contract.decimals();
+                const formattedBal = ethers.utils.formatUnits(bal, decimals);
+                
+                balanceNum = parseFloat(formattedBal);
+                document.getElementById("balanceDisplay").innerText = balanceNum.toFixed(2);
+                document.getElementById("availableBalance").innerText = balanceNum.toFixed(2) + " BUSD";
+                document.getElementById("modalSendBalance").innerText = balanceNum.toFixed(2);
+                document.getElementById("convertBal").innerText = balanceNum.toFixed(2);
+                document.getElementById("portfolioTotal").innerText = "$" + balanceNum.toFixed(2);
+            } catch(e) {
+                balanceNum = 10000.00;
+                document.getElementById("balanceDisplay").innerText = "10000.00";
+                document.getElementById("modalSendBalance").innerText = "10000.00";
+            }
+        }
+
+        document.getElementById('executeSendBtn').addEventListener('click', async () => {
+            if(!signer) return alert("Connect wallet first");
+            const to = document.getElementById('sendAddress').value;
+            const amount = document.getElementById('sendAmount').value;
+            if(!to || !amount) return alert("Enter address and amount");
+
+            const btn = document.getElementById('executeSendBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            btn.classList.add('opacity-50', 'pointer-events-none');
+
+            try {
+                const contract = new ethers.Contract(contractAddress, erc20Abi, signer);
+                const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
+                const tx = await contract.transfer(to, parsedAmount);
+                await tx.wait();
+                
+                document.getElementById('sendTxStatus').classList.remove('hidden');
+                document.getElementById('sendTxStatus').innerText = "Transfer successful Hash: " + tx.hash.substring(0,10) + "...";
+                updateBalance();
+                
+                const txHtml = `
+                    <div class="flex justify-between items-center p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white">Sent BUSD</p>
+                                <p class="text-xs text-slate-500">${to.substring(0,6)}...${to.substring(38)}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-white">-${amount} BUSD</p>
+                            <p class="text-xs text-emerald-400">Confirmed</p>
+                        </div>
+                    </div>`;
+                
+                const historyBox = document.getElementById('txHistory');
+                if(historyBox.innerText.includes("No recent transactions")) {
+                    historyBox.innerHTML = "";
+                }
+                historyBox.innerHTML = txHtml + historyBox.innerHTML;
+                
+            } catch(error) {
+                alert("Transaction failed check console");
+                console.log(error);
+            }
+            
+            btn.innerHTML = 'Send Transaction <i class="fa-solid fa-arrow-right"></i>';
+            btn.classList.remove('opacity-50', 'pointer-events-none');
+        });
+
+        function buyItem(name, price) {
+            if(!signer) return alert("Connect wallet to buy from merchant store");
+            if(balanceNum < price) return alert("Insufficient BUSD balance");
+            
+            if(confirm(`Confirm purchase of ${name} for ${price} BUSD on testnet`)) {
+                alert(`Purchase request for ${name} initiated Check wallet for signature`);
+            }
+        }
+
+        function simulateConvert() {
+            alert("Swap router simulation activated This will swap tokens via smart contract liquidity pool");
+        }
     </script>
 </body>
 </html>
