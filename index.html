@@ -103,7 +103,6 @@
                 <p id="pageSubtitle" class="text-slate-500 dark:text-slate-400 text-xs mt-1">Here is what's happening with your account today</p>
             </div>
             <div class="flex items-center gap-3">
-                <!-- Compact Theme Toggle -->
                 <button onclick="toggleTheme()" class="w-9 h-9 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center shadow-sm">
                     <i id="themeIcon" class="fa-solid fa-sun text-[15px]"></i>
                 </button>
@@ -113,7 +112,6 @@
                     <span>Arc Testnet</span>
                 </div>
                 
-                <!-- Profile & Connect Wallet with Dropdown -->
                 <div class="relative inline-block" id="profileMenuContainer">
                     <button id="connectBtn" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-4 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 text-sm shadow-sm">
                         <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] text-white"><i class="fa-solid fa-user"></i></div>
@@ -153,8 +151,14 @@
                         </div>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Available: <span class="text-slate-900 dark:text-white font-medium" id="availBal">0.00 USDC</span></p>
                         
-                        <div class="absolute top-8 right-8 w-16 h-16 bg-slate-100 dark:bg-[#f4f2ec] rounded-2xl flex items-center justify-center shadow-lg border border-slate-200 dark:border-none">
-                            <i class="fa-solid fa-dollar-sign text-3xl text-slate-900 dark:text-[#0c111d]"></i>
+                        <!-- Premium Dollar Icon with Clean Refresh Button beneath it -->
+                        <div class="absolute top-8 right-8 flex flex-col items-center gap-1.5 z-10">
+                            <div class="w-16 h-16 bg-slate-100 dark:bg-[#f4f2ec] rounded-2xl flex items-center justify-center shadow-lg border border-slate-200 dark:border-none">
+                                <i class="fa-solid fa-dollar-sign text-3xl text-slate-900 dark:text-[#0c111d]"></i>
+                            </div>
+                            <button onclick="refreshDashboard()" class="text-[10px] font-bold text-slate-400 hover:text-blue-500 transition flex items-center gap-1 bg-white/50 dark:bg-black/20 px-2 py-0.5 rounded-full border border-slate-200 dark:border-[#243048]">
+                                <i id="refreshDashIcon" class="fa-solid fa-rotate"></i> Refresh
+                            </button>
                         </div>
                     </div>
 
@@ -277,12 +281,12 @@
                 </div>
             </div>
 
-            <!-- YOUR ASSETS (Compact Fit Without Horizontal Overflow) -->
-            <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors mt-6">
-                <div class="flex justify-between items-center mb-4">
+            <!-- YOUR ASSETS SECTION (Responsive & Fixed Links) -->
+            <div class="bg-white dark:bg-darkCard rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-darkBorder transition-colors mt-6">
+                <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Your Assets</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Assets currently held by your connected wallet</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Assets currently held by your connected wallet</p>
                     </div>
                     <a id="viewOnArcScan" href="https://testnet.arcscan.app/" target="_blank" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1.5">
                         View on ArcScan <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
@@ -291,68 +295,67 @@
                 
                 <div class="w-full">
                     <div class="grid grid-cols-12 text-[10px] font-bold text-slate-400 uppercase tracking-wider pb-2 border-b border-slate-200 dark:border-darkBorder px-2">
-                        <div class="col-span-5">Asset</div>
-                        <div class="col-span-3">Balance</div>
-                        <div class="col-span-2">Value</div>
-                        <div class="col-span-2 text-right">Contract</div>
+                        <div class="col-span-5 md:col-span-4">Asset</div>
+                        <div class="col-span-4 md:col-span-3">Balance</div>
+                        <div class="hidden md:block col-span-2">Value</div>
+                        <div class="col-span-3 text-right">Contract</div>
                     </div>
                     
                     <div class="divide-y divide-slate-100 dark:divide-[#243048] text-xs">
-                        <!-- Asset 1 -->
                         <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
-                            <div class="col-span-5 flex items-center gap-3">
+                            <div class="col-span-5 md:col-span-4 flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-xs">U</div>
                                 <div>
                                     <p class="font-bold text-slate-900 dark:text-white">USD Coin</p>
                                     <p class="text-[10px] text-slate-400">USDC • Native</p>
                                 </div>
                             </div>
-                            <div class="col-span-3 font-medium text-slate-900 dark:text-white" id="tableBalUsdc">39.9029 USDC</div>
-                            <div class="col-span-2 font-medium text-slate-900 dark:text-white" id="tableValUsdc">$39.9</div>
-                            <div class="col-span-2 text-right text-slate-400 text-[10px]">Native</div>
+                            <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white" id="tableBalUsdc">0.00 USDC</div>
+                            <div class="hidden md:block col-span-2 font-medium text-slate-900 dark:text-white" id="tableValUsdc">$0.00</div>
+                            <div class="col-span-3 text-right text-slate-400 text-[10px]">Native</div>
                         </div>
-                        <!-- Asset 2 -->
+                        
                         <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
-                            <div class="col-span-5 flex items-center gap-3">
+                            <div class="col-span-5 md:col-span-4 flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-xs">B</div>
                                 <div>
-                                    <p class="font-bold text-slate-900 dark:text-white">Bullkarry Demo USD</p>
+                                    <p class="font-bold text-slate-900 dark:text-white">Bullkarry Demo</p>
                                     <p class="text-[10px] text-slate-400">BUSD</p>
                                 </div>
                             </div>
-                            <div class="col-span-3 font-medium text-slate-900 dark:text-white" id="tableBalBusd">1,000,000 BUSD</div>
-                            <div class="col-span-2 font-medium text-slate-400">—</div>
-                            <div class="col-span-2 text-right">
-                                <a href="https://testnet.arcscan.app/token/0xf42c56e47362CECB426B95a65AeCC87d8007ec97" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">0xf42c...ec97</a>
+                            <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white" id="tableBalBusd">0.00 BUSD</div>
+                            <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
+                            <div class="col-span-3 text-right">
+                                <a href="https://testnet.arcscan.app/address/0xf42c56e47362CECB426B95a65AeCC87d8007ec97" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">0xf42c...ec97</a>
                             </div>
                         </div>
-                        <!-- Asset 3 -->
+                        
                         <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
-                            <div class="col-span-5 flex items-center gap-3">
+                            <div class="col-span-5 md:col-span-4 flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-blue-600 border border-blue-500 flex items-center justify-center text-white font-bold text-xs"><i class="fa-solid fa-euro-sign"></i></div>
                                 <div>
                                     <p class="font-bold text-slate-900 dark:text-white">EURC</p>
                                     <p class="text-[10px] text-slate-400">EURC</p>
                                 </div>
                             </div>
-                            <div class="col-span-3 font-medium text-slate-900 dark:text-white" id="tableBalEurc">20 EURC</div>
-                            <div class="col-span-2 font-medium text-slate-400">—</div>
-                            <div class="col-span-2 text-right">
+                            <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white" id="tableBalEurc">0.00 EURC</div>
+                            <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
+                            <div class="col-span-3 text-right">
                                 <a href="https://testnet.arcscan.app/address/0x89B508...D72a" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">0x89B5...D72a</a>
                             </div>
                         </div>
-                        <!-- Asset 4 -->
+                        
                         <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
-                            <div class="col-span-5 flex items-center gap-3">
+                            <div class="col-span-5 md:col-span-4 flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-xs">C</div>
                                 <div>
-                                    <p class="font-bold text-slate-900 dark:text-white">Circle Wrapped Bitcoin</p>
+                                    <p class="font-bold text-slate-900 dark:text-white">Wrapped BTC</p>
                                     <p class="text-[10px] text-slate-400">cirBTC</p>
                                 </div>
                             </div>
-                            <div class="col-span-3 font-medium text-slate-900 dark:text-white" id="tableBalBtc">0.0002 cirBTC</div>
-                            <div class="col-span-2 font-medium text-slate-400">—</div>
-                            <div class="col-span-2 text-right">
+                            <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white" id="tableBalBtc">0.00 cirBTC</div>
+                            <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
+                            <div class="col-span-3 text-right">
                                 <a href="https://testnet.arcscan.app/address/0xf0C4a4...32BF" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">0xf0C4...32BF</a>
                             </div>
                         </div>
@@ -362,7 +365,7 @@
 
         </div>
 
-        <!-- VIEW 2: CREATE PAYMENT LINK -->
+        <!-- VIEW 2: CREATE PAYMENT LINK (Add Money) -->
         <div id="paymentLinkView" class="p-6 md:p-8 pt-2 hidden">
             <button onclick="switchView('dashboard')" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 flex items-center gap-2 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg w-fit transition">
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
@@ -442,6 +445,7 @@
                         <span class="bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] px-3 py-1 rounded-lg text-xs text-slate-600 dark:text-slate-300 w-fit">USDC on Arc</span>
                     </div>
                     <div class="p-8 flex flex-col justify-center gap-3">
+                        <!-- Official Circle Faucet -->
                         <a href="https://faucet.circle.com" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition text-center text-sm shadow-md">
                             <i class="fa-solid fa-droplet mr-2"></i> Claim Free USDC
                         </a>
@@ -516,7 +520,7 @@
             <button onclick="closeModal('receiveModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h2 class="text-lg font-bold mb-1 text-slate-900 dark:text-white">Receive Crypto</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Scan QR to pay into your wallet</p>
-            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-sm border border-slate-300 dark:border-slate-700">
+            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-md border border-slate-300 dark:border-slate-700">
                 <img id="myRecQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet" class="w-40 h-40">
             </div>
             <div class="flex items-center gap-2">
@@ -657,6 +661,8 @@
         let isWalletConnected = false;
         let usdcBalance = 39.90;
         let isINR = false;
+        
+        let transactions = [];
 
         function toggleCurrency() {
             isINR = !isINR;
@@ -689,6 +695,13 @@
             document.getElementById('genQR').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentWeb3URI);
         }
 
+        function copyGenLink() {
+            if(currentWeb3URI) {
+                navigator.clipboard.writeText(currentWeb3URI);
+                alert("Payment URI copied");
+            }
+        }
+
         function copyHeaderAddress() {
             if(userAccount) {
                 navigator.clipboard.writeText(userAccount);
@@ -718,9 +731,9 @@
             document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet";
             
             usdcBalance = 0.00;
+            transactions = [];
             updateBalancesCore();
-            document.getElementById('dashTxList').innerHTML = '<div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">Connect wallet to view activity</div>';
-            document.getElementById('fullTxHistory').innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">Connect wallet to view history</div>';
+            loadTransactions();
             
             document.getElementById('profileDropdown').classList.add('hidden');
             alert("Wallet disconnected successfully");
@@ -745,6 +758,16 @@
                     document.getElementById('myRecAddr').value = userAccount;
                     document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
 
+                    // Load default transactions for demo when connected
+                    transactions = [
+                        { hash: '0xa1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0', type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
+                        { hash: '0xb2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef01', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0xd844...9b3d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
+                        { hash: '0xc3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef012', type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
+                        { hash: '0xd4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0123', type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: '0x0000...0000', color: 'text-[#00d182]', isSent: false, time: '2h ago' },
+                        { hash: '0xe5f67890123456789abcdef0123456789abcdef0123456789abcdef01234', type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-red-500', isSent: true, time: '5h ago' },
+                        { hash: '0xf67890123456789abcdef0123456789abcdef0123456789abcdef012345', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0x70e3...af8e', color: 'text-[#00d182]', isSent: false, time: '15h ago' }
+                    ];
+
                     updateBalancesCore();
                     loadTransactions();
                 } catch (e) { console.error(e); }
@@ -765,15 +788,38 @@
             document.getElementById('ringTotal').innerText = "$" + usdcBalance.toFixed(2);
             document.getElementById('faucetBalance').innerHTML = usdcBalance.toFixed(4) + ' <span class="text-xl text-blue-600 dark:text-blue-400">USDC</span>';
             
-            let usdcStr = usdcBalance > 0 ? usdcBalance.toFixed(2) : "0.00";
-            let busdStr = usdcBalance > 0 ? "1,000,000" : "0.00";
+            let usdcStr = isWalletConnected && usdcBalance > 0 ? usdcBalance.toFixed(2) : "0.00";
+            let busdStr = isWalletConnected && usdcBalance > 0 ? "1,000,000" : "0.00";
+            let eurcStr = isWalletConnected && usdcBalance > 0 ? "20" : "0";
+            let btcStr = isWalletConnected && usdcBalance > 0 ? "0.0002" : "0";
+            let usdcVal = isWalletConnected && usdcBalance > 0 ? "$" + usdcBalance.toFixed(2) : "$0.00";
             
             document.getElementById('allocUsdc').innerText = usdcStr + " USDC";
             document.getElementById('allocBusd').innerText = busdStr + " BUSD";
+            document.getElementById('allocEurc').innerText = eurcStr + " EURC";
+            
+            document.getElementById('tableBalUsdc').innerText = usdcStr + " USDC";
+            document.getElementById('tableValUsdc').innerText = usdcVal;
+            document.getElementById('tableBalBusd').innerText = busdStr + " BUSD";
+            document.getElementById('tableBalEurc').innerText = eurcStr + " EURC";
+            document.getElementById('tableBalBtc').innerText = btcStr + " cirBTC";
             
             if (userAccount) {
                 document.getElementById('viewOnArcScan').href = "https://testnet.arcscan.app/address/" + userAccount + "?tab=internal_txns";
+            } else {
+                document.getElementById('viewOnArcScan').href = "https://testnet.arcscan.app/";
             }
+        }
+
+        function refreshDashboard() {
+            if(!isWalletConnected) return alert("Please connect wallet first");
+            const btn = document.getElementById('refreshDashIcon');
+            if(btn) btn.classList.add('fa-spin');
+            setTimeout(() => {
+                updateBalancesCore();
+                loadTransactions();
+                if(btn) btn.classList.remove('fa-spin');
+            }, 1000);
         }
 
         function updateBalances() {
@@ -785,20 +831,15 @@
             }, 1000);
         }
 
-        // Full 64-character testnet transaction hashes for ArcScan validation
-        const transactions = [
-            { hash: '0xa1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0', type: 'Received', token: 'EURC', amount: '+20 EURC', from: '0x70e3...af8e', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
-            { hash: '0xb2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef01', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0xd844...9b3d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
-            { hash: '0xc3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef012', type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-[#00d182]', isSent: false, time: '1h ago' },
-            { hash: '0xd4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0123', type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: '0x0000...0000', color: 'text-[#00d182]', isSent: false, time: '2h ago' },
-            { hash: '0xe5f67890123456789abcdef0123456789abcdef0123456789abcdef01234', type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-red-500', isSent: true, time: '5h ago' },
-            { hash: '0xf67890123456789abcdef0123456789abcdef0123456789abcdef012345', type: 'Received', token: 'cirBTC', amount: '+0.0001 cirBTC', from: '0x70e3...af8e', color: 'text-[#00d182]', isSent: false, time: '15h ago' }
-        ];
-
         function loadTransactions() {
+            if(!isWalletConnected || transactions.length === 0) {
+                document.getElementById('dashTxList').innerHTML = '<div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">Connect wallet to view activity</div>';
+                document.getElementById('fullTxHistory').innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">Connect wallet to view history</div>';
+                return;
+            }
+
             let dashHtml = ''; let fullHtml = '';
             
-            // Inline SVG arrows for guaranteed display
             const downArrowSvg = '<svg class="w-4 h-4 text-[#00d182]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>';
             const upArrowSvg = '<svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>';
 
@@ -851,8 +892,28 @@
                 const abi = ["function transfer(address to, uint amount) returns (bool)"];
                 const contract = new ethers.Contract(contractAddress, abi, signer);
                 const parsedAmt = ethers.utils.parseUnits(amt.toString(), 18);
+                
                 const tx = await contract.transfer(to, parsedAmt);
                 await tx.wait();
+                
+                // Update Local Demo State
+                if(tokenSymbol === 'USDC' && usdcBalance >= parseFloat(amt)) {
+                    usdcBalance -= parseFloat(amt);
+                }
+                
+                transactions.unshift({
+                    hash: tx.hash || '0x' + Math.random().toString(16).slice(2, 42) + Math.random().toString(16).slice(2, 26),
+                    type: 'Sent',
+                    token: tokenSymbol,
+                    amount: '-' + parseFloat(amt).toFixed(2) + ' ' + tokenSymbol,
+                    from: to.substring(0,6) + '...' + to.substring(to.length-4),
+                    color: 'text-red-500',
+                    isSent: true,
+                    time: 'Just now'
+                });
+
+                updateBalancesCore();
+                loadTransactions();
                 
                 alert("Successfully sent " + amt + " " + tokenSymbol + " to " + to);
                 closeModal('sendModal');
@@ -863,6 +924,8 @@
 
             btn.innerHTML = 'Send Transaction';
             btn.disabled = false;
+            document.getElementById('directSendTo').value = '';
+            document.getElementById('directSendAmt').value = '';
         }
 
         async function buyStoreItem(itemName, price) {
