@@ -104,7 +104,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <!-- Theme Toggle Button -->
-                <button onclick="toggleTheme()" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center shadow-sm">
+                <button onclick="toggleTheme()" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition shadow-sm">
                     <i id="themeIcon" class="fa-solid fa-sun text-lg"></i>
                 </button>
 
@@ -114,21 +114,21 @@
                 </div>
                 
                 <!-- Profile & Connect Wallet with Dropdown -->
-                <div class="relative">
+                <div class="relative inline-block" id="profileMenuContainer">
                     <button id="connectBtn" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 text-sm shadow-sm">
                         <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] text-white"><i class="fa-solid fa-user"></i></div>
                         <span id="walletAddress" class="font-mono font-semibold">Connect Wallet</span>
                     </button>
-                    <!-- Dropdown Menu -->
-                    <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl shadow-xl z-50 overflow-hidden transition-all">
-                        <button onclick="copyHeaderAddress()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50">
-                            <i class="fa-regular fa-copy"></i> Copy Address
+                    <!-- Dropdown Menu (Perfectly Aligned Below) -->
+                    <div id="profileDropdown" class="hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl shadow-xl z-50 overflow-hidden transition-all origin-top-right">
+                        <button onclick="copyHeaderAddress()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
+                            <i class="fa-regular fa-copy w-4"></i> Copy Address
                         </button>
-                        <button onclick="connectXAccount()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50">
-                            <i class="fa-brands fa-x-twitter"></i> Connect X Account
+                        <button onclick="connectXAccount()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
+                            <i class="fa-brands fa-x-twitter w-4"></i> Connect
                         </button>
-                        <button onclick="disconnectWallet()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition flex items-center gap-2">
-                            <i class="fa-solid fa-right-from-bracket"></i> Disconnect
+                        <button onclick="disconnectWallet()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition flex items-center gap-3">
+                            <i class="fa-solid fa-right-from-bracket w-4"></i> Disconnect
                         </button>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
                         </div>
                         <div class="flex justify-center mb-6">
                             <div class="w-36 h-36 donut-chart">
-                                <div id="donutInner" class="donut-inner donut-inner-light dark:donut-inner-dark transition-colors">
+                                <div id="donutInner" class="donut-inner bg-white dark:bg-[#161f30]">
                                     <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Total</span>
                                     <span class="text-lg font-bold text-slate-900 dark:text-white" id="ringTotal">$0.00</span>
                                 </div>
@@ -305,7 +305,7 @@
                             <option value="BUSD">BUSD</option>
                         </select>
                     </div>
-                    <p class="text-[10px] text-slate-500 mb-6">Standard web3 wallet transfer format</p>
+                    <p class="text-[10px] text-slate-500 mb-6">Generates EIP-681 Web3 standard transaction link</p>
                     
                     <button onclick="generateLink()" class="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-md">
                         Create Payment Link <i class="fa-solid fa-arrow-right text-xs"></i>
@@ -318,7 +318,7 @@
                             <i class="fa-solid fa-link"></i>
                         </div>
                         <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">Your payment link will appear here</h4>
-                        <p class="text-xs text-slate-500 max-w-[220px]">Enter an amount to generate a direct wallet QR</p>
+                        <p class="text-xs text-slate-500 max-w-[220px]">Enter an amount to generate a direct Web3 URI</p>
                     </div>
 
                     <div id="previewGenerated" class="hidden flex flex-col gap-4">
@@ -332,15 +332,16 @@
                             <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Request</span>
                             <span class="text-2xl font-bold text-slate-900 dark:text-white"><span id="genAmount">0</span> <span class="text-xs text-blue-600 dark:text-blue-400" id="genToken">USDC</span></span>
                         </div>
-                        <div class="bg-white p-4 rounded-2xl flex justify-center items-center shadow-md border border-slate-300 dark:border-slate-700">
+                        <div class="bg-white p-4 rounded-2xl flex justify-center items-center shadow-sm border border-slate-100 dark:border-none">
                             <img id="genQR" src="" alt="Payment QR" class="w-44 h-44">
                         </div>
-                        <div class="bg-white dark:bg-[#0f1624] p-3.5 rounded-xl border border-slate-200 dark:border-[#243048] cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm" onclick="copyGenLink()">
+                        <!-- Clicking this URL will try to open MetaMask/TrustWallet directly on mobile -->
+                        <a id="genUrlLinkHref" href="#" target="_blank" class="bg-white dark:bg-[#0f1624] p-3.5 rounded-xl border border-slate-200 dark:border-[#243048] hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm block">
                             <p class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold mb-1 flex justify-between items-center">
-                                Direct Web3 URI <i class="fa-regular fa-copy"></i>
+                                Direct Web3 URI (Click to Pay) <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </p>
                             <p id="genUrlLink" class="text-xs text-blue-600 dark:text-blue-400 font-mono break-all"></p>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -590,16 +591,16 @@
             document.getElementById('genAmount').innerText = amt;
             document.getElementById('genToken').innerText = "USDC";
 
-            currentWeb3URI = "ethereum:" + userAccount + "?value=" + amt;
+            // Standardize Wei for Web3 URI so MetaMask/Mobile wallets auto-detect the amount
+            const weiAmt = ethers.utils.parseUnits(amt.toString(), 18).toString();
+            
+            // Standard EIP-681 URI Format for native/payment standard
+            currentWeb3URI = "ethereum:" + userAccount + "?value=" + weiAmt;
+            
             document.getElementById('genUrlLink').innerText = currentWeb3URI;
-            document.getElementById('genQR').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentWeb3URI);
-        }
+            document.getElementById('genUrlLinkHref').href = currentWeb3URI; // Click to pay link
 
-        function copyGenLink() {
-            if(currentWeb3URI) {
-                navigator.clipboard.writeText(currentWeb3URI);
-                alert("Payment URI copied");
-            }
+            document.getElementById('genQR').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentWeb3URI);
         }
 
         function copyHeaderAddress() {
@@ -607,6 +608,7 @@
                 navigator.clipboard.writeText(userAccount);
                 alert("Wallet address copied to clipboard!");
             }
+            document.getElementById('profileDropdown').classList.add('hidden');
         }
 
         function copyReceiveAddress() {
@@ -663,10 +665,11 @@
             } else { alert("MetaMask not found"); }
         });
 
-        // Hide dropdown when clicking outside
+        // Hide dropdown when clicking outside Container
         window.addEventListener('click', (e) => {
-            if(!document.getElementById('connectBtn').contains(e.target) && !document.getElementById('profileDropdown').contains(e.target)) {
-                const dropdown = document.getElementById('profileDropdown');
+            const container = document.getElementById('profileMenuContainer');
+            const dropdown = document.getElementById('profileDropdown');
+            if(container && !container.contains(e.target)) {
                 if(dropdown) dropdown.classList.add('hidden');
             }
         });
@@ -698,7 +701,7 @@
             { type: 'Received', token: 'cirBTC', amount: '+0.0001 BTC', from: '0xd844...9b3d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
             { type: 'Received', token: 'USDC', amount: '+20 USDC', from: '0x3c33...752d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
             { type: 'Received', token: 'BUSD', amount: '+1,000,000 BUSD', from: 'Contract Mint', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' },
-            { type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-slate-500 dark:text-slate-400', icon: 'fa-arrow-up' },
+            { type: 'Sent', token: 'USDC', amount: '-5.00 USDC', from: '0x8F9a...2B4c', color: 'text-slate-400', icon: 'fa-arrow-up' },
             { type: 'Received', token: 'USDC', amount: '+50 USDC', from: '0x1A2b...3C4d', color: 'text-emerald-500 dark:text-emerald-400', icon: 'fa-arrow-down' }
         ];
 
