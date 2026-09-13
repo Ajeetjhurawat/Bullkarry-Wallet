@@ -738,192 +738,125 @@
             }
         }
 
-        const ARCSCAN_API_BASE = 'https://api-testnet.arc-scan.org/api';
-        const ARC_TESTNET_INDEX_START = 53500000;
-
-        function formatTxTime(timestamp) {
-            const txSeconds = Number(timestamp || 0);
-            if (!txSeconds) return 'Just now';
-
-            const timeDiff = Math.max(0, Math.floor(Date.now() / 1000) - txSeconds);
-            if (timeDiff < 60) return 'Just now';
-            if (timeDiff < 3600) return Math.floor(timeDiff / 60) + 'm ago';
-            if (timeDiff < 86400) return Math.floor(timeDiff / 3600) + 'h ago';
-            return Math.floor(timeDiff / 86400) + 'd ago';
-        }
-
-        function formatTransferAmount(rawValue, decimals) {
-            try {
-                const exact = ethers.utils.formatUnits(rawValue || '0', decimals || 18);
-                const num = Number(exact);
-                if (!Number.isFinite(num)) return exact;
-                return num.toLocaleString(undefined, {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 6
-                });
-            } catch {
-                return '0';
-            }
-        }
-
-        function shortAddress(address) {
-            if (!address) return 'Unknown';
-            return address.substring(0, 6) + '...' + address.substring(address.length - 4);
-        }
-
-        async function fetchArcScanApi(module, action, params = {}) {
-            const query = new URLSearchParams({
-                module,
-                action,
-                ...params,
-                _: Date.now().toString()
-            });
-
-            const res = await fetch(`${ARCSCAN_API_BASE}?${query.toString()}`, {
-                cache: 'no-store',
-                headers: { 'Accept': 'application/json' }
-            });
-
-            if (!res.ok) {
-                throw new Error(`ArcScan API HTTP ${res.status}`);
-            }
-
-            const data = await res.json();
-
-            if (data && data.status === '0' && Array.isArray(data.result) && data.result.length === 0) {
-                return [];
-            }
-
-            if (!data || !Array.isArray(data.result)) {
-                throw new Error(data?.message || 'Invalid ArcScan API response');
-            }
-
-            return data.result;
-        }
-
-        function normalizeTokenTransfer(tx) {
-            const wallet = userAccount.toLowerCase();
-            const from = (tx.from || '').toLowerCase();
-            const to = (tx.to || '').toLowerCase();
-            const isSent = from === wallet;
-
-            if (from !== wallet && to !== wallet) return null;
-
-            const symbol = tx.tokenSymbol || 'USDC';
-            const decimals = Number.parseInt(tx.tokenDecimal || '18', 10);
-            const amount = formatTransferAmount(tx.value || '0', decimals);
-            const counterpart = isSent ? tx.to : tx.from;
-
-            return {
-                hash: tx.hash,
-                type: isSent ? 'Sent' : 'Received',
-                token: symbol,
-                amount: (isSent ? '-' : '+') + amount + ' ' + symbol,
-                from: shortAddress(counterpart),
-                color: isSent ? 'text-red-500' : 'text-[#00d182]',
-                isSent,
-                time: formatTxTime(tx.timeStamp),
-                timestamp: Number(tx.timeStamp || 0),
-                _key: `${tx.hash}:token:${symbol}:${tx.value}:${from}:${to}`
-            };
-        }
-
-        function normalizeNativeTransaction(tx) {
-            const wallet = userAccount.toLowerCase();
-            const from = (tx.from || '').toLowerCase();
-            const to = (tx.to || '').toLowerCase();
-            const value = tx.value || '0';
-
-            if (!value || value === '0') return null;
-            if (from !== wallet && to !== wallet) return null;
-
-            const isSent = from === wallet;
-            const amount = formatTransferAmount(value, 18);
-            const counterpart = isSent ? tx.to : tx.from;
-
-            return {
-                hash: tx.hash,
-                type: isSent ? 'Sent' : 'Received',
-                token: 'USDC',
-                amount: (isSent ? '-' : '+') + amount + ' USDC',
-                from: shortAddress(counterpart),
-                color: isSent ? 'text-red-500' : 'text-[#00d182]',
-                isSent,
-                time: formatTxTime(tx.timeStamp),
-                timestamp: Number(tx.timeStamp || 0),
-                _key: `${tx.hash}:native:${value}:${from}:${to}`
-            };
-        }
-
         async function fetchLiveTransactions() {
             if (!userAccount) return;
+            const ts = Date.now();
+            const API_BASE = 'https://testnet.arcscan.app/api';
+
+            // Native coin transfers (e.g. plain "USDC" sends done via signer.sendTransaction)
+            // and ERC20 token transfers (BUSD, EURC, cirBTC, etc.) live on two DIFFERENT
+            // explorer actions. The old code only ever queried `tokentx`, so a native send
+            // would never show up there — and once that single call came back empty, the
+            // UI got permanently stuck on hardcoded sample data. Fixed by:
+            //   1. Querying BOTH `txlist` (native) and `tokentx` (ERC20) every sync.
+            //   2. NEVER falling back to fake/sample transactions — an empty result means
+            //      an empty (or "no new tx yet") list, not made-up data.
+            const nativeUrl = `${API_BASE}?module=account&action=txlist&address=${userAccount}&sort=desc&_t=${ts}`;
+            const tokenUrl = `${API_BASE}?module=account&action=tokentx&address=${userAccount}&sort=desc&_t=${ts}`;
 
             try {
-                // Arcscan's old testnet.arcscan.app API is not a reliable live source for this UI.
-                // Use the current public Arcscan API and merge native USDC + ERC-20 activity.
-                const [nativeTxs, tokenTxs] = await Promise.all([
-                    fetchArcScanApi('account', 'txlist', {
-                        address: userAccount,
-                        startblock: ARC_TESTNET_INDEX_START.toString(),
-                        endblock: 'latest',
-                        sort: 'desc',
-                        page: '1',
-                        offset: '100'
-                    }),
-                    fetchArcScanApi('account', 'tokentx', {
-                        address: userAccount,
-                        startblock: ARC_TESTNET_INDEX_START.toString(),
-                        endblock: 'latest',
-                        sort: 'desc',
-                        page: '1',
-                        offset: '100'
-                    })
+                const [nativeSettled, tokenSettled] = await Promise.allSettled([
+                    fetch(nativeUrl, { cache: 'no-store' }).then(r => r.json()),
+                    fetch(tokenUrl, { cache: 'no-store' }).then(r => r.json())
                 ]);
 
-                const normalized = [
-                    ...nativeTxs.map(normalizeNativeTransaction).filter(Boolean),
-                    ...tokenTxs.map(normalizeTokenTransfer).filter(Boolean)
-                ];
+                let rawList = [];
 
-                // Remove duplicate records, then always sort newest first.
-                const unique = new Map();
-                normalized.forEach(tx => {
-                    if (!unique.has(tx._key)) unique.set(tx._key, tx);
+                if (nativeSettled.status === 'fulfilled') {
+                    const data = nativeSettled.value;
+                    if (data && data.status === "1" && Array.isArray(data.result)) {
+                        data.result.forEach(tx => {
+                            if (!tx.value || tx.value === '0') return; // skip 0-value contract calls
+                            rawList.push({
+                                hash: tx.hash,
+                                from: tx.from,
+                                to: tx.to,
+                                value: tx.value,
+                                tokenSymbol: 'USDC',
+                                tokenDecimal: '18',
+                                timeStamp: tx.timeStamp
+                            });
+                        });
+                    }
+                }
+
+                if (tokenSettled.status === 'fulfilled') {
+                    const data = tokenSettled.value;
+                    if (data && data.status === "1" && Array.isArray(data.result)) {
+                        data.result.forEach(tx => {
+                            rawList.push({
+                                hash: tx.hash,
+                                from: tx.from,
+                                to: tx.to,
+                                value: tx.value,
+                                tokenSymbol: tx.tokenSymbol || 'TOKEN',
+                                tokenDecimal: tx.tokenDecimal || '18',
+                                timeStamp: tx.timeStamp
+                            });
+                        });
+                    }
+                }
+
+                // Newest first, de-duplicated (a hash can legitimately appear twice if it
+                // moved both native coin AND a token in the same call, so key on hash+symbol)
+                rawList.sort((a, b) => parseInt(b.timeStamp || 0) - parseInt(a.timeStamp || 0));
+                const seenKeys = new Set();
+                rawList = rawList.filter(tx => {
+                    const key = tx.hash + '_' + tx.tokenSymbol;
+                    if (seenKeys.has(key)) return false;
+                    seenKeys.add(key);
+                    return true;
                 });
 
-                const formatted = Array.from(unique.values())
-                    .sort((a, b) => b.timestamp - a.timestamp)
-                    .slice(0, 100)
-                    .map(({ _key, timestamp, ...tx }) => tx);
+                const formatted = rawList.slice(0, 30).map(tx => {
+                    const isSent = tx.from.toLowerCase() === userAccount.toLowerCase();
+                    const symbol = tx.tokenSymbol;
+                    const decimals = parseInt(tx.tokenDecimal || 18);
+                    const amount = parseFloat(ethers.utils.formatUnits(tx.value || 0, decimals));
+                    const formattedAmt = amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 });
 
-                // Trigger popup only for newly discovered incoming transfers.
+                    const timeDiff = Math.floor(Date.now() / 1000) - parseInt(tx.timeStamp || Date.now() / 1000);
+                    let timeStr = 'Just now';
+                    if (timeDiff > 86400) timeStr = Math.floor(timeDiff / 86400) + 'd ago';
+                    else if (timeDiff > 3600) timeStr = Math.floor(timeDiff / 3600) + 'h ago';
+                    else if (timeDiff > 60) timeStr = Math.floor(timeDiff / 60) + 'm ago';
+
+                    const counterpart = isSent ? tx.to : tx.from;
+
+                    return {
+                        hash: tx.hash,
+                        token: symbol,
+                        type: isSent ? 'Sent' : 'Received',
+                        amount: (isSent ? '-' : '+') + formattedAmt + ' ' + symbol,
+                        from: counterpart.substring(0, 6) + '...' + counterpart.substring(counterpart.length - 4),
+                        color: isSent ? 'text-red-500' : 'text-[#00d182]',
+                        isSent: isSent,
+                        time: timeStr
+                    };
+                });
+
+                // Trigger Popup on New Receive
                 if (!isFirstTxLoad) {
-                    const newReceives = formatted.filter(t =>
-                        t.type === 'Received' && !knownTxHashes.has(t.hash)
-                    );
-
+                    const newReceives = formatted.filter(t => t.type === 'Received' && !knownTxHashes.has(t.hash + '_' + t.token));
                     if (newReceives.length > 0) {
                         const latest = newReceives[0];
                         document.getElementById('successModalTitle').innerText = "Funds Received!";
-                        document.getElementById('successModalMsg').innerText =
-                            `You received ${latest.amount.replace('+', '')} from ${latest.from}`;
+                        document.getElementById('successModalMsg').innerText = `You received ${latest.amount.replace('+', '')} from ${latest.from}`;
                         openModal('successModal');
                     }
                 }
 
-                knownTxHashes = new Set(formatted.map(t => t.hash));
+                formatted.forEach(t => knownTxHashes.add(t.hash + '_' + t.token));
                 isFirstTxLoad = false;
+
+                // Always reflect reality — including an empty list. No fake sample data, ever.
                 transactions = formatted;
-                renderTransactionLists();
             } catch (err) {
                 console.error("Tx History API error:", err);
-
-                // Never show fake/stale transactions when the live API fails.
-                // Keep the last real records if we already have them; otherwise show an empty state.
-                if (transactions.length === 0) {
-                    renderTransactionLists();
-                }
+                // Keep showing whatever we already had rather than wiping it out or
+                // silently swapping in fake data.
             }
+            renderTransactionLists();
         }
 
         function renderBalancesAndAssets() {
@@ -995,10 +928,9 @@
                 document.getElementById('fullTxHistory').innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">Connect wallet to view history</div>';
                 return;
             }
-
             if (transactions.length === 0) {
-                document.getElementById('dashTxList').innerHTML = '<div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">No on-chain transactions found yet</div>';
-                document.getElementById('fullTxHistory').innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">No on-chain transactions found yet</div>';
+                document.getElementById('dashTxList').innerHTML = '<div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">No transactions yet</div>';
+                document.getElementById('fullTxHistory').innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">No on-chain transactions found for this wallet yet</div>';
                 return;
             }
 
@@ -1288,26 +1220,7 @@
                     tx = await contract.transfer(to, parsedAmt);
                 }
 
-                const receipt = await tx.wait();
-
-                // Show the confirmed send immediately. The indexer can take a few seconds,
-                // so don't make the UI wait for Arcscan before showing a transaction we just confirmed.
-                const optimisticTx = {
-                    hash: receipt.transactionHash || tx.hash,
-                    type: 'Sent',
-                    token: tokenSymbol,
-                    amount: '-' + Number(amt).toLocaleString(undefined, { maximumFractionDigits: 6 }) + ' ' + tokenSymbol,
-                    from: shortAddress(to),
-                    color: 'text-red-500',
-                    isSent: true,
-                    time: 'Just now'
-                };
-
-                transactions = [optimisticTx, ...transactions.filter(t => t.hash !== optimisticTx.hash)].slice(0, 100);
-                knownTxHashes.add(optimisticTx.hash);
-                renderTransactionLists();
-
-                // Reconcile with the live Arcscan index in the background.
+                await tx.wait();
                 await syncAllOnChainData();
 
                 document.getElementById('successModalTitle').innerText = "Transaction Successful!";
