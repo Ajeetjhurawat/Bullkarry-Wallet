@@ -124,7 +124,7 @@
         .net-detail { color:#64748b; }
         .dark .net-detail { color:#94a3b8; }
         .payment-compare { font-size:10px; font-weight:800; letter-spacing:.01em; }
-        .network-card { flex-shrink:0; }
+        .network-card { flex-shrink:0; max-width: 220px; }
         .payment-stat-card { position: relative; overflow: hidden; }
         .payment-stat-value { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.035em; }
         .payment-stat-card::after { content: ""; position: absolute; inset: auto -28px -42px auto; width: 110px; height: 110px; border-radius: 50%; background: rgba(59,130,246,.07); pointer-events: none; }
@@ -201,8 +201,8 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors pb-24 md:pb-0">
         
-        <!-- Header -->
-        <div class="flex flex-wrap justify-between items-center gap-3 p-4 md:p-8 pb-4">
+        <!-- Header: shown on dashboard only; inner pages start directly at the top -->
+        <div id="mainHeader" class="flex flex-wrap justify-between items-center gap-3 p-4 md:p-8 pb-4">
             <div class="flex items-center gap-3 min-w-0">
                 <div class="w-9 h-9 rounded-lg bg-black border border-teal-400/30 flex items-center justify-center shrink-0 md:hidden">
                     <svg class="w-6 h-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -400,7 +400,7 @@
         </div>
 
         <!-- VIEW 2: CREATE PAYMENT LINK -->
-        <div id="paymentLinkView" class="p-4 md:p-8 pt-2 hidden">
+        <div id="paymentLinkView" class="p-4 md:p-8 pt-4 md:pt-6 hidden">
             <button onclick="switchView('dashboard')" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 flex items-center gap-2 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg w-fit transition">
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
             </button>
@@ -552,7 +552,7 @@
         </div>
 
         <!-- VIEW 4: TRANSACTIONS -->
-        <div id="transactionsView" class="p-4 md:p-8 pt-2 hidden">
+        <div id="transactionsView" class="p-4 md:p-8 pt-4 md:pt-6 hidden">
             <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">All On-Chain Transactions</h2>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm overflow-x-auto">
                 <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-[1.1fr_1fr_1.35fr_92px_108px] gap-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase min-w-[720px]">
@@ -569,9 +569,10 @@
         </div>
 
         <!-- VIEW 5: PAYMENTS -->
-        <div id="paymentsView" class="p-4 md:p-8 pt-2 hidden">
+        <div id="paymentsView" class="p-4 md:p-8 pt-4 md:pt-6 hidden">
             <div class="flex items-start justify-between gap-4 mb-6">
                 <div>
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Payments</h1>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Incoming USDC • earnings • refunds</p>
                 </div>
                 <button onclick="refreshPayments()" id="paymentsRefreshBtn" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-[#243048] bg-white dark:bg-darkCard text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -622,7 +623,7 @@
         </div>
 
         <!-- VIEW 6: STORE -->
-        <div id="merchantView" class="p-4 md:p-8 pt-2 hidden">
+        <div id="merchantView" class="p-4 md:p-8 pt-4 md:pt-6 hidden">
             <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Store</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">On-chain Digital Product</p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -673,11 +674,11 @@
             <div class="text-center mb-4">
                 <div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-blue-500/20"><i class="fa-solid fa-wallet text-xl"></i></div>
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white">Connect Wallet</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Choose your installed wallet</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Choose a wallet, scan the QR, or open Bullkarry inside your wallet app</p>
             </div>
             <div id="walletProviderList" class="wallet-provider-list space-y-2"></div>
             <div id="mobileWalletOptions" class="hidden mt-4 space-y-2">
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 text-center">No browser wallet is injected here. Open Bullkarry inside a wallet app.</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 text-center">No browser wallet is detected here. Use a wallet app button or scan the QR to open Bullkarry in your wallet.</p>
                 <div class="grid grid-cols-2 gap-2">
                     <button onclick="openMobileWallet('metamask')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">MetaMask</span></button>
                     <button onclick="openMobileWallet('okx')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">OKX Wallet</span></button>
@@ -886,10 +887,12 @@
                 const metadata = {
                     name: 'Bullkarry',
                     description: 'Bullkarry on Arc Testnet',
-                    // Keep this fixed to the exact production origin that is allowlisted
-                    // in the Reown Dashboard. This avoids preview/local origins being
-                    // sent to Reown when the app is deployed on Vercel.
-                    url: 'https://bullkarry-wallet.vercel.app',
+                    // Reown requires metadata.url to match the deployed origin.
+                    // Use the live origin so mobile WalletConnect/deep-link flows
+                    // are tied to the actual site the user opened.
+                    url: (location.protocol === 'http:' || location.protocol === 'https:')
+                        ? window.location.origin
+                        : 'https://bullkarry-wallet.vercel.app',
                     icons: []
                 };
 
@@ -984,9 +987,18 @@
                 }, 250);
             } catch (error) {
                 console.error('Reown connect failed:', error);
-                const code = error?.code || error?.data?.code || '';
-                const message = error?.message || 'Unknown Reown error';
-                alert(`Reown wallet connection failed${code ? ` (${code})` : ''}: ${message}`);
+                // Do not trap the user in a dead-end error alert. The fallback modal
+                // supports EIP-6963 desktop wallets plus direct mobile wallet app
+                // handoff and QR opening when AppKit cannot initialize.
+                try {
+                    if (typeof renderWalletProviders === 'function') renderWalletProviders();
+                    if (typeof openModal === 'function') openModal('connectWalletModal');
+                } catch (fallbackError) {
+                    console.error('Wallet fallback failed:', fallbackError);
+                    const code = error?.code || error?.data?.code || '';
+                    const message = error?.message || 'Unknown Reown error';
+                    alert(`Wallet connection failed${code ? ` (${code})` : ''}: ${message}`);
+                }
             }
         };
     </script>
@@ -2086,6 +2098,7 @@
             }
         }
         updateHeader('dashboard');
+        document.getElementById('mainHeader')?.classList.remove('hidden');
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -2107,6 +2120,14 @@
         }
 
         function switchView(viewName) {
+            const mainContent = document.querySelector('body > .flex-1');
+            const mainHeader = document.getElementById('mainHeader');
+
+            // Inner pages are intentionally full-width from the top. The dashboard
+            // keeps the global greeting + theme/network/wallet controls.
+            if (mainHeader) mainHeader.classList.toggle('hidden', viewName !== 'dashboard');
+            if (mainContent) mainContent.scrollTop = 0;
+
             ['dashboardView', 'paymentLinkView', 'faucetView', 'transactionsView', 'paymentsView', 'merchantView'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
