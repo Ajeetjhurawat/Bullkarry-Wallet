@@ -635,7 +635,6 @@
                 refreshWalletOptionStatus();
                 const providers = getInjectedProviders();
                 const provider = getWalletProvider("metamask") || getWalletProvider("okx") || providers[0];
-
                 if (provider) {
                     const accounts = await provider.request({ method: 'eth_accounts' });
                     if (accounts?.length) {
@@ -643,11 +642,10 @@
                         window.__bullkarryWalletProvider = provider;
                         try { await ensureArcNetwork(provider); } catch (networkError) { console.warn('Arc network restore:', networkError); }
                         await initializeWallet(accounts[0]);
-                        provider.on?.('accountsChanged', handleInjectedAccountsChanged);
-                        provider.on?.('chainChanged', handleInjectedChainChanged);
+                        attachInjectedWalletListeners(provider);
                     }
                 }
-
+                await initReownWallet();
                 applyPaymentLinkFromUrl();
             } catch (e) {
                 console.error('Wallet/payment initialization error:', e);
@@ -669,10 +667,26 @@
             document.getElementById('assetsPlaceholder').classList.add('hidden');
             document.getElementById('assetsTable').classList.remove('hidden');
 
-            await syncAllOnChainData();
+            await runWalletSync();
 
             if (autoSyncInterval) clearInterval(autoSyncInterval);
-            autoSyncInterval = setInterval(syncAllOnChainData, 4000);
+            autoSyncInterval = setInterval(runWalletSync, 4000);
+        }
+
+        let syncInFlight = false;
+        let lastSuccessfulSyncAt = 0;
+
+        async function runWalletSync() {
+            if (syncInFlight || !userAccount || !isWalletConnected || typeof window.ethereum === 'undefined') return;
+            syncInFlight = true;
+            try {
+                await syncAllOnChainData();
+                lastSuccessfulSyncAt = Date.now();
+            } catch (error) {
+                console.error("Wallet auto-sync error:", error);
+            } finally {
+                syncInFlight = false;
+            }
         }
 
         async function syncAllOnChainData() {
@@ -1363,11 +1377,11 @@
             // Keep a real wallet-native URI available for compatible wallet scanners.
             if (token === "USDC") {
                 const value = ethers.utils.parseUnits(amount, decimals).toString();
-                currentWeb3URI = `ethereum:${chainId}/${receiver}?value=${value}`;
+                currentWeb3URI = `ethereum:${receiver}@${chainId}?value=${value}`;
             } else if (TOKEN_CONTRACTS[token]) {
                 const tokenInfo = TOKEN_CONTRACTS[token];
                 const tokenAmount = ethers.utils.parseUnits(amount, decimals).toString();
-                currentWeb3URI = `ethereum:${chainId}/${tokenInfo.address}/transfer?address=${receiver}&uint256=${tokenAmount}`;
+                currentWeb3URI = `ethereum:${tokenInfo.address}@${chainId}/transfer?address=${receiver}&uint256=${tokenAmount}`;
             } else {
                 throw new Error("Unsupported payment token");
             }
@@ -1390,25 +1404,29 @@
             return currentPaymentRequest;
         }
 
-        async function renderPaymentQR(paymentURL) {
+        async function renderPaymentQR(walletURI) {
             const img = document.getElementById("genQR");
-            if (!img) return;
+            if (!img || !walletURI) return;
+
+            const showFallbackQR = () => {
+                img.src = "https://api.qrserver.com/v1/create-qr-code/?size=520x520&margin=12&data=" + encodeURIComponent(walletURI);
+            };
 
             try {
-                if (!window.QRCode || typeof window.QRCode.toDataURL !== "function") {
-                    throw new Error("QR library unavailable");
+                if (window.QRCode && typeof window.QRCode.toDataURL === "function") {
+                    const dataUrl = await window.QRCode.toDataURL(walletURI, {
+                        width: 520, margin: 4, errorCorrectionLevel: "H",
+                        color: { dark: "#08111f", light: "#ffffff" }
+                    });
+                    if (!dataUrl || !dataUrl.startsWith("data:image/")) throw new Error("Invalid QR image");
+                    img.src = dataUrl;
+                    img.style.visibility = "visible";
+                    return;
                 }
-                // QR encodes the real Bullkarry payment page, not a fake text string.
-                // Opening it immediately loads the receiver, amount and payment button.
-                img.src = await window.QRCode.toDataURL(paymentURL, {
-                    width: 520,
-                    margin: 2,
-                    errorCorrectionLevel: "H",
-                    color: { dark: "#08111f", light: "#ffffff" }
-                });
+                showFallbackQR();
             } catch (error) {
                 console.error("QR generation error:", error);
-                img.src = "";
+                showFallbackQR();
             }
         }
 
@@ -1425,7 +1443,7 @@
             note.innerText = request.note || "";
             note.classList.toggle('hidden', !request.note);
 
-            renderPaymentQR(request.shareURL);
+            renderPaymentQR(request.web3URI);
         }
 
         function generateLink() {
@@ -1533,8 +1551,8 @@
             if (!payerPaymentRequest) return;
 
             if (!userAccount || !isWalletConnected) {
-                refreshWalletOptionStatus();
-                openModal('connectWalletModal');
+                const opened = await openReownConnect();
+                if (!opened) { refreshWalletOptionStatus(); openModal('connectWalletModal'); }
                 return;
             }
 
@@ -1574,7 +1592,7 @@
                 openModal('successModal');
                 button.disabled = false;
                 button.innerText = "PAID";
-                setTimeout(() => syncAllOnChainData().catch(() => {}), 500);
+                setTimeout(() => runWalletSync(), 500);
             } catch (error) {
                 console.error("Payment request error:", error);
                 alert(error?.reason || error?.message || "Payment failed");
@@ -1596,6 +1614,84 @@
                 navigator.clipboard.writeText(userAccount);
                 alert("Address copied");
             }
+        }
+
+        const REOWN_PROJECT_ID = "c9287f8264a6836a5b67a6016ed69076";
+        let reownAppKit = null;
+        let reownInitPromise = null;
+
+        async function initReownWallet() {
+            if (reownAppKit) return reownAppKit;
+            if (reownInitPromise) return reownInitPromise;
+            reownInitPromise = (async () => {
+                try {
+                    const [{ createAppKit }, { EthersAdapter }, { defineChain }] = await Promise.all([
+                        import("https://esm.sh/@reown/appkit@1.7.8"),
+                        import("https://esm.sh/@reown/appkit-adapter-ethers@1.7.8"),
+                        import("https://esm.sh/@reown/appkit@1.7.8/networks")
+                    ]);
+                    const arcTestnet = defineChain({
+                        id: 5042002,
+                        name: "Arc Testnet",
+                        caipNetworkId: "eip155:5042002",
+                        chainNamespace: "eip155",
+                        nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
+                        rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } },
+                        blockExplorers: { default: { name: "Arcscan", url: "https://testnet.arcscan.app" } }
+                    });
+                    const adapter = new EthersAdapter();
+                    const metadataUrl = (location.protocol === "http:" || location.protocol === "https:") ? location.origin : "https://reown.com/appkit";
+                    reownAppKit = createAppKit({
+                        adapters: [adapter], networks: [arcTestnet], defaultNetwork: arcTestnet,
+                        projectId: REOWN_PROJECT_ID,
+                        metadata: { name: "Bullkarry Wallet", description: "Bullkarry Wallet on Arc Testnet", url: metadataUrl, icons: [] },
+                        features: { analytics: false, email: false, socials: [] },
+                        allWallets: "SHOW",
+                        customRpcUrls: { "eip155:5042002": "https://rpc.testnet.arc.network" }
+                    });
+                    reownAppKit.subscribeProvider(async ({ provider, address, isConnected, chainId }) => {
+                        if (!isConnected || !provider || !address) {
+                            if (isWalletConnected && window.__bullkarryReownProvider) clearWalletUiState();
+                            return;
+                        }
+                        try {
+                            window.ethereum = provider;
+                            window.__bullkarryWalletProvider = provider;
+                            window.__bullkarryReownProvider = provider;
+                            if (Number(chainId) !== 5042002) { try { await ensureArcNetwork(provider); } catch (e) { console.warn("Reown Arc network switch:", e); } }
+                            await initializeWallet(address);
+                            await updatePayerPaymentState();
+                        } catch (e) { console.error("Reown provider sync error:", e); }
+                    });
+                    try {
+                        if (reownAppKit.getIsConnected()) {
+                            const provider = reownAppKit.getWalletProvider();
+                            const address = reownAppKit.getAddress();
+                            if (provider && address) {
+                                window.ethereum = provider;
+                                window.__bullkarryWalletProvider = provider;
+                                window.__bullkarryReownProvider = provider;
+                                try { await ensureArcNetwork(provider); } catch (e) { console.warn("Reown session Arc switch:", e); }
+                                await initializeWallet(address);
+                            }
+                        }
+                    } catch (e) { console.warn("Reown session restore failed:", e); }
+                    return reownAppKit;
+                } catch (error) {
+                    console.error("Reown AppKit failed; injected-wallet fallback remains available:", error);
+                    reownAppKit = null;
+                    return null;
+                }
+            })();
+            return reownInitPromise;
+        }
+
+        async function openReownConnect() {
+            try {
+                const appKit = await initReownWallet();
+                if (appKit) { appKit.open({ view: "Connect", namespace: "eip155" }); return true; }
+            } catch (error) { console.error("Reown connect modal error:", error); }
+            return false;
         }
 
         function getInjectedProviders() {
@@ -1632,16 +1728,16 @@
 
         async function ensureArcNetwork(provider) {
             const current = await provider.request({ method: "eth_chainId" });
-            if (String(current).toLowerCase() === "0x4cef72") return;
+            if (String(current).toLowerCase() === "0x4cef52") return;
 
             try {
-                await provider.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0x4cef72" }] });
+                await provider.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0x4cef52" }] });
             } catch (error) {
                 if (error?.code !== 4902) throw error;
                 await provider.request({
                     method: "wallet_addEthereumChain",
                     params: [{
-                        chainId: "0x4cef72",
+                        chainId: "0x4cef52",
                         chainName: "Arc Testnet",
                         nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
                         rpcUrls: ["https://rpc.testnet.arc.network"],
@@ -1649,6 +1745,14 @@
                     }]
                 });
             }
+        }
+
+        function attachInjectedWalletListeners(provider) {
+            if (!provider?.on) return;
+            provider.removeListener?.('accountsChanged', handleInjectedAccountsChanged);
+            provider.removeListener?.('chainChanged', handleInjectedChainChanged);
+            provider.on?.('accountsChanged', handleInjectedAccountsChanged);
+            provider.on?.('chainChanged', handleInjectedChainChanged);
         }
 
         async function connectWalletProvider(type = "metamask") {
@@ -1724,19 +1828,19 @@
             updatePayerPaymentState();
         }
 
-        function disconnectWallet() {
-            // Injected wallets do not provide a universal disconnect RPC. This
-            // clears Bullkarry's session; the extension remains independently connected.
+        async function disconnectWallet() {
+            try { if (reownAppKit?.getIsConnected?.()) await reownAppKit.disconnect(); }
+            catch (error) { console.warn("Reown disconnect failed:", error); }
             clearWalletUiState();
         }
 
-        document.getElementById('connectBtn').addEventListener('click', () => {
+        document.getElementById('connectBtn').addEventListener('click', async () => {
             if (isWalletConnected) {
                 document.getElementById('profileDropdown').classList.toggle('hidden');
-            } else {
-                refreshWalletOptionStatus();
-                openModal('connectWalletModal');
+                return;
             }
+            const opened = await openReownConnect();
+            if (!opened) { refreshWalletOptionStatus(); openModal('connectWalletModal'); }
         });
 
         window.addEventListener('click', (e) => {
@@ -1835,6 +1939,16 @@
             btn.innerText = originalText;
             btn.disabled = false;
         }
+    </script>
+
+    <script type="module">
+        try {
+            Promise.all([
+                import("https://esm.sh/@reown/appkit@1.7.8"),
+                import("https://esm.sh/@reown/appkit-adapter-ethers@1.7.8"),
+                import("https://esm.sh/@reown/appkit@1.7.8/networks")
+            ]).catch(() => {});
+        } catch (_) {}
     </script>
 
 </body>
