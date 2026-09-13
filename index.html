@@ -533,62 +533,23 @@
     </div>
 
     <!-- Reown Connect Wallet Replica Modal -->
-    <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[100]">
-        <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-0 relative shadow-2xl text-slate-900 dark:text-white font-sans overflow-hidden border border-slate-200 dark:border-white/5 scale-95">
-            <div class="flex justify-between items-center p-4 border-b border-slate-100 dark:border-white/5">
-                <button class="text-slate-400 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-regular fa-circle-question"></i></button>
-                <h2 class="text-sm font-semibold">Connect Wallet</h2>
-                <button onclick="closeModal('connectWalletModal')" class="text-slate-400 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    <div id="connectWalletModal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between mb-5">
+                    <div>
+                        <div class="text-lg font-bold text-slate-900 dark:text-white">Connect your wallet</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Connect to Arc Testnet</div>
+                    </div>
+                    <button onclick="closeModal('connectWalletModal')" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl">×</button>
+                </div>
+                <button id="reownConnectBridge"
+                    onclick="window.connectWalletProvider && window.connectWalletProvider()"
+                    class="w-full py-3.5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:opacity-90 transition">
+                    Connect Wallet
+                </button>
+                <div class="text-[11px] text-center text-slate-400 mt-3">WalletConnect and supported wallets are provided by Reown AppKit.</div>
             </div>
-            
-            <div class="p-3 space-y-2">
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center"><i class="fa-solid fa-wave-square text-white"></i></div>
-                        <span class="font-semibold text-sm">WalletConnect</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-bold text-blue-500 dark:text-blue-400 bg-blue-100 dark:bg-blue-400/10 px-1.5 py-0.5 rounded">QR CODE</span>
-                        <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
-                    </div>
-                </button>
-                
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
-                    <div class="flex items-center gap-3">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-8 h-8 rounded-lg" alt="MetaMask">
-                        <span class="font-semibold text-sm">MetaMask</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-1.5 py-0.5 rounded">INSTALLED</span>
-                        <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
-                    </div>
-                </button>
-
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-blue-50 dark:bg-white rounded-lg flex items-center justify-center border border-slate-100 dark:border-none"><i class="fa-solid fa-shield text-blue-500 text-lg"></i></div>
-                        <span class="font-semibold text-sm">Trust Wallet</span>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
-                </button>
-
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition mt-2">
-                    <div class="flex items-center gap-3 text-slate-500 dark:text-gray-400">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                        <span class="font-semibold text-sm text-slate-900 dark:text-white">Search Wallet</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-slate-400 dark:text-gray-500">
-                        <span class="text-[10px]">80+</span>
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </div>
-                </button>
-            </div>
-
-            <div class="flex items-center gap-3 px-4 py-1">
-                <div class="h-px bg-slate-200 dark:bg-white/10 flex-1"></div>
-                <span class="text-xs text-slate-400 dark:text-gray-500 font-medium">or</span>
-                <div class="h-px bg-slate-200 dark:bg-white/10 flex-1"></div>
-            </div>
+        </div>
 
             <div class="p-4 space-y-3">
                 <div class="relative flex items-center">
@@ -1896,7 +1857,8 @@
 
             window.bullkarryAppKit.open({
                 view: "Connect",
-                namespace: "eip155"
+                namespace: "eip155",
+                preferredWalletIds: []
             });
         };
 
@@ -1948,6 +1910,36 @@
                 console.error("Payment-link URL error:", error);
             }
         }, 250);
+    </script>
+
+
+    <script>
+        (function () {
+            function openRealWalletConnect() {
+                if (window.connectWalletProvider) {
+                    window.connectWalletProvider();
+                } else if (window.bullkarryAppKit && window.bullkarryAppKit.open) {
+                    window.bullkarryAppKit.open({ view: "Connect", namespace: "eip155" });
+                }
+            }
+
+            window.openRealWalletConnect = openRealWalletConnect;
+
+            // Reuse any existing "Connect Wallet" buttons without changing their design.
+            document.addEventListener("click", function (event) {
+                const button = event.target.closest("button, a");
+                if (!button) return;
+
+                const text = (button.innerText || button.textContent || "").trim().toLowerCase();
+                if (text === "connect wallet" || text === "connect your wallet") {
+                    if (!window.isWalletConnected) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        openRealWalletConnect();
+                    }
+                }
+            }, true);
+        })();
     </script>
 
 </body>
