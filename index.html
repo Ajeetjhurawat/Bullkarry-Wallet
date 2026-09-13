@@ -124,12 +124,17 @@
         .net-detail { color:#64748b; }
         .dark .net-detail { color:#94a3b8; }
         .payment-compare { font-size:10px; font-weight:800; letter-spacing:.01em; }
-        .network-card { flex-shrink:0; max-width: 220px; }
-        .payment-stat-card { position: relative; overflow: hidden; }
+        .network-card { flex-shrink:0; width: 100%; max-width: 198px; }
+        .payment-stat-card { position: relative; overflow: hidden; min-height: 190px; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+        .payment-stat-card:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(0,0,0,.12); }
+        .payment-stat-value { line-height: 1.05; }
+        .payment-net-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; padding-top:12px; border-top:1px solid rgba(148,163,184,.16); }
+        .payment-usdc-symbol { width:30px; height:30px; }
+        .payment-summary-card { min-height: 128px; }
         .payment-stat-value { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.035em; }
         .payment-stat-card::after { content: ""; position: absolute; inset: auto -28px -42px auto; width: 110px; height: 110px; border-radius: 50%; background: rgba(59,130,246,.07); pointer-events: none; }
-        .refund-status-gap { margin-left: 18px; padding-left: 18px; border-left: 1px solid rgba(148,163,184,.18); }
-        @media (min-width: 768px) { .network-card { padding: 12px !important; } .network-card .network-logo { width: 30px !important; height: 30px !important; } .network-card .network-title { font-size: 12px !important; } .network-card .network-status { font-size: 11px !important; } }
+        .refund-status-gap { margin-left: 8px; padding-left: 16px; border-left: 1px solid rgba(148,163,184,.18); display:block; width:100%; }
+        @media (min-width: 768px) { .network-card { padding: 10px !important; } .network-card .network-logo { width: 28px !important; height: 28px !important; } .network-card .network-title { font-size: 11px !important; } .network-card .network-status { font-size: 10px !important; } }
         @media (max-width: 639px) { .wallet-provider-list { max-height: 300px; } .wallet-qr { width: 132px; height: 132px; } }
 
         ::-webkit-scrollbar { width: 6px; }
@@ -552,15 +557,15 @@
         </div>
 
         <!-- VIEW 4: TRANSACTIONS -->
-        <div id="transactionsView" class="p-4 md:p-8 pt-4 md:pt-6 hidden">
-            <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">All On-Chain Transactions</h2>
+        <div id="transactionsView" class="p-4 md:p-8 pt-5 md:pt-8 hidden">
+            <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mb-5 text-slate-900 dark:text-white">All On-Chain Transactions</h2>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm overflow-x-auto">
-                <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-[1.1fr_1fr_1.35fr_92px_108px] gap-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase min-w-[720px]">
+                <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-[1.1fr_1fr_1.35fr_112px_112px] gap-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase min-w-[720px]">
                     <div>Type</div>
                     <div>Asset</div>
                     <div>Counterparty</div>
                     <div class="text-center">Refund</div>
-                    <div class="text-right">Status</div>
+                    <div class="text-center">Status</div>
                 </div>
                 <div class="divide-y divide-slate-100 dark:divide-[#243048] min-w-[780px]" id="fullTxHistory">
                     <div class="p-8 text-center text-slate-500 text-xs">Connect wallet to view history</div>
@@ -569,11 +574,12 @@
         </div>
 
         <!-- VIEW 5: PAYMENTS -->
-        <div id="paymentsView" class="p-4 md:p-8 pt-4 md:pt-6 hidden">
-            <div class="flex items-start justify-between gap-4 mb-6">
+        <div id="paymentsView" class="p-4 md:p-8 pt-5 md:pt-8 hidden">
+            <div class="flex items-start justify-between gap-4 mb-7">
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Payments</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Incoming USDC • earnings • refunds</p>
+                    <div class="payment-period-label mb-2"><span class="payment-period-dot"></span><span>Payment Center</span></div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Payments</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">Incoming payments, earnings and refunds</p>
                 </div>
                 <button onclick="refreshPayments()" id="paymentsRefreshBtn" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-[#243048] bg-white dark:bg-darkCard text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
                     <i class="fa-solid fa-rotate-right mr-1" id="paymentsRefreshIcon"></i> Refresh
@@ -583,31 +589,28 @@
                 <div class="payment-stat-card premium-payment-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
                     <div class="flex items-center justify-between gap-3">
                         <div class="payment-period-label"><span class="payment-period-dot"></span><span>Today Earning</span></div>
-                        <span class="usdc-mark" aria-label="USDC">$</span>
+                        <span class="usdc-mark payment-usdc-symbol" aria-label="USDC">$</span>
                     </div>
-                    <p id="paymentsTodayReceived" class="payment-stat-value text-3xl font-extrabold text-emerald-500 mt-3">0.00</p>
-                    <p id="paymentsTodayRefund" class="payment-detail refund-detail mt-2">Refunded: 0.00</p>
-                    <p id="paymentsTodayNet" class="payment-detail net-detail mt-1">Net: 0.00</p>
+                    <p id="paymentsTodayReceived" class="payment-stat-value text-4xl font-black text-emerald-400 mt-5">0.00</p>
+                    <div class="flex items-center justify-between gap-3 mt-3"><p id="paymentsTodayRefund" class="payment-detail refund-detail">Refunded: 0.00</p><p id="paymentsTodayNet" class="payment-detail net-detail">Net: 0.00</p></div>
                     <p id="paymentsTodayCompare" class="payment-compare mt-3">—</p>
                 </div>
                 <div class="payment-stat-card premium-payment-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
                     <div class="flex items-center justify-between gap-3">
                         <div class="payment-period-label"><span class="payment-period-dot"></span><span>Yesterday Earning</span></div>
-                        <span class="usdc-mark" aria-label="USDC">$</span>
+                        <span class="usdc-mark payment-usdc-symbol" aria-label="USDC">$</span>
                     </div>
-                    <p id="paymentsYesterdayReceived" class="payment-stat-value text-3xl font-extrabold text-emerald-500 mt-3">0.00</p>
-                    <p id="paymentsYesterdayRefund" class="payment-detail refund-detail mt-2">Refunded: 0.00</p>
-                    <p id="paymentsYesterdayNet" class="payment-detail net-detail mt-1">Net: 0.00</p>
+                    <p id="paymentsYesterdayReceived" class="payment-stat-value text-4xl font-black text-emerald-400 mt-5">0.00</p>
+                    <div class="flex items-center justify-between gap-3 mt-3"><p id="paymentsYesterdayRefund" class="payment-detail refund-detail">Refunded: 0.00</p><p id="paymentsYesterdayNet" class="payment-detail net-detail">Net: 0.00</p></div>
                     <p id="paymentsYesterdayCompare" class="payment-compare mt-3">—</p>
                 </div>
                 <div class="payment-stat-card premium-payment-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
                     <div class="flex items-center justify-between gap-3">
                         <div class="payment-period-label"><span class="payment-period-dot"></span><span>Total Earn this Month</span></div>
-                        <span class="usdc-mark" aria-label="USDC">$</span>
+                        <span class="usdc-mark payment-usdc-symbol" aria-label="USDC">$</span>
                     </div>
-                    <p id="paymentsMonthReceived" class="payment-stat-value text-3xl font-extrabold text-emerald-500 mt-3">0.00</p>
-                    <p id="paymentsMonthRefund" class="payment-detail refund-detail mt-2">Refunded: 0.00</p>
-                    <p id="paymentsMonthNet" class="payment-detail net-detail mt-1">Net: 0.00</p>
+                    <p id="paymentsMonthReceived" class="payment-stat-value text-4xl font-black text-emerald-400 mt-5">0.00</p>
+                    <div class="flex items-center justify-between gap-3 mt-3"><p id="paymentsMonthRefund" class="payment-detail refund-detail">Refunded: 0.00</p><p id="paymentsMonthNet" class="payment-detail net-detail">Net: 0.00</p></div>
                     <p id="paymentsMonthCompare" class="payment-compare mt-3">—</p>
                 </div>
             </div>
@@ -689,8 +692,8 @@
             <div class="mt-4 pt-4 border-t border-slate-200 dark:border-[#243048]">
                 <div class="flex items-center justify-between gap-3">
                     <div class="min-w-0">
-                        <p class="text-xs font-bold text-slate-900 dark:text-white">Open on mobile with QR</p>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Scan this page in your wallet's in-app browser.</p>
+                        <p class="text-xs font-bold text-slate-900 dark:text-white">Open on mobile wallet</p>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Use the wallet list or WalletConnect QR/deep-link option to connect.</p>
                     </div>
                     <img id="walletConnectQr" class="wallet-qr shrink-0" alt="Open Bullkarry in a wallet browser">
                 </div>
@@ -823,7 +826,7 @@
         import { defineChain } from 'https://esm.sh/@reown/appkit@1.8.23/networks?bundle';
         import { Ethers5Adapter } from 'https://esm.sh/@reown/appkit-adapter-ethers5@1.8.23?bundle&deps=ethers@5.7.2';
 
-        const REOWN_PROJECT_ID = 'c9287f8264a6836a5b67a6016ed69076';
+        const REOWN_PROJECT_ID = '11085fdc7e3488a54a917f03c2167492';
         const ARC_TESTNET = defineChain({
             id: 5042002,
             caipNetworkId: 'eip155:5042002',
@@ -893,7 +896,7 @@
                     url: (location.protocol === 'http:' || location.protocol === 'https:')
                         ? window.location.origin
                         : 'https://bullkarry-wallet.vercel.app',
-                    icons: []
+                    icons: ['https://bullkarry-wallet.vercel.app/favicon.ico']
                 };
 
                 appKit = createAppKit({
@@ -1878,19 +1881,19 @@
                 const refundButton = (!t.isSent && t.status !== 'Failed' && Number(t.amountValue) > 0)
                     ? (alreadyRefunded
                         ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold cursor-not-allowed select-none"><i class="fa-solid fa-circle-check"></i> Refunded</span>`
-                        : `<button type="button" onclick="event.preventDefault(); event.stopPropagation(); prepareRefund('${String(t.hash).replace(/'/g, "\'")}','${String(t.counterparty || '').replace(/'/g, "\'")}','${Number(t.amountValue)}','${String(t.token || 'USDC').replace(/'/g, "\'")}')" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500/20 text-[10px] font-bold transition">Refund</button>` )
+                        : `<button type="button" onclick="event.preventDefault(); event.stopPropagation(); prepareRefund('${String(t.hash).replace(/'/g, "\'")}','${String(t.counterparty || '').replace(/'/g, "\'")}','${Number(t.amountValue)}','${String(t.token || 'USDC').replace(/'/g, "\'")}')" class="inline-flex items-center justify-center min-w-[78px] px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500/20 text-[10px] font-bold transition">Refund</button>` )
                     : `<span class="text-[10px] text-slate-600 dark:text-slate-500">—</span>`;
 
                 fullHtml += `
                     <div class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition border-b border-slate-100 dark:border-[#243048]">
-                        <div class="p-4 grid grid-cols-[1.1fr_1fr_1.35fr_92px_108px] gap-4 items-center text-xs min-w-[780px]">
+                        <div class="p-4 grid grid-cols-[1.1fr_1fr_1.35fr_112px_112px] gap-3 items-center text-xs min-w-[780px]">
                             <a href="https://testnet.arc-scan.org/tx/${t.hash}" target="_blank" class="flex items-center gap-2.5 min-w-0">
                                 <div class="w-7 h-7 rounded-lg ${bgBox} flex items-center justify-center shrink-0">${iconSvg}</div><span class="font-bold text-slate-900 dark:text-white">${t.type}</span>
                             </a>
                             <span class="${t.color} font-bold">${t.amount}</span>
                             <span class="font-mono text-slate-500 dark:text-slate-400 truncate">${t.from}</span>
-                            <div class="text-center px-1">${refundButton}</div>
-                            <span class="refund-status-gap text-right whitespace-nowrap ${t.status === 'Failed' ? 'text-red-500' : 'text-emerald-500 dark:text-emerald-400'} font-medium">${t.status}</span>
+                            <div class="flex items-center justify-center min-w-0">${refundButton}</div>
+                            <span class="refund-status-gap text-center whitespace-nowrap ${t.status === 'Failed' ? 'text-red-500' : 'text-emerald-500 dark:text-emerald-400'} font-medium">${t.status}</span>
                         </div>
                     </div>
                 `;
@@ -2020,7 +2023,9 @@
             if (btn) btn.disabled = true;
             if (icon) icon.classList.add('fa-spin');
             try {
+                isFirstTxLoad = false;
                 await syncAllOnChainData();
+                renderTransactionLists();
                 renderPayments();
             } catch (err) {
                 console.error('Payments refresh error:', err);
@@ -2126,7 +2131,8 @@
             // Inner pages are intentionally full-width from the top. The dashboard
             // keeps the global greeting + theme/network/wallet controls.
             if (mainHeader) mainHeader.classList.toggle('hidden', viewName !== 'dashboard');
-            if (mainContent) mainContent.scrollTop = 0;
+            if (mainContent) { mainContent.scrollTop = 0; mainContent.querySelectorAll('.overflow-y-auto').forEach(el => { try { el.scrollTop = 0; } catch (_) {} }); }
+            window.scrollTo(0, 0);
 
             ['dashboardView', 'paymentLinkView', 'faucetView', 'transactionsView', 'paymentsView', 'merchantView'].forEach(id => {
                 const el = document.getElementById(id);
