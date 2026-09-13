@@ -40,6 +40,66 @@
             align-items: center;
             justify-content: center;
         }
+        .portfolio-orbit {
+            border-radius: 50%;
+            filter: drop-shadow(0 8px 22px rgba(59,130,246,.12));
+        }
+        .portfolio-orbit::before,
+        .portfolio-orbit::after {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border-radius: 50%;
+            border: 1px dashed rgba(100,116,139,.22);
+            pointer-events: none;
+        }
+        .portfolio-orbit::after {
+            inset: 20px;
+            border-style: solid;
+            border-color: rgba(100,116,139,.12);
+        }
+        .portfolio-orbit-center {
+            position: absolute;
+            inset: 43px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 4;
+            box-shadow: inset 0 0 24px rgba(15,23,42,.35), 0 0 0 1px rgba(148,163,184,.12);
+        }
+        .portfolio-orbit-node {
+            position: absolute;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            box-shadow: 0 0 0 4px rgba(15,23,42,.35), 0 0 14px currentColor;
+            animation: portfolioPulse 2.4s ease-in-out infinite;
+        }
+        .portfolio-orbit-node.core {
+            width: 15px;
+            height: 15px;
+            box-shadow: 0 0 0 5px rgba(15,23,42,.35), 0 0 20px currentColor;
+        }
+        @keyframes portfolioPulse {
+            0%, 100% { opacity: .72; transform: translate(-50%, -50%) scale(.92); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
+        }
+        .portfolio-orbit-sweep {
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: rgba(59,130,246,.8);
+            border-right-color: rgba(16,185,129,.55);
+            animation: portfolioSpin 7s linear infinite;
+        }
+        @keyframes portfolioSpin {
+            to { transform: rotate(360deg); }
+        }
         .modal { display: none; z-index: 100; backdrop-filter: blur(6px); }
         .modal.active { display: flex; }
         ::-webkit-scrollbar { width: 6px; }
@@ -252,10 +312,12 @@
                         </div>
                         <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-3">Live on-chain balances on Arc Testnet</p>
                         <div class="flex justify-center mb-6">
-                            <div class="w-36 h-36 donut-chart">
-                                <div id="donutInner" class="donut-inner donut-inner-light dark:donut-inner-dark transition-colors">
-                                    <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Assets</span>
-                                    <span class="text-lg font-bold text-slate-900 dark:text-white" id="ringTotal">0</span>
+                            <div class="w-40 h-40 portfolio-orbit relative" id="portfolioOrbit">
+                                <div id="portfolioOrbitGraphic" class="absolute inset-0"></div>
+                                <div id="donutInner" class="portfolio-orbit-center donut-inner-light dark:donut-inner-dark transition-colors">
+                                    <span class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-[0.18em]">Assets</span>
+                                    <span class="text-xl font-bold text-slate-900 dark:text-white" id="ringTotal">0</span>
+                                    <span class="text-[8px] text-slate-400 mt-0.5">ON-CHAIN</span>
                                 </div>
                             </div>
                         </div>
@@ -1005,9 +1067,29 @@
                     return (b.timestamp || 0) - (a.timestamp || 0);
                 });
 
-                const optimistic = transactions.filter(t => t.optimistic && !unique.some(u => u.hash === t.hash));
+                // Show the receive popup only for transactions that appeared
+                // since the previous successful history scan. Initial history load
+                // is silent so an old receive does not trigger a popup.
+                if (!isFirstTxLoad) {
+                    const newReceived = unique.filter(t =>
+                        t.type === "Received" &&
+                        t.status !== "Failed" &&
+                        t.hash &&
+                        !knownTxHashes.has(t.hash)
+                    );
+
+                    if (newReceived.length > 0) {
+                        const latest = newReceived[0];
+                        document.getElementById('successModalTitle').innerText = "Funds Received!";
+                        document.getElementById('successModalMsg').innerText =
+                            `You received ${latest.amount.replace(/^\+/, "")} from ${latest.from}`;
+                        openModal('successModal');
+                    }
+                }
+
                 unique.forEach(t => knownTxHashes.add(t.hash));
                 isFirstTxLoad = false;
+                const optimistic = transactions.filter(t => t.optimistic && !unique.some(u => u.hash === t.hash));
                 transactions = [...optimistic, ...unique].slice(0, 200);
                 renderTransactionLists();
             } catch (err) {
@@ -1047,20 +1129,50 @@
         }
 
 
-        function updatePortfolioDonut(assetCount) {
-            const donut = document.querySelector('.donut-chart');
-            if (!donut) return;
-            if (assetCount <= 0) {
-                donut.style.background = 'conic-gradient(#334155 0% 100%)';
-                return;
-            }
-            const segments = [];
-            const colors = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#06b6d4','#f43f5e','#84cc16','#a855f7'];
-            const step = 100 / assetCount;
-            for (let i = 0; i < assetCount; i++) {
-                segments.push(`${colors[i % colors.length]} ${i * step}% ${(i + 1) * step}%`);
-            }
-            donut.style.background = `conic-gradient(${segments.join(', ')})`;
+        function updatePortfolioDonut(assetCount, heldTokens = []) {
+            const host = document.getElementById("portfolioOrbitGraphic");
+            if (!host) return;
+
+            const total = Math.max(0, Number(assetCount) || 0);
+            const palette = [
+                "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6",
+                "#06b6d4", "#f43f5e", "#84cc16", "#a855f7",
+                "#14b8a6", "#f97316", "#6366f1", "#ec4899"
+            ];
+
+            host.innerHTML = '<div class="portfolio-orbit-sweep"></div>';
+
+            if (total === 0) return;
+
+            // This graphic intentionally represents asset presence/count, not fake
+            // percentage allocation. Token quantities use different units and
+            // cannot be compared without trustworthy market prices.
+            const items = [
+                { symbol: "USDC", color: palette[0], core: true },
+                ...heldTokens.map((t, i) => ({
+                    symbol: t.symbol || "TOKEN",
+                    color: palette[(i + 1) % palette.length],
+                    core: false
+                }))
+            ];
+
+            const radius = 67;
+            items.forEach((item, i) => {
+                const angle = (-90 + (360 / items.length) * i) * Math.PI / 180;
+                const x = 80 + Math.cos(angle) * radius;
+                const y = 80 + Math.sin(angle) * radius;
+
+                const node = document.createElement("div");
+                node.className = "portfolio-orbit-node" + (item.core ? " core" : "");
+                node.style.left = x + "px";
+                node.style.top = y + "px";
+                node.style.background = item.color;
+                node.style.color = item.color;
+                node.title = item.symbol;
+                node.setAttribute("aria-label", item.symbol);
+                node.style.animationDelay = (i * 0.12) + "s";
+                host.appendChild(node);
+            });
         }
 
         function renderBalancesAndAssets() {
@@ -1070,7 +1182,7 @@
             document.getElementById('balanceDisplay').innerText = usdcBalance.toFixed(2);
             document.getElementById('availBal').innerText = usdcBalance.toFixed(2) + " USDC";
             document.getElementById('ringTotal').innerText = String(assetCount);
-            updatePortfolioDonut(assetCount);
+            updatePortfolioDonut(assetCount, heldTokens);
             document.getElementById('faucetBalance').innerHTML = usdcBalance.toFixed(4) + ' <span class="text-xl text-blue-600 dark:text-blue-400">USDC</span>';
             document.getElementById('viewOnArcScan').href = "https://testnet.arc-scan.org/address/" + userAccount;
 
