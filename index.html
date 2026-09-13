@@ -342,6 +342,8 @@
 
                 <!-- Right Column -->
 <div class="space-y-6">
+    
+    <!-- 1. Live Exchange Box -->
     <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
         <div class="flex justify-between items-center mb-4">
             <div>
@@ -353,7 +355,6 @@
             </div>
         </div>
         
-        <!-- सिर्फ इस बॉक्स में बदलाव किया गया है -->
         <div class="p-4 bg-slate-50 dark:bg-[#0f1624] rounded-2xl border border-slate-100 dark:border-[#243048] flex justify-between items-center">
             <span class="font-bold text-sm text-slate-700 dark:text-slate-300">USDC / INR</span>
             <div class="text-right">
@@ -361,32 +362,31 @@
                 <span class="font-bold text-lg text-slate-900 dark:text-white">₹83.45</span>
             </div>
         </div>
-        
     </div>
-</div>
 
-                <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Assets</h3>
-                            <span class="text-xs text-slate-500 dark:text-slate-400">Arc Testnet</span>
-                        </div>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-3">Live on-chain balances on Arc Testnet</p>
-                        <div class="flex justify-center mb-6">
-                            <div class="w-40 h-40 portfolio-orbit relative" id="portfolioOrbit">
-                                <div id="portfolioOrbitGraphic" class="absolute inset-0"></div>
-                                <div id="donutInner" class="portfolio-orbit-center donut-inner-light dark:donut-inner-dark transition-colors">
-                                    <span class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-[0.18em]">Assets</span>
-                                    <span class="text-xl font-bold text-slate-900 dark:text-white" id="ringTotal">0</span>
-                                    <span class="text-[8px] text-slate-400 mt-0.5">ON-CHAIN</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="space-y-3 bg-slate-50 dark:bg-[#0f1624] p-4 rounded-2xl border border-slate-100 dark:border-[#243048]" id="portfolioListContainer">
-                            <div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>
-                        </div>
-                    </div>
+    <!-- 2. Portfolio Assets Box -->
+    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Assets</h3>
+            <span class="text-xs text-slate-500 dark:text-slate-400">Arc Testnet</span>
+        </div>
+        <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-3">Live on-chain balances on Arc Testnet</p>
+        <div class="flex justify-center mb-6">
+            <div class="w-40 h-40 portfolio-orbit relative" id="portfolioOrbit">
+                <div id="portfolioOrbitGraphic" class="absolute inset-0"></div>
+                <div id="donutInner" class="portfolio-orbit-center donut-inner-light dark:donut-inner-dark transition-colors">
+                    <span class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-[0.18em]">Assets</span>
+                    <span class="text-xl font-bold text-slate-900 dark:text-white" id="ringTotal">0</span>
+                    <span class="text-[8px] text-slate-400 mt-0.5">ON-CHAIN</span>
                 </div>
             </div>
+        </div>
+        <div class="space-y-3 bg-slate-50 dark:bg-[#0f1624] p-4 rounded-2xl border border-slate-100 dark:border-[#243048]" id="portfolioListContainer">
+            <div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>
+        </div>
+    </div>
+    
+</div>
 
             <!-- Your Assets Table -->
             <div class="bg-white dark:bg-darkCard rounded-3xl p-4 md:p-8 border border-slate-200 dark:border-darkBorder transition-colors mt-6">
