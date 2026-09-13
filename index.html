@@ -22,7 +22,6 @@
         }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -40,9 +39,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-        #genQR {
-            image-rendering: crisp-edges;
         }
         .portfolio-orbit {
             border-radius: 50%;
@@ -416,10 +412,8 @@
                             <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Request</span>
                             <span class="text-2xl font-bold text-slate-900 dark:text-white"><span id="genAmount">0</span> <span class="text-xs text-blue-600 dark:text-blue-400" id="genToken">USDC</span></span>
                         </div>
-                        <div class="bg-white p-4 rounded-2xl flex justify-center items-center shadow-lg border border-slate-200 dark:border-slate-700">
-                            <div class="w-44 h-44 flex items-center justify-center bg-white rounded-xl overflow-hidden" id="genQrFrame">
-                                <img id="genQR" src="" alt="Payment QR" class="w-44 h-44 object-contain">
-                            </div>
+                        <div class="bg-white p-4 rounded-2xl flex justify-center items-center shadow-sm border border-slate-100 dark:border-none">
+                            <img id="genQR" src="" alt="Payment QR" class="w-44 h-44">
                         </div>
                         <a id="genUrlLinkHref" href="#" target="_blank" class="bg-white dark:bg-[#0f1624] p-3.5 rounded-xl border border-slate-200 dark:border-[#243048] hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm block">
                             <p class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold mb-1 flex justify-between items-center">
@@ -763,21 +757,7 @@
             await syncAllOnChainData();
 
             if (autoSyncInterval) clearInterval(autoSyncInterval);
-            autoSyncInterval = setInterval(() => {
-                syncAllOnChainData().catch(err => console.warn("Auto sync failed:", err));
-            }, 4000);
-        }
-
-        function attachWalletProviderListeners(provider) {
-            if (!provider || typeof provider.on !== "function" || provider.__bullkarryListenersAttached) return;
-            provider.__bullkarryListenersAttached = true;
-            provider.on("accountsChanged", async (accounts) => {
-                if (accounts && accounts[0]) await initializeWallet(accounts[0]);
-                else resetBullkarryWalletUI();
-            });
-            provider.on("chainChanged", async () => {
-                if (userAccount) await syncAllOnChainData();
-            });
+            autoSyncInterval = setInterval(syncAllOnChainData, 4000);
         }
 
         async function syncAllOnChainData() {
@@ -1425,176 +1405,21 @@
         }
 
         let currentWeb3URI = "";
-        let currentPaymentShareURL = "";
+        function generateLink() {
+            const amt = document.getElementById('payAmount').value;
+            if (!amt || !userAccount) return alert("Connect wallet and enter an amount");
 
-        function buildPaymentRequest() {
-            if (!userAccount) throw new Error("Connect wallet first");
+            document.getElementById('previewEmpty').classList.add('hidden');
+            document.getElementById('previewGenerated').classList.remove('hidden');
+            document.getElementById('genAmount').innerText = amt;
+            document.getElementById('genToken').innerText = "USDC";
 
-            const rawAmount = document.getElementById('payAmount').value;
-            const token = document.getElementById('payToken').value || "USDC";
-            const amount = String(rawAmount || "").trim();
+            const weiAmt = ethers.utils.parseUnits(amt.toString(), 18).toString();
+            currentWeb3URI = "ethereum:" + userAccount + "?value=" + weiAmt;
 
-            if (!amount || Number(amount) <= 0) {
-                throw new Error("Enter a valid amount");
-            }
-
-            if (!ethers.utils.isAddress(userAccount)) {
-                throw new Error("Receiving wallet address is invalid");
-            }
-
-            const chainId = 5042002;
-
-            if (token === "USDC") {
-                // Arc's native asset is USDC with 18 decimals.
-                const value = ethers.utils.parseUnits(amount, 18).toString();
-
-                // EIP-681 native payment URI. Wallets can prefill recipient + amount.
-                currentWeb3URI =
-                    `ethereum:${chainId}/${userAccount}?value=${value}`;
-            } else if (TOKEN_CONTRACTS[token]) {
-                const tokenInfo = TOKEN_CONTRACTS[token];
-                const tokenAmount = ethers.utils.parseUnits(
-                    amount,
-                    Number(tokenInfo.decimals || 18)
-                ).toString();
-
-                // EIP-681 ERC-20 transfer URI.
-                currentWeb3URI =
-                    `ethereum:${chainId}/${tokenInfo.address}/transfer` +
-                    `?address=${userAccount}&uint256=${tokenAmount}`;
-            } else {
-                throw new Error("Unsupported payment token");
-            }
-
-            // Human/shareable URL: opening it on Bullkarry auto-fills the
-            // receiving address + amount and opens the payment-link screen.
-            const shareURL = new URL(window.location.href);
-            shareURL.search = "";
-            shareURL.searchParams.set("payment", "1");
-            shareURL.searchParams.set("to", userAccount);
-            shareURL.searchParams.set("amount", amount);
-            shareURL.searchParams.set("token", token);
-            shareURL.searchParams.set("chainId", String(chainId));
-            const note = String(document.getElementById('payNote')?.value || '').trim();
-            if (note) shareURL.searchParams.set('note', note);
-
-            currentPaymentShareURL = shareURL.toString();
-
-            return { amount, token, currentWeb3URI, currentPaymentShareURL };
-        }
-
-        async function renderPaymentQR(uri) {
-            const img = document.getElementById("genQR");
-            if (!img) throw new Error("QR display element not found");
-            img.removeAttribute("src");
-            img.alt = "Generating payment QR…";
-
-            // Generate locally first. This produces a real QR containing the
-            // wallet-readable payment URI, not a screenshot or placeholder.
-            try {
-                if (window.QRCode && typeof window.QRCode.toDataURL === "function") {
-                    const dataUrl = await window.QRCode.toDataURL(uri, {
-                        width: 360,
-                        margin: 3,
-                        errorCorrectionLevel: "M",
-                        color: { dark: "#0b1220", light: "#ffffff" }
-                    });
-                    if (!dataUrl || !dataUrl.startsWith("data:image/")) throw new Error("Invalid QR data");
-                    img.src = dataUrl;
-                    img.alt = "Payment QR code";
-                    return;
-                }
-            } catch (error) {
-                console.warn("Local QR generation failed; trying QR fallback", error);
-            }
-
-            // CDN fallback. It encodes the exact same EIP-681 URI.
-            const fallback = "https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=10&data=" + encodeURIComponent(uri);
-            await new Promise((resolve, reject) => {
-                img.onload = () => { img.alt = "Payment QR code"; resolve(); };
-                img.onerror = () => reject(new Error("QR code could not be generated. Please try again."));
-                img.src = fallback;
-            });
-        }
-
-        async function generateLink() {
-            try {
-                const request = buildPaymentRequest();
-
-                document.getElementById('previewEmpty').classList.add('hidden');
-                document.getElementById('previewGenerated').classList.remove('hidden');
-                document.getElementById('genAmount').innerText = request.amount;
-                document.getElementById('genToken').innerText = request.token;
-
-                const linkEl = document.getElementById('genUrlLink');
-                const hrefEl = document.getElementById('genUrlLinkHref');
-                linkEl.innerText = request.currentPaymentShareURL;
-                hrefEl.href = request.currentPaymentShareURL;
-
-                await renderPaymentQR(request.currentWeb3URI);
-            } catch (error) {
-                console.error("Create payment link error:", error);
-                alert(error.message || "Unable to create payment link");
-            }
-        }
-
-        function applyPaymentLinkFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-
-            if (params.get("payment") !== "1") return;
-
-            const to = params.get("to");
-            const amount = params.get("amount");
-            const token = params.get("token") || "USDC";
-            const chainId = params.get("chainId") || "5042002";
-            const note = params.get("note") || "";
-
-            if (!to || !ethers.utils.isAddress(to) || !amount || Number(amount) <= 0) {
-                return;
-            }
-
-            // Only accept Arc Testnet payment links.
-            if (String(chainId) !== "5042002") return;
-
-            const payAmount = document.getElementById("payAmount");
-            const payToken = document.getElementById("payToken");
-
-            if (payAmount) payAmount.value = amount;
-            if (payToken && [...payToken.options].some(o => o.value === token)) {
-                payToken.value = token;
-            }
-            const payNote = document.getElementById('payNote');
-            if (payNote) payNote.value = note;
-
-            const receiveLabel = document.getElementById("payWalletAddress");
-            if (receiveLabel) {
-                receiveLabel.innerText =
-                    to.substring(0, 6) + "..." + to.substring(38);
-            }
-
-            switchView("paymentLink");
-
-            // Rebuild the request using the link recipient, even if the viewer
-            // is not connected to that wallet.
-            const originalAccount = userAccount;
-            const originalConnected = isWalletConnected;
-
-            userAccount = to;
-            try {
-                const request = buildPaymentRequest();
-                document.getElementById('previewEmpty').classList.add('hidden');
-                document.getElementById('previewGenerated').classList.remove('hidden');
-                document.getElementById('genAmount').innerText = request.amount;
-                document.getElementById('genToken').innerText = request.token;
-                document.getElementById('genUrlLink').innerText = request.currentPaymentShareURL;
-                document.getElementById('genUrlLinkHref').href = request.currentPaymentShareURL;
-                renderPaymentQR(request.currentWeb3URI);
-            } catch (error) {
-                console.error("Payment-link hydration error:", error);
-            } finally {
-                userAccount = originalAccount;
-                isWalletConnected = originalConnected;
-            }
+            document.getElementById('genUrlLink').innerText = currentWeb3URI;
+            document.getElementById('genUrlLinkHref').href = currentWeb3URI;
+            document.getElementById('genQR').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentWeb3URI);
         }
 
         function copyHeaderAddress() {
@@ -1613,9 +1438,8 @@
         }
 
         function connectXAccount() {
-            // X login is intentionally disabled. Keep this legacy handler harmless.
+            alert("Redirecting to X OAuth authorization");
             document.getElementById('profileDropdown').classList.add('hidden');
-            connectWalletProvider();
         }
 
         function disconnectWallet() {
@@ -1666,16 +1490,6 @@
                     }
                 } catch (e) { console.error(e); }
             } else { alert("MetaMask or Web3 Wallet not found"); }
-        }
-
-        if (typeof window.ethereum !== "undefined" && typeof window.ethereum.on === "function") {
-            window.ethereum.on("accountsChanged", async (accounts) => {
-                if (accounts && accounts[0]) await initializeWallet(accounts[0]);
-                else if (typeof resetBullkarryWalletUI === "function") resetBullkarryWalletUI();
-            });
-            window.ethereum.on("chainChanged", async () => {
-                if (userAccount) await syncAllOnChainData();
-            });
         }
 
         window.addEventListener('click', (e) => {
@@ -1775,205 +1589,5 @@
             btn.disabled = false;
         }
     </script>
-
-    <!-- Reown AppKit integration -->
-    <script type="module">
-        import { createAppKit } from "https://esm.sh/@reown/appkit@1.8.23?bundle";
-        import { Ethers5Adapter } from "https://esm.sh/@reown/appkit-adapter-ethers5@1.8.23?bundle";
-        import { defineChain } from "https://esm.sh/@reown/appkit@1.8.23/networks?bundle";
-
-        const REOWN_PROJECT_ID = "c9287f8264a6836a5b67a6016ed69076";
-
-        const arcTestnet = defineChain({
-            id: 5042002,
-            caipNetworkId: "eip155:5042002",
-            chainNamespace: "eip155",
-            name: "Arc Testnet",
-            nativeCurrency: {
-                name: "USDC",
-                symbol: "USDC",
-                decimals: 18
-            },
-            rpcUrls: {
-                default: {
-                    http: ["https://rpc.testnet.arc.network"]
-                }
-            },
-            blockExplorers: {
-                default: {
-                    name: "Arcscan",
-                    url: "https://testnet.arc-scan.org"
-                }
-            },
-            testnet: true
-        });
-
-        const metadata = {
-            name: "Bullkarry",
-            description: "Bullkarry on Arc Testnet",
-            url: window.location.origin,
-            icons: []
-        };
-
-        const ethers5Adapter = new Ethers5Adapter();
-
-        const reownAppKit = createAppKit({
-            adapters: [ethers5Adapter],
-            networks: [arcTestnet],
-            defaultNetwork: arcTestnet,
-            metadata,
-            projectId: REOWN_PROJECT_ID,
-            features: {
-                analytics: true,
-                email: false,
-                socials: false
-            },
-            themeMode: "dark"
-        });
-
-        window.bullkarryAppKit = reownAppKit;
-
-        function resetBullkarryWalletUI() {
-            userAccount = null;
-            isWalletConnected = false;
-            localStorage.removeItem("bullkarry_account");
-
-            if (autoSyncInterval) clearInterval(autoSyncInterval);
-
-            knownTxHashes.clear();
-            isFirstTxLoad = true;
-            liveTokens = [];
-            transactions = [];
-            usdcBalance = 0;
-
-            document.getElementById("walletAddress").innerText = "Connect Wallet";
-            document.getElementById("payWalletAddress").innerText = "Not Connected";
-            document.getElementById("faucetWalletAddress").innerText = "Not Connected";
-            document.getElementById("myRecAddr").value = "Connect wallet to view";
-            document.getElementById("myRecQr").src =
-                "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet";
-
-            document.getElementById("assetsPlaceholder").classList.remove("hidden");
-            document.getElementById("assetsTable").classList.add("hidden");
-            document.getElementById("portfolioListContainer").innerHTML =
-                '<div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>';
-
-            renderBalancesAndAssets();
-            renderTransactionLists();
-
-            const dropdown = document.getElementById("profileDropdown");
-            if (dropdown) dropdown.classList.add("hidden");
-        }
-
-        window.clearWalletUiState = resetBullkarryWalletUI;
-
-        async function syncReownConnection(state) {
-            if (state && state.error) {
-                console.error("Reown connection error:", state.error);
-            }
-
-            const provider = state?.provider;
-            const address = state?.address;
-            const connected = !!(state?.isConnected && provider && address);
-
-            if (!connected) {
-                if (isWalletConnected || userAccount) {
-                    resetBullkarryWalletUI();
-                }
-                return;
-            }
-
-            // This is an EIP-1193 provider and is now used by the existing
-            // ethers 5.7.2 send/balance code.
-            window.ethereum = provider;
-            window.__bullkarryReownProvider = provider;
-            attachWalletProviderListeners(provider);
-
-            closeModal("connectWalletModal");
-            await initializeWallet(address);
-        }
-
-        // Official AppKit provider subscription API.
-        reownAppKit.subscribeProvider(async (state) => {
-            try {
-                await syncReownConnection(state);
-            } catch (error) {
-                console.error("Reown provider sync error:", error);
-            }
-        });
-
-        reownAppKit.subscribeEvents(({ data }) => {
-            if (
-                data?.event === "ACCOUNT_DISCONNECTED" ||
-                data?.event === "DISCONNECT_SUCCESS"
-            ) {
-                resetBullkarryWalletUI();
-            }
-        });
-
-        // Existing Connect Wallet buttons now always open the real AppKit modal.
-        window.connectWalletProvider = function () {
-            if (!window.bullkarryAppKit) {
-                alert("Wallet connection is still loading. Please try again.");
-                return;
-            }
-
-            window.bullkarryAppKit.open({
-                view: "Connect",
-                namespace: "eip155"
-            });
-        };
-
-        // Use the official AppKit disconnect action.
-        window.disconnectWallet = async function () {
-            try {
-                await window.bullkarryAppKit.adapter?.connectionControllerClient?.disconnect();
-            } catch (error) {
-                console.error("Reown disconnect error:", error);
-            } finally {
-                resetBullkarryWalletUI();
-            }
-        };
-
-        // Override only the old custom connect-modal route. Everything else
-        // in Bullkarry keeps using its existing modal system.
-        const existingOpenModal = window.openModal;
-        window.openModal = function (id) {
-            if (id === "connectWalletModal") {
-                window.connectWalletProvider();
-                return;
-            }
-            return existingOpenModal(id);
-        };
-
-        // Restore an AppKit session after refresh.
-        setTimeout(async () => {
-            try {
-                if (reownAppKit.getIsConnected()) {
-                    const provider = reownAppKit.getWalletProvider();
-                    const address = reownAppKit.getAddress();
-
-                    if (provider && address) {
-                        window.ethereum = provider;
-                        window.__bullkarryReownProvider = provider;
-                        attachWalletProviderListeners(provider);
-                        await initializeWallet(address);
-                    }
-                }
-            } catch (error) {
-                console.error("Reown session restore error:", error);
-            }
-        }, 500);
-
-        // If a shareable payment link was opened, hydrate it after the page is ready.
-        setTimeout(() => {
-            try {
-                applyPaymentLinkFromUrl();
-            } catch (error) {
-                console.error("Payment-link URL error:", error);
-            }
-        }, 250);
-    </script>
-
 </body>
 </html>
