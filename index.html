@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Bullkarry Wallet</title>
-    <!-- DIRECT_WALLET_BUILD_V12 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -118,128 +117,7 @@
         }
     </style>
 
-    <!-- Direct injected EVM wallet connection. -->
-    <script>
-        const ARC_TESTNET = {
-            chainId: '0x4cef52',
-            chainName: 'Arc Testnet',
-            nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
-            rpcUrls: ['https://rpc.testnet.arc.network'],
-            blockExplorerUrls: ['https://testnet.arcscan.app']
-        };
-
-        let injectedWalletProvider = null;
-        let walletListenersAttachedTo = null;
-        let walletDiscoveryStarted = false;
-        const discoveredEvmProviders = [];
-
-        // EIP-6963 lets the page discover installed browser wallets without
-        // depending on a third-party connection service.
-        function startWalletDiscovery() {
-            if (walletDiscoveryStarted) return;
-            walletDiscoveryStarted = true;
-            window.addEventListener('eip6963:announceProvider', (event) => {
-                const provider = event && event.detail && event.detail.provider;
-                if (!provider || discoveredEvmProviders.includes(provider)) return;
-                discoveredEvmProviders.push(provider);
-                if (!injectedWalletProvider && provider.isMetaMask) injectedWalletProvider = provider;
-            });
-            try { window.dispatchEvent(new Event('eip6963:requestProvider')); } catch (_) {}
-        }
-
-        function getInjectedWalletProvider() {
-            startWalletDiscovery();
-            if (injectedWalletProvider) return injectedWalletProvider;
-
-            const eth = window.ethereum;
-            if (eth) {
-                if (Array.isArray(eth.providers)) {
-                    injectedWalletProvider = eth.providers.find(p => p && p.isMetaMask) || eth.providers[0] || null;
-                } else {
-                    injectedWalletProvider = eth;
-                }
-            }
-
-            if (!injectedWalletProvider && discoveredEvmProviders.length) {
-                injectedWalletProvider = discoveredEvmProviders.find(p => p && p.isMetaMask) || discoveredEvmProviders[0];
-            }
-            return injectedWalletProvider;
-        }
-
-        async function waitForInjectedWallet(timeoutMs = 2500) {
-            const existing = getInjectedWalletProvider();
-            if (existing) return existing;
-
-            return new Promise(resolve => {
-                const started = Date.now();
-                const timer = setInterval(() => {
-                    const provider = getInjectedWalletProvider();
-                    if (provider || Date.now() - started >= timeoutMs) {
-                        clearInterval(timer);
-                        resolve(provider || null);
-                    }
-                }, 100);
-            });
-        }
-
-        async function ensureArcTestnet(provider) {
-            if (!provider) return false;
-            const current = await provider.request({ method: 'eth_chainId' });
-            if (String(current).toLowerCase() === ARC_TESTNET.chainId.toLowerCase()) return true;
-
-            try {
-                await provider.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: ARC_TESTNET.chainId }]
-                });
-                return true;
-            } catch (switchError) {
-                // 4902 means the wallet does not know Arc Testnet yet.
-                if (switchError && (switchError.code === 4902 || switchError.code === -32603)) {
-                    await provider.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [ARC_TESTNET]
-                    });
-                    return true;
-                }
-                throw switchError;
-            }
-        }
-
-        function attachWalletProviderListeners(provider) {
-            if (!provider || typeof provider.on !== 'function' || walletListenersAttachedTo === provider) return;
-            walletListenersAttachedTo = provider;
-
-            provider.on('accountsChanged', async (accounts) => {
-                if (Array.isArray(accounts) && accounts.length) {
-                    await initializeWallet(accounts[0]);
-                } else {
-                    clearLocalWalletState(false);
-                }
-            });
-
-            provider.on('chainChanged', async () => {
-                if (userAccount) await initializeWallet(userAccount);
-            });
-
-            provider.on('disconnect', () => clearLocalWalletState(false));
-        }
-
-        async function restoreInjectedWalletSession() {
-            const provider = await waitForInjectedWallet(1500);
-            if (!provider) return;
-            attachWalletProviderListeners(provider);
-            try {
-                const accounts = await provider.request({ method: 'eth_accounts' });
-                if (Array.isArray(accounts) && accounts.length) await initializeWallet(accounts[0]);
-            } catch (e) {
-                console.warn('Wallet session restore failed:', e);
-            }
-        }
-
-        startWalletDiscovery();
-        window.addEventListener('DOMContentLoaded', restoreInjectedWalletSession);
-    </script>
+    <!-- Wallet connection: direct EIP-1193 / EIP-6963 only. -->
 
 </head>
 <body class="h-screen flex overflow-hidden bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-50 transition-colors duration-200">
@@ -295,7 +173,7 @@
     </div>
 
     <!-- Main Content -->
-    <div id="mainScrollContainer" class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors pb-24 md:pb-0">
+    <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors pb-24 md:pb-0">
         
         <!-- Header -->
         <div class="flex flex-wrap justify-between items-center gap-3 p-4 md:p-8 pb-4">
@@ -695,10 +573,6 @@
             <i class="fa-solid fa-droplet text-lg"></i>
             <span class="text-[10px] font-semibold">Faucet</span>
         </button>
-<button onclick="switchView('faucet')" id="mnav-faucet" class="flex flex-col items-center gap-1 px-3 py-1 text-slate-500 dark:text-slate-400">
-            <i class="fa-solid fa-droplet text-lg"></i>
-            <span class="text-[10px] font-semibold">Payments</span>
-        </button>
         <button onclick="openModal('receiveModal')" class="flex flex-col items-center justify-center -mt-6">
             <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30"><i class="fa-solid fa-qrcode"></i></div>
         </button>
@@ -855,32 +729,21 @@
         let knownTxHashes = new Set();
         let isFirstTxLoad = true;
 
-        // Mobile-only: start at the top after refresh/reload.
-        // Normal manual scrolling is unchanged.
-        (function () {
-            if (!window.matchMedia('(max-width: 767px)').matches) return;
-            try { history.scrollRestoration = 'manual'; } catch (_) {}
-
-            function resetMobileStartPosition() {
-                const container = document.getElementById('mainScrollContainer');
-                if (container) container.scrollTop = 0;
-                window.scrollTo(0, 0);
-            }
-
-            window.addEventListener('DOMContentLoaded', resetMobileStartPosition, { once: true });
-            window.addEventListener('load', function () {
-                resetMobileStartPosition();
-                setTimeout(resetMobileStartPosition, 80);
-                setTimeout(resetMobileStartPosition, 300);
-            });
-            window.addEventListener('pageshow', function () {
-                resetMobileStartPosition();
-                setTimeout(resetMobileStartPosition, 80);
-            });
-        })();
-
         window.addEventListener('DOMContentLoaded', async () => {
             handleIncomingPaymentLink();
+            try {
+                await setupWalletConnection();
+                const provider = getInjectedWalletProvider();
+                if (provider) {
+                    const accounts = await provider.request({ method: 'eth_accounts' });
+                    if (Array.isArray(accounts) && accounts.length > 0) {
+                        injectedWalletProvider = provider;
+                        window.ethereum = provider;
+                        attachWalletProviderListeners(provider);
+                        await initializeWallet(accounts[0]);
+                    }
+                }
+            } catch (e) { console.error('Wallet session restore error:', e); }
         });
 
         // Reads ?pay=<address>&amt=<amount>&token=<symbol>&note=<note>
@@ -914,11 +777,11 @@
             openModal('paymentRequestModal');
         }
 
-        async function payPendingRequest() {
+        function payPendingRequest() {
             if (!window.__pendingPayment) return;
             if (!userAccount) {
                 closeModal('paymentRequestModal');
-                await connectWalletProvider();
+                openModal('connectWalletModal');
                 return;
             }
             const { to, amount, token } = window.__pendingPayment;
@@ -964,12 +827,10 @@
         }
 
         async function syncAllOnChainData() {
-            if (!userAccount || !isWalletConnected) return;
+            if (!userAccount || !isWalletConnected || typeof window.ethereum === 'undefined') return;
 
             try {
-                const walletProvider = getInjectedWalletProvider();
-                if (!walletProvider) throw new Error('No injected wallet provider available');
-                const provider = new ethers.providers.Web3Provider(walletProvider);
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
 
                 // Arc uses native USDC as the gas asset. Keep this native balance as
                 // the single USDC balance; do not add an ERC-20 copy of the same asset.
@@ -1719,55 +1580,184 @@
 
         window.clearLocalWalletState = clearLocalWalletState;
 
-        function disconnectWallet() {
-            // Direct injected wallets do not expose a universal dapp-side disconnect.
-            // Clear Bullkarry's local connection state; the wallet remains under the user's control.
+        let injectedWalletProvider = null;
+        let walletProviders = [];
+
+        function providerLabel(providerInfo, index) {
+            return providerInfo?.info?.name || providerInfo?.name || `Wallet ${index + 1}`;
+        }
+
+        function providerObject(providerInfo) {
+            return providerInfo?.provider || providerInfo;
+        }
+
+        function attachWalletProviderListeners(provider) {
+            if (!provider || provider.__bullkarryListenersAttached) return;
+            provider.__bullkarryListenersAttached = true;
+            provider.on?.('accountsChanged', async (accounts) => {
+                if (accounts && accounts.length) {
+                    await initializeWallet(accounts[0]);
+                } else {
+                    clearLocalWalletState(false);
+                }
+            });
+            provider.on?.('chainChanged', async () => {
+                if (userAccount) await syncAllOnChainData();
+            });
+            provider.on?.('disconnect', () => clearLocalWalletState(false));
+        }
+
+        function getInjectedWalletProvider() {
+            if (injectedWalletProvider) return injectedWalletProvider;
+            if (window.ethereum) return window.ethereum;
+            return null;
+        }
+
+        function showWalletPicker() {
+            let modal = document.getElementById('simpleWalletPicker');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'simpleWalletPicker';
+                modal.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);';
+                modal.innerHTML = `
+                    <div style="width:min(390px,100%);background:#0f1624;border:1px solid #243048;border-radius:22px;padding:20px;box-shadow:0 24px 70px rgba(0,0,0,.45);color:#fff;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                            <div><div style="font-size:18px;font-weight:700;">Connect Wallet</div><div style="font-size:12px;color:#94a3b8;margin-top:4px;">Choose a wallet to continue</div></div>
+                            <button id="closeSimpleWalletPicker" type="button" style="width:34px;height:34px;border-radius:10px;border:1px solid #243048;background:#111a2a;color:#94a3b8;font-size:20px;">×</button>
+                        </div>
+                        <div id="simpleWalletList" style="display:grid;gap:10px;"></div>
+                        <div id="simpleWalletEmpty" style="display:none;text-align:center;color:#94a3b8;font-size:13px;padding:14px 4px;">No browser wallet found. Install MetaMask or open this site inside your wallet app.</div>
+                    </div>`;
+                document.body.appendChild(modal);
+                modal.querySelector('#closeSimpleWalletPicker').onclick = () => modal.remove();
+                modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+            }
+            const list = modal.querySelector('#simpleWalletList');
+            const empty = modal.querySelector('#simpleWalletEmpty');
+            list.innerHTML = '';
+            if (!walletProviders.length) {
+                empty.style.display = 'block';
+                return;
+            }
+            empty.style.display = 'none';
+            walletProviders.forEach((item, index) => {
+                const info = item.info || {};
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.style.cssText = 'display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;border-radius:14px;border:1px solid #243048;background:#111a2a;color:#fff;text-align:left;cursor:pointer;';
+                const icon = info.icon ? `<img src="${info.icon}" style="width:34px;height:34px;border-radius:9px;object-fit:cover;" alt="">` : '<div style="width:34px;height:34px;border-radius:9px;background:#2563eb;display:flex;align-items:center;justify-content:center;">◈</div>';
+                button.innerHTML = `${icon}<span style="font-weight:600;">${providerLabel(item,index)}</span>`;
+                button.onclick = async () => {
+                    modal.remove();
+                    await connectWithProvider(providerObject(item));
+                };
+                list.appendChild(button);
+            });
+        }
+
+        async function setupWalletConnection() {
+            walletProviders = [];
+            const seen = new Set();
+            const addProvider = (detail) => {
+                const provider = providerObject(detail);
+                if (!provider || seen.has(provider)) return;
+                seen.add(provider);
+                walletProviders.push(detail?.provider ? detail : { provider, info: { name: provider.isMetaMask ? 'MetaMask' : 'Browser Wallet' } });
+            };
+
+            if (window.ethereum) addProvider(window.ethereum);
+
+            await new Promise(resolve => {
+                let timer = setTimeout(resolve, 700);
+                const handler = (event) => {
+                    addProvider(event.detail);
+                    clearTimeout(timer);
+                    timer = setTimeout(resolve, 150);
+                };
+                window.addEventListener('eip6963:announceProvider', handler);
+                try { window.dispatchEvent(new Event('eip6963:requestProvider')); } catch (_) {}
+                setTimeout(() => {
+                    window.removeEventListener('eip6963:announceProvider', handler);
+                    resolve();
+                }, 900);
+            });
+
+            if (walletProviders.length) {
+                const first = providerObject(walletProviders[0]);
+                if (first) window.ethereum = first;
+            }
+            return walletProviders;
+        }
+
+        async function ensureArcTestnet(provider) {
+            const chainId = await provider.request({ method: 'eth_chainId' });
+            if (String(chainId).toLowerCase() === '0x4cef52') return;
+            try {
+                await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x4cef52' }] });
+            } catch (switchError) {
+                if (switchError?.code === 4902 || switchError?.code === -32603) {
+                    await provider.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: '0x4cef52',
+                            chainName: 'Arc Testnet',
+                            nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+                            rpcUrls: ['https://rpc.testnet.arc.network'],
+                            blockExplorerUrls: ['https://testnet.arcscan.app']
+                        }]
+                    });
+                } else {
+                    throw switchError;
+                }
+            }
+        }
+
+        async function connectWithProvider(provider) {
+            if (!provider) return false;
+            injectedWalletProvider = provider;
+            window.ethereum = provider;
+            attachWalletProviderListeners(provider);
+            try {
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
+                if (!accounts?.length) return false;
+                await ensureArcTestnet(provider);
+                await initializeWallet(accounts[0]);
+                return true;
+            } catch (e) {
+                console.error('Wallet connection failed:', e);
+                if (e?.code === 4001) alert('Wallet connection was rejected.');
+                else alert(e?.message || 'Could not connect the wallet. Please unlock your wallet and try again.');
+                return false;
+            }
+        }
+
+        async function disconnectWallet() {
             clearLocalWalletState(true);
         }
 
         document.getElementById('connectBtn').addEventListener('click', async () => {
             if (isWalletConnected) {
                 document.getElementById('profileDropdown').classList.toggle('hidden');
-            } else {
-                await connectWalletProvider();
+                return;
+            }
+            try {
+                await setupWalletConnection();
+                if (walletProviders.length === 1) {
+                    await connectWithProvider(providerObject(walletProviders[0]));
+                } else {
+                    showWalletPicker();
+                }
+            } catch (e) {
+                console.error('Wallet discovery failed:', e);
+                alert('Could not load the wallet connection. Please try again.');
             }
         });
 
         async function connectWalletProvider() {
-            const provider = await waitForInjectedWallet(2500);
-            if (!provider) {
-                alert('No browser wallet was found. Install MetaMask or open this page inside a wallet browser.');
-                return false;
-            }
-
-            injectedWalletProvider = provider;
-            attachWalletProviderListeners(provider);
-
-            try {
-                // This is the only connection request. It opens the wallet's native popup.
-                const accounts = await provider.request({ method: 'eth_requestAccounts' });
-                if (!Array.isArray(accounts) || !accounts.length) return false;
-
-                try {
-                    await ensureArcTestnet(provider);
-                } catch (networkError) {
-                    // The wallet is already connected. If the user rejects the network
-                    // switch/add request, keep the wallet connected instead of reporting
-                    // a false connection failure.
-                    console.warn('Arc Testnet switch was not completed:', networkError);
-                }
-
-                await initializeWallet(accounts[0]);
-                return true;
-            } catch (e) {
-                console.error('Direct wallet connection failed:', e);
-                if (e && e.code === 4001) {
-                    alert('Wallet connection was rejected.');
-                } else {
-                    alert('Could not connect the wallet. Please unlock your wallet and try again.');
-                }
-                return false;
-            }
+            await setupWalletConnection();
+            if (walletProviders.length === 1) return connectWithProvider(providerObject(walletProviders[0]));
+            showWalletPicker();
+            return false;
         }
 
         window.addEventListener('click', (e) => {
@@ -1791,9 +1781,7 @@
             btn.disabled = true;
 
             try {
-                const walletProvider = getInjectedWalletProvider();
-                if (!walletProvider) throw new Error('No injected wallet provider available');
-                const provider = new ethers.providers.Web3Provider(walletProvider);
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
 
                 let tx;
@@ -1849,9 +1837,7 @@
             btn.disabled = true;
 
             try {
-                const walletProvider = getInjectedWalletProvider();
-                if (!walletProvider) throw new Error('No injected wallet provider available');
-                const provider = new ethers.providers.Web3Provider(walletProvider);
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
                 const parsedAmt = ethers.utils.parseEther((price / 1000).toString());
                 const tx = await signer.sendTransaction({
