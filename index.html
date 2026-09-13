@@ -131,8 +131,7 @@
             name: 'Arc Testnet',
             nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
             rpcUrls: {
-                default: { http: ['https://rpc.testnet.arc.network'] },
-                public: { http: ['https://rpc.testnet.arc.network'] }
+                default: { http: ['https://rpc.testnet.arc.network'] }
             },
             blockExplorers: {
                 default: { name: 'Arcscan', url: 'https://testnet.arcscan.app' }
@@ -143,6 +142,35 @@
         let appKit = null;
         let reownInitPromise = null;
         let reownDisconnecting = false;
+        let reownSyncTimer = null;
+
+        async function syncReownWalletState() {
+            if (!appKit || reownDisconnecting) return;
+
+            try {
+                const connected = !!appKit.getIsConnected?.();
+                const address = appKit.getAddress?.();
+                const provider = appKit.getWalletProvider?.();
+
+                if (connected && address && provider) {
+                    window.ethereum = provider;
+                    window.__bullkarryReownProvider = provider;
+
+                    // Keep the existing Bullkarry wallet/data logic unchanged.
+                    if (typeof window.initializeWallet === 'function') {
+                        if (userAccount !== address || !isWalletConnected) {
+                            await window.initializeWallet(address);
+                        }
+                    }
+                } else if (!connected && !reownDisconnecting) {
+                    if (typeof window.clearLocalWalletState === 'function' && isWalletConnected) {
+                        window.clearLocalWalletState(false);
+                    }
+                }
+            } catch (e) {
+                console.warn('Reown wallet state sync:', e);
+            }
+        }
 
         async function initializeReown() {
             if (appKit) return appKit;
@@ -150,11 +178,15 @@
 
             reownInitPromise = (async () => {
                 const adapter = new Ethers5Adapter();
+                const appUrl = (location.protocol === 'http:' || location.protocol === 'https:')
+                    ? window.location.origin
+                    : 'https://bullkarry-wallet.vercel.app';
+
                 const metadata = {
                     name: 'Bullkarry',
                     description: 'Bullkarry on Arc Testnet',
-                    // This must exactly match the origin allowlisted in Reown Cloud.
-                    url: 'https://bullkarry-wallet.vercel.app',
+                    // Reown requires this origin to match the allowlisted project domain.
+                    url: appUrl,
                     icons: []
                 };
 
@@ -164,6 +196,9 @@
                     defaultNetwork: ARC_TESTNET,
                     metadata,
                     projectId: REOWN_PROJECT_ID,
+                    customRpcUrls: {
+                        'eip155:5042002': 'https://rpc.testnet.arc.network'
+                    },
                     features: {
                         analytics: false,
                         email: false,
@@ -191,50 +226,23 @@
                     }
                 };
 
-                appKit.subscribeProvider(async ({ provider, address, chainId, isConnected }) => {
-                    try {
-                        if (isConnected && provider && address) {
-                            window.ethereum = provider;
-                            window.__bullkarryReownProvider = provider;
+                // Reown's provider subscription keeps the existing Bullkarry UI/data
+                // in sync when the user connects, changes account, or changes chain.
+                if (typeof appKit.subscribeProvider === 'function') {
+                    appKit.subscribeProvider(async () => {
+                        await syncReownWalletState();
+                    });
+                }
 
-                            // Keep the existing Bullkarry wallet/data logic unchanged.
-                            if (Number(chainId) !== 5042002 && appKit.switchNetwork) {
-                                try {
-                                    await appKit.switchNetwork(ARC_TESTNET);
-                                } catch (switchError) {
-                                    console.warn('Arc network switch request:', switchError);
-                                }
-                            }
-
-                            if (typeof window.initializeWallet === 'function') {
-                                await window.initializeWallet(address);
-                            }
-                        } else if (!isConnected && !reownDisconnecting) {
-                            if (typeof window.clearLocalWalletState === 'function') {
-                                window.clearLocalWalletState(false);
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Reown provider update error:', e);
-                    }
-                });
+                // Also listen through the current multi-provider API when available.
+                if (typeof appKit.subscribeProviders === 'function') {
+                    appKit.subscribeProviders(async () => {
+                        await syncReownWalletState();
+                    });
+                }
 
                 // Restore an existing Reown session without requiring a page refresh.
-                try {
-                    if (appKit.getIsConnected?.()) {
-                        const provider = appKit.getWalletProvider?.();
-                        const address = appKit.getAddress?.();
-                        if (provider && address) {
-                            window.ethereum = provider;
-                            window.__bullkarryReownProvider = provider;
-                            if (typeof window.initializeWallet === 'function') {
-                                await window.initializeWallet(address);
-                            }
-                        }
-                    }
-                } catch (restoreError) {
-                    console.warn('Reown session restore error:', restoreError);
-                }
+                await syncReownWalletState();
 
                 return appKit;
             })();
@@ -244,11 +252,11 @@
             } catch (error) {
                 reownInitPromise = null;
                 appKit = null;
+                window.__reownAppKit = null;
                 throw error;
             }
         }
 
-        // Initialize as soon as the page loads so the Connect Wallet button is ready.
         initializeReown().catch((error) => {
             console.error('Reown AppKit initialization failed:', error);
             window.__reownInitError = error;
@@ -258,6 +266,20 @@
             try {
                 const kit = await initializeReown();
                 await kit.open({ view: 'Connect', namespace: 'eip155' });
+
+                // Do not depend on a single Reown callback. After the modal opens,
+                // check the AppKit session briefly so the existing Bullkarry wallet
+                // state updates immediately after the user approves the connection.
+                if (reownSyncTimer) clearInterval(reownSyncTimer);
+                let attempts = 0;
+                reownSyncTimer = setInterval(async () => {
+                    attempts += 1;
+                    await syncReownWalletState();
+                    if (appKit?.getIsConnected?.() || attempts >= 40) {
+                        clearInterval(reownSyncTimer);
+                        reownSyncTimer = null;
+                    }
+                }, 250);
             } catch (error) {
                 console.error('Reown connect failed:', error);
                 const code = error?.code || error?.data?.code || '';
