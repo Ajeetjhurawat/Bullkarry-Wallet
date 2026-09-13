@@ -1589,5 +1589,190 @@
             btn.disabled = false;
         }
     </script>
+
+    <!-- Reown AppKit integration -->
+    <script type="module">
+        import { createAppKit } from "https://esm.sh/@reown/appkit@latest";
+        import { EthersAdapter } from "https://esm.sh/@reown/appkit-adapter-ethers@latest";
+        import { defineChain } from "https://esm.sh/@reown/appkit/networks";
+
+        const REOWN_PROJECT_ID = "c9287f8264a6836a5b67a6016ed69076";
+
+        const arcTestnet = defineChain({
+            id: 5042002,
+            caipNetworkId: "eip155:5042002",
+            chainNamespace: "eip155",
+            name: "Arc Testnet",
+            nativeCurrency: {
+                name: "USDC",
+                symbol: "USDC",
+                decimals: 18
+            },
+            rpcUrls: {
+                default: {
+                    http: ["https://rpc.testnet.arc.network"]
+                }
+            },
+            blockExplorers: {
+                default: {
+                    name: "Arcscan",
+                    url: "https://testnet.arc-scan.org"
+                }
+            }
+        });
+
+        const metadata = {
+            name: "Bullkarry",
+            description: "Bullkarry on-chain wallet",
+            url: window.location.origin,
+            icons: []
+        };
+
+        const reownAppKit = createAppKit({
+            adapters: [new EthersAdapter()],
+            networks: [arcTestnet],
+            defaultNetwork: arcTestnet,
+            metadata,
+            projectId: REOWN_PROJECT_ID,
+            allWallets: "SHOW",
+            features: {
+                analytics: true,
+                email: true,
+                socials: [
+                    "google", "x", "discord", "github",
+                    "apple", "facebook", "farcaster"
+                ],
+                emailShowWallets: true
+            },
+            themeMode: "dark"
+        });
+
+        window.bullkarryAppKit = reownAppKit;
+
+        function clearWalletUiState() {
+            userAccount = null;
+            isWalletConnected = false;
+            localStorage.removeItem("bullkarry_account");
+
+            if (autoSyncInterval) clearInterval(autoSyncInterval);
+
+            knownTxHashes.clear();
+            isFirstTxLoad = true;
+            liveTokens = [];
+            transactions = [];
+            usdcBalance = 0;
+
+            document.getElementById("walletAddress").innerText = "Connect Wallet";
+            document.getElementById("payWalletAddress").innerText = "Not Connected";
+            document.getElementById("faucetWalletAddress").innerText = "Not Connected";
+            document.getElementById("myRecAddr").value = "Connect wallet to view";
+            document.getElementById("myRecQr").src =
+                "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet";
+
+            document.getElementById("assetsPlaceholder").classList.remove("hidden");
+            document.getElementById("assetsTable").classList.add("hidden");
+            document.getElementById("portfolioListContainer").innerHTML =
+                '<div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>';
+
+            renderBalancesAndAssets();
+            renderTransactionLists();
+
+            const dropdown = document.getElementById("profileDropdown");
+            if (dropdown) dropdown.classList.add("hidden");
+        }
+
+        window.clearWalletUiState = clearWalletUiState;
+
+        async function applyReownState(state) {
+            const connected = !!(state && state.isConnected && state.address);
+            const provider = state && state.provider;
+
+            if (connected && provider) {
+                // Existing Bullkarry code uses ethers v5 + window.ethereum.
+                // Reown's provider is EIP-1193, so this keeps that code compatible.
+                window.ethereum = provider;
+                window.__bullkarryReownProvider = provider;
+
+                closeModal("connectWalletModal");
+                await initializeWallet(state.address);
+
+                userAccount = state.address;
+                isWalletConnected = true;
+                localStorage.setItem("bullkarry_account", state.address);
+            } else if (!connected && (isWalletConnected || userAccount)) {
+                clearWalletUiState();
+            }
+        }
+
+        reownAppKit.subscribeProvider(async (state) => {
+            try {
+                await applyReownState(state);
+            } catch (error) {
+                console.error("Reown provider state error:", error);
+            }
+        });
+
+        reownAppKit.subscribeEvents(({ data }) => {
+            if (data?.event === "ACCOUNT_DISCONNECTED") {
+                clearWalletUiState();
+            }
+        });
+
+        // Restore the Reown session after a page refresh.
+        setTimeout(async () => {
+            try {
+                const address = reownAppKit.getAddress();
+                const provider = reownAppKit.getWalletProvider();
+
+                if (reownAppKit.getIsConnected() && address && provider) {
+                    window.ethereum = provider;
+                    window.__bullkarryReownProvider = provider;
+                    await initializeWallet(address);
+                    userAccount = address;
+                    isWalletConnected = true;
+                    localStorage.setItem("bullkarry_account", address);
+                }
+            } catch (error) {
+                console.error("Reown session restore error:", error);
+            }
+        }, 700);
+
+        // The existing Connect button now opens the real Reown modal.
+        window.connectWalletProvider = function () {
+            reownAppKit.open({
+                view: "Connect",
+                namespace: "eip155"
+            });
+        };
+
+        // The existing Disconnect menu now disconnects the actual Reown session.
+        window.disconnectWallet = async function () {
+            try {
+                if (reownAppKit.adapter?.connectionControllerClient?.disconnect) {
+                    await reownAppKit.adapter.connectionControllerClient.disconnect();
+                } else if (reownAppKit.disconnect) {
+                    await reownAppKit.disconnect();
+                }
+            } catch (error) {
+                console.error("Reown disconnect error:", error);
+            } finally {
+                clearWalletUiState();
+            }
+        };
+
+        // Keep any old inline "open connect wallet modal" call routed to Reown.
+        const oldOpenModal = window.openModal;
+        window.openModal = function (id) {
+            if (id === "connectWalletModal") {
+                reownAppKit.open({
+                    view: "Connect",
+                    namespace: "eip155"
+                });
+                return;
+            }
+            return oldOpenModal(id);
+        };
+    </script>
+
 </body>
 </html>
