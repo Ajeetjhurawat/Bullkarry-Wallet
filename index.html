@@ -119,11 +119,12 @@
 
     <!-- Real Reown AppKit integration for Arc Testnet -->
     <script type="module">
-        import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.8?bundle';
-        import { Ethers5Adapter } from 'https://esm.sh/@reown/appkit-adapter-ethers5@1.7.8?bundle&deps=ethers@5.7.2';
+        import { createAppKit } from 'https://esm.sh/@reown/appkit@1.8.23?bundle';
+        import { defineChain } from 'https://esm.sh/@reown/appkit@1.8.23/networks?bundle';
+        import { Ethers5Adapter } from 'https://esm.sh/@reown/appkit-adapter-ethers5@1.8.23?bundle&deps=ethers@5.7.2';
 
         const REOWN_PROJECT_ID = 'c9287f8264a6836a5b67a6016ed69076';
-        const ARC_TESTNET = {
+        const ARC_TESTNET = defineChain({
             id: 5042002,
             name: 'Arc Testnet',
             caipNetworkId: 'eip155:5042002',
@@ -136,7 +137,7 @@
             blockExplorers: {
                 default: { name: 'Arcscan', url: 'https://testnet.arcscan.app' }
             }
-        };
+        });
 
         let appKit = null;
         let reownDisconnecting = false;
@@ -213,6 +214,7 @@
             }
         } catch (e) {
             console.error('Reown AppKit initialization failed:', e);
+            console.error('Reown AppKit initialization details:', e?.message || e);
             window.__openReownConnect = () => alert('Reown wallet connection could not initialize. Check the Reown Project ID and deployment domain.');
         }
     </script>
