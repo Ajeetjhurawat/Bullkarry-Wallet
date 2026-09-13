@@ -113,14 +113,7 @@
     <!-- Left Sidebar -->
     <div class="w-64 bg-white dark:bg-darkSidebar border-r border-slate-200 dark:border-darkSidebarBorder flex flex-col p-6 hidden md:flex z-10 transition-colors">
         <div class="flex items-center gap-3 mb-10 cursor-pointer" onclick="switchView('dashboard')">
-            <!-- Fast Loading Teal & Black BK Logo (SVG) -->
-            <div class="w-10 h-10 rounded-xl bg-black border border-teal-400/30 flex items-center justify-center shadow-lg shadow-teal-500/10 shrink-0">
-                <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 36H48C52.4 36 56 39.6 56 44C56 48.4 52.4 52 48 52H28V64H48C52.4 64 56 67.6 56 72C56 76.4 52.4 80 48 80H22V36Z" stroke="#00F5B8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M62 36V80" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
-                    <path d="M84 36L65 58L84 80" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
+            <img src="Black and Teal Modern Gym & Fitness YouTube Channel Logo (1).png" alt="Bullkarry" class="w-10 h-10 rounded-xl object-cover shadow-lg border border-slate-700/50 bg-black">
             <span class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Bullkarry</span>
         </div>
         
@@ -149,7 +142,7 @@
             <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-2">Network</p>
             <div class="flex items-center gap-2 mb-2">
                 <div class="w-7 h-7 rounded-md overflow-hidden flex items-center justify-center shadow-sm border border-slate-200 dark:border-[#243048] bg-[#0c1a2e]">
-                    <img src="ARC_NETWORK_LOGO_PLACEHOLDER" alt="Arc Network" class="w-full h-full object-cover" />
+                    <span class="text-teal-400 font-bold text-xs">ARC</span>
                 </div>
                 <span class="font-bold text-slate-900 dark:text-white text-sm">Arc Testnet</span>
             </div>
@@ -188,6 +181,11 @@
                     <div id="profileDropdown" class="hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl shadow-xl z-50 overflow-hidden transition-all origin-top-right">
                         <button onclick="copyHeaderAddress()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
                             <i class="fa-regular fa-copy w-4 text-lg"></i> Copy Address
+                        </button>
+                        <button onclick="connectXAccount()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
+                            <svg class="w-4 h-4 fill-current text-slate-700 dark:text-white" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/>
+                            </svg> Connect X
                         </button>
                         <button onclick="disconnectWallet()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition flex items-center gap-3">
                             <i class="fa-solid fa-right-from-bracket w-4 text-lg"></i> Disconnect
@@ -545,86 +543,75 @@
 
     </div>
 
-    <!-- Reown Connect Wallet Replica Modal -->
+    <!-- Universal Web3 Wallet Modal (MetaMask, OKX, Trust, Injected) -->
     <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[100]">
-        <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-0 relative shadow-2xl text-slate-900 dark:text-white font-sans overflow-hidden border border-slate-200 dark:border-white/5 scale-95">
+        <div class="bg-white dark:bg-[#191a1a] w-full max-w-[340px] rounded-[24px] p-0 relative shadow-2xl text-slate-900 dark:text-white font-sans overflow-hidden border border-slate-200 dark:border-white/5 scale-95 transition-all">
             <div class="flex justify-between items-center p-4 border-b border-slate-100 dark:border-white/5">
-                <button class="text-slate-400 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-regular fa-circle-question"></i></button>
-                <h2 class="text-sm font-semibold">Connect Wallet</h2>
+                <span class="text-xs font-bold uppercase tracking-wider text-teal-500 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span> Web3 Connect
+                </span>
+                <h2 class="text-sm font-semibold">Select Wallet</h2>
                 <button onclick="closeModal('connectWalletModal')" class="text-slate-400 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="p-3 space-y-2">
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center"><i class="fa-solid fa-wave-square text-white"></i></div>
-                        <span class="font-semibold text-sm">WalletConnect</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-bold text-blue-500 dark:text-blue-400 bg-blue-100 dark:bg-blue-400/10 px-1.5 py-0.5 rounded">QR CODE</span>
-                        <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
-                    </div>
-                </button>
-                
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
+                <!-- MetaMask Option -->
+                <button onclick="selectWalletProvider('metamask')" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition border border-transparent hover:border-slate-200 dark:hover:border-white/10 group">
                     <div class="flex items-center gap-3">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-8 h-8 rounded-lg" alt="MetaMask">
-                        <span class="font-semibold text-sm">MetaMask</span>
+                        <div class="text-left">
+                            <span class="font-semibold text-sm block leading-tight">MetaMask</span>
+                            <span class="text-[10px] text-slate-400">Desktop & Mobile</span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-1.5 py-0.5 rounded">INSTALLED</span>
-                        <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
-                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs transition group-hover:translate-x-0.5"></i>
                 </button>
 
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition">
+                <!-- OKX Wallet Option -->
+                <button onclick="selectWalletProvider('okx')" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition border border-transparent hover:border-slate-200 dark:hover:border-white/10 group">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-blue-50 dark:bg-white rounded-lg flex items-center justify-center border border-slate-100 dark:border-none"><i class="fa-solid fa-shield text-blue-500 text-lg"></i></div>
-                        <span class="font-semibold text-sm">Trust Wallet</span>
+                        <div class="w-8 h-8 rounded-lg bg-black border border-white/20 flex items-center justify-center font-black text-white text-xs">
+                            OKX
+                        </div>
+                        <div class="text-left">
+                            <span class="font-semibold text-sm block leading-tight">OKX Wallet</span>
+                            <span class="text-[10px] text-slate-400">Extension & App</span>
+                        </div>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-slate-400 dark:text-gray-500 text-xs"></i>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs transition group-hover:translate-x-0.5"></i>
                 </button>
 
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition mt-2">
-                    <div class="flex items-center gap-3 text-slate-500 dark:text-gray-400">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                        <span class="font-semibold text-sm text-slate-900 dark:text-white">Search Wallet</span>
+                <!-- Trust Wallet Option -->
+                <button onclick="selectWalletProvider('trust')" class="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition border border-transparent hover:border-slate-200 dark:hover:border-white/10 group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-50 dark:bg-white rounded-lg flex items-center justify-center border border-slate-100 dark:border-none">
+                            <i class="fa-solid fa-shield text-blue-500 text-lg"></i>
+                        </div>
+                        <div class="text-left">
+                            <span class="font-semibold text-sm block leading-tight">Trust Wallet</span>
+                            <span class="text-[10px] text-slate-400">Mobile & Extension</span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2 text-slate-400 dark:text-gray-500">
-                        <span class="text-[10px]">80+</span>
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs transition group-hover:translate-x-0.5"></i>
+                </button>
+
+                <!-- Any Detected Injected Web3 Wallet -->
+                <button onclick="selectWalletProvider('injected')" class="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition border border-transparent group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div class="text-left">
+                            <span class="font-semibold text-sm block leading-tight">Browser Wallet</span>
+                            <span class="text-[10px] text-slate-400">Phantom, Brave, Coinbase</span>
+                        </div>
                     </div>
+                    <span class="text-[10px] font-bold text-teal-400 bg-teal-400/10 px-2 py-0.5 rounded">Auto</span>
                 </button>
             </div>
 
-            <div class="flex items-center gap-3 px-4 py-1">
-                <div class="h-px bg-slate-200 dark:bg-white/10 flex-1"></div>
-                <span class="text-xs text-slate-400 dark:text-gray-500 font-medium">or</span>
-                <div class="h-px bg-slate-200 dark:bg-white/10 flex-1"></div>
-            </div>
-
-            <div class="p-4 space-y-3">
-                <div class="relative flex items-center">
-                    <i class="fa-regular fa-envelope absolute left-4 text-slate-400 dark:text-gray-400 text-sm"></i>
-                    <input type="email" placeholder="Email" class="w-full bg-transparent border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-slate-400 dark:focus:border-white/30 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500">
-                </div>
-                
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition text-sm font-semibold">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"> Continue with Google
-                </button>
-
-                <div class="flex justify-center gap-2 pt-2">
-                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><i class="fa-brands fa-discord text-[#5865F2]"></i></button>
-                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fa-solid fa-n text-purple-500"></i></button>
-                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fa-brands fa-github"></i></button>
-                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fa-solid fa-ellipsis"></i></button>
-                </div>
-            </div>
-
-            <div class="p-3 pt-0 text-center flex items-center justify-center gap-1 opacity-50 hover:opacity-100 transition cursor-pointer">
-                <span class="text-[10px] text-slate-500 dark:text-gray-400">UX by</span>
-                <i class="fa-solid fa-wallet text-slate-500 dark:text-gray-400 text-[10px]"></i>
-                <span class="text-[10px] text-slate-500 dark:text-gray-400 font-bold">reown</span>
+            <div class="p-3 pt-0 text-center border-t border-slate-100 dark:border-white/5 mt-2">
+                <p class="text-[10px] text-slate-400 mt-2">Connecting automatically switches to <b>Arc Testnet</b></p>
             </div>
         </div>
     </div>
@@ -776,19 +763,75 @@
         let knownTxHashes = new Set();
         let isFirstTxLoad = true;
 
+        // Auto login on session recall
         window.addEventListener('DOMContentLoaded', async () => {
-            if (typeof window.ethereum !== 'undefined') {
+            const savedAccount = localStorage.getItem('bullkarry_account');
+            const activeProvider = getWeb3Provider();
+            if (savedAccount && activeProvider) {
                 try {
-                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                    if (accounts.length > 0) {
-                        await initializeWallet(accounts[0]);
+                    const accounts = await activeProvider.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0 && accounts[0].toLowerCase() === savedAccount.toLowerCase()) {
+                        await initializeWallet(savedAccount);
                     }
                 } catch (e) {
-                    console.error("Session auto-recall error", e);
+                    console.error("Session recall error", e);
                 }
             }
             loadPaymentRequestFromURL();
         });
+
+        // Universal Provider Selector (MetaMask, OKX, Trust, Any Web3 Injected)
+        function getWeb3Provider(target) {
+            if (target === 'okx' && window.okxwallet) return window.okxwallet;
+            if (target === 'trust' && (window.trustwallet || window.ethereum?.isTrust)) return window.trustwallet || window.ethereum;
+            if (target === 'metamask' && (window.ethereum?.isMetaMask || window.ethereum?.providers?.find(p => p.isMetaMask))) {
+                return window.ethereum.providers ? window.ethereum.providers.find(p => p.isMetaMask) : window.ethereum;
+            }
+            if (window.ethereum?.providers?.length) return window.ethereum.providers[0];
+            return window.ethereum || window.okxwallet || window.trustwallet || null;
+        }
+
+        // Connect wallet with Auto-Switch to Arc Testnet
+        async function selectWalletProvider(target) {
+            const provider = getWeb3Provider(target);
+            if (!provider) {
+                alert(`Selected wallet is not installed. Please install it or use MetaMask / Trust Wallet.`);
+                return;
+            }
+
+            try {
+                // Request Accounts
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
+                if (!accounts || accounts.length === 0) return;
+
+                // Ensure Arc Testnet is selected (Chain ID: 5042002 -> 0x4cef02)
+                try {
+                    await provider.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x4cef02' }],
+                    });
+                } catch (switchError) {
+                    if (switchError.code === 4902) {
+                        await provider.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0x4cef02',
+                                chainName: 'Arc Testnet',
+                                nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+                                rpcUrls: ['https://rpc-testnet.arc-scan.org'],
+                                blockExplorerUrls: ['https://testnet.arc-scan.org']
+                            }]
+                        });
+                    }
+                }
+
+                closeModal('connectWalletModal');
+                await initializeWallet(accounts[0]);
+            } catch (err) {
+                console.error("Wallet connection failed:", err);
+                alert("Connection failed or cancelled by user");
+            }
+        }
 
         async function initializeWallet(account) {
             userAccount = account;
@@ -812,19 +855,15 @@
         }
 
         async function syncAllOnChainData() {
-            if (!userAccount || !isWalletConnected || typeof window.ethereum === 'undefined') return;
+            const injected = getWeb3Provider();
+            if (!userAccount || !isWalletConnected || !injected) return;
 
             try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const provider = new ethers.providers.Web3Provider(injected);
 
-                // Arc uses native USDC as the gas asset. Keep this native balance as
-                // the single USDC balance; do not add an ERC-20 copy of the same asset.
                 const balanceWei = await provider.getBalance(userAccount).catch(() => ethers.BigNumber.from(0));
                 usdcBalance = parseFloat(ethers.utils.formatEther(balanceWei));
 
-                // First try Arcscan's address token index. This discovers tokens that
-                // are NOT hard-coded in TOKEN_CONTRACTS. Fall back to the known contracts
-                // only if the index is temporarily unavailable.
                 const discovered = await fetchAllWalletAssets(provider);
                 liveTokens = discovered;
 
@@ -837,7 +876,6 @@
             }
         }
 
-        // Official Arcscan Testnet API documented for chain 5042002.
         const ARCSCAN_TESTNET_API = "https://api-testnet.arc-scan.org/api";
         const ARCSCAN_TESTNET_V1 = "https://api-testnet.arc-scan.org/v1";
         const ARC_NATIVE_USDC_PRECOMPILE = "0x3600000000000000000000000000000000000000";
@@ -858,57 +896,14 @@
             return address.substring(0, 6) + "..." + address.substring(address.length - 4);
         }
 
-        function formatTokenAmount(raw, decimals) {
-            try {
-                const value = ethers.utils.formatUnits(String(raw || "0"), Number(decimals || 18));
-                return Number(value).toLocaleString(undefined, { maximumFractionDigits: 8 });
-            } catch (_) {
-                return "0";
-            }
-        }
-
-        function normalizeTokenRecord(row) {
-            const address = String(
-                row.token_address || row.address || row.contract_address || row.tokenAddress || ""
-            );
-            const lower = address.toLowerCase();
-            if (!address || lower === ARC_NATIVE_USDC_PRECOMPILE) return null;
-
-            const money = row.balance && typeof row.balance === "object" ? row.balance : null;
-            const raw = money?.raw ?? row.balance_raw ?? row.raw_balance ?? row.raw ?? row.balance ?? "0";
-            const decimals = Number(row.decimals ?? row.token_decimals ?? row.tokenDecimal ?? money?.decimals ?? 18);
-            const symbol = row.symbol || row.token_symbol || row.tokenSymbol || money?.symbol || "TOKEN";
-            const name = row.name || row.token_name || row.tokenName || symbol;
-            const formatted = money?.formatted;
-            const balance = formatted !== undefined && formatted !== null
-                ? Number(String(formatted).replace(/,/g, ""))
-                : Number(ethers.utils.formatUnits(String(raw), decimals));
-
-            if (!Number.isFinite(balance) || balance <= 0) return null;
-
-            return {
-                name,
-                symbol,
-                address,
-                decimals,
-                balance,
-                color: "bg-emerald-600"
-            };
-        }
-
         async function fetchAllWalletAssets(provider) {
             const byAddress = new Map();
 
-            // Known contracts are still included, but they are no longer the only
-            // source. We also discover every ERC-20 contract that has transferred
-            // to/from this wallet on Arc Testnet, then read its real balanceOf().
             for (const key of Object.keys(TOKEN_CONTRACTS)) {
                 const t = TOKEN_CONTRACTS[key];
                 byAddress.set(t.address.toLowerCase(), { ...t });
             }
 
-            // Discover token contracts from the wallet's actual on-chain transfer history.
-            // This avoids relying on a fragile/undocumented token-inventory endpoint.
             try {
                 const blockResponse = await fetch(`${ARCSCAN_TESTNET_API}?module=proxy&action=eth_blockNumber&_t=${Date.now()}`, { cache: "no-store" });
                 const blockJson = await blockResponse.json();
@@ -950,8 +945,6 @@
                 console.warn("Token contract discovery failed:", err);
             }
 
-            // Read the current balance directly from each ERC-20 contract. This is
-            // authoritative for quantity and automatically removes zero-balance assets.
             const entries = [...byAddress.values()];
             const results = await Promise.all(entries.map(async t => {
                 try {
@@ -964,7 +957,6 @@
                     const balance = Number(ethers.utils.formatUnits(rawBal, dec));
                     return { ...t, decimals: dec, balance };
                 } catch (err) {
-                    console.warn("Token balance read failed:", t.symbol, t.address, err);
                     return null;
                 }
             }));
@@ -1056,9 +1048,6 @@
             if (!userAccount) return;
 
             try {
-                // txlist = every indexed normal transaction involving this address.
-                // txlistinternal = value-carrying internal transfers.
-                // tokentx = ERC-20 transfer history.
                 const [normal, internal] = await Promise.all([
                     arcscanRequest({
                         module: "account", action: "txlist", address: userAccount,
@@ -1070,7 +1059,6 @@
                     }).catch(err => { console.warn("Internal tx history unavailable", err); return []; })
                 ]);
 
-                // tokentx has a block-span limit, so scan backward in safe chunks.
                 let tokenTransfers = [];
                 try {
                     const blockResponse = await fetch(`${ARCSCAN_TESTNET_API}?module=proxy&action=eth_blockNumber&_t=${Date.now()}`, { cache: "no-store" });
@@ -1091,7 +1079,6 @@
                     console.warn("Token transfer history unavailable", err);
                 }
 
-                // Resolve missing token symbols/decimals from the official typed token endpoint.
                 const tokenAddresses = [...new Set(tokenTransfers.map(t => t.contractAddress || t.contract_address || t.token_address).filter(Boolean))];
                 const metadataEntries = await Promise.all(tokenAddresses.slice(0, 50).map(async address => [address, await getTokenMetadata(address)]));
                 const metadata = new Map(metadataEntries.map(([address, meta]) => [address.toLowerCase(), meta]));
@@ -1118,9 +1105,6 @@
                     return (b.timestamp || 0) - (a.timestamp || 0);
                 });
 
-                // Show the receive popup only for transactions that appeared
-                // since the previous successful history scan. Initial history load
-                // is silent so an old receive does not trigger a popup.
                 if (!isFirstTxLoad) {
                     const newReceived = unique.filter(t =>
                         t.type === "Received" &&
@@ -1179,7 +1163,6 @@
             renderTransactionLists();
         }
 
-
         function updatePortfolioDonut(assetCount, heldTokens = []) {
             const host = document.getElementById("portfolioOrbitGraphic");
             if (!host) return;
@@ -1192,12 +1175,8 @@
             ];
 
             host.innerHTML = '<div class="portfolio-orbit-sweep"></div>';
-
             if (total === 0) return;
 
-            // This graphic intentionally represents asset presence/count, not fake
-            // percentage allocation. Token quantities use different units and
-            // cannot be compared without trustworthy market prices.
             const items = [
                 { symbol: "USDC", color: palette[0], core: true },
                 ...heldTokens.map((t, i) => ({
@@ -1228,7 +1207,7 @@
 
         function renderBalancesAndAssets() {
             const heldTokens = liveTokens.filter(t => Number(t.balance) > 0);
-            const assetCount = 1 + heldTokens.length; // native USDC + ERC-20 assets
+            const assetCount = 1 + heldTokens.length;
 
             document.getElementById('balanceDisplay').innerText = usdcBalance.toFixed(2);
             document.getElementById('availBal').innerText = usdcBalance.toFixed(2) + " USDC";
@@ -1554,11 +1533,8 @@
             const btn = document.getElementById('reqPayBtn');
 
             if (!isWalletConnected) {
-                if (typeof window.ethereum === 'undefined') return alert("MetaMask or Web3 Wallet not found");
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    if (accounts.length > 0) await initializeWallet(accounts[0]);
-                } catch (e) { console.error(e); return; }
+                openModal('connectWalletModal');
+                return;
             }
             if (!userAccount) return;
 
@@ -1567,7 +1543,8 @@
             btn.disabled = true;
 
             try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const injected = getWeb3Provider();
+                const provider = new ethers.providers.Web3Provider(injected);
                 const signer = provider.getSigner();
                 let tx;
                 if (token === 'USDC' || !TOKEN_CONTRACTS[token]) {
@@ -1649,18 +1626,6 @@
             }
         });
 
-        async function connectWalletProvider() {
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    if (accounts.length > 0) {
-                        closeModal('connectWalletModal');
-                        await initializeWallet(accounts[0]);
-                    }
-                } catch (e) { console.error(e); }
-            } else { alert("MetaMask or Web3 Wallet not found"); }
-        }
-
         window.addEventListener('click', (e) => {
             const container = document.getElementById('profileMenuContainer');
             const dropdown = document.getElementById('profileDropdown');
@@ -1682,7 +1647,8 @@
             btn.disabled = true;
 
             try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const injected = getWeb3Provider();
+                const provider = new ethers.providers.Web3Provider(injected);
                 const signer = provider.getSigner();
 
                 let tx;
@@ -1698,8 +1664,6 @@
 
                 const confirmedTx = await tx.wait();
 
-                // Show the confirmed transaction immediately. Arcscan's indexer can
-                // take a few seconds to expose a just-mined transaction.
                 addOptimisticTransaction(
                     confirmedTx,
                     amt,
@@ -1707,7 +1671,6 @@
                     to
                 );
 
-                // Reconcile with the explorer/indexer in the background.
                 setTimeout(() => {
                     syncAllOnChainData().catch(err =>
                         console.error("Post-send history sync error:", err)
@@ -1738,7 +1701,8 @@
             btn.disabled = true;
 
             try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const injected = getWeb3Provider();
+                const provider = new ethers.providers.Web3Provider(injected);
                 const signer = provider.getSigner();
                 const parsedAmt = ethers.utils.parseEther((price / 1000).toString());
                 const tx = await signer.sendTransaction({
