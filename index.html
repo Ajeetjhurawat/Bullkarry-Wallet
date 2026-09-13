@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Bullkarry Wallet</title>
+    <!-- DIRECT_WALLET_BUILD_V12 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -24,7 +25,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .donut-chart {
             background: conic-gradient(#334155 0% 100%);
@@ -108,35 +109,6 @@
         }
 
         .modal.active { display: flex; }
-        .wallet-provider-list { max-height: 360px; overflow-y: auto; }
-        .wallet-provider-btn { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid #243048; border-radius: 14px; background: #0f1624; color: inherit; transition: .18s ease; text-align: left; }
-        .wallet-provider-btn:hover { border-color: #3b82f6; transform: translateY(-1px); }
-        .wallet-provider-icon { width: 38px; height: 38px; border-radius: 11px; object-fit: cover; background: #fff; flex: 0 0 auto; }
-        .wallet-qr { width: 150px; height: 150px; border-radius: 16px; background: #fff; padding: 8px; }
-        .premium-payment-card { background: radial-gradient(circle at 100% 0%, rgba(59,130,246,.10), transparent 38%), linear-gradient(145deg, rgba(255,255,255,.98), rgba(248,250,252,.92)); }
-        .dark .premium-payment-card { background: radial-gradient(circle at 100% 0%, rgba(59,130,246,.16), transparent 40%), linear-gradient(145deg, rgba(22,31,48,.98), rgba(15,22,36,.98)); }
-        .payment-period-label { display:flex; align-items:center; gap:8px; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#64748b; }
-        .dark .payment-period-label { color:#94a3b8; }
-        .payment-period-dot { width:7px; height:7px; border-radius:999px; background:#00d182; box-shadow:0 0 0 4px rgba(0,209,130,.08); }
-        .usdc-mark { width:28px; height:28px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#2775ca,#1f5fae); color:#fff; font-size:15px; font-weight:900; border:2px solid rgba(255,255,255,.55); box-shadow:0 6px 16px rgba(39,117,202,.25); }
-        .payment-detail { font-size:11px; font-weight:700; letter-spacing:.01em; }
-        .refund-detail { color:#ef4444; }
-        .net-detail { color:#64748b; }
-        .dark .net-detail { color:#94a3b8; }
-        .payment-compare { font-size:10px; font-weight:800; letter-spacing:.01em; }
-        .network-card { flex-shrink:0; width: 100%; max-width: 198px; }
-        .payment-stat-card { position: relative; overflow: hidden; min-height: 190px; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
-        .payment-stat-card:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(0,0,0,.12); }
-        .payment-stat-value { line-height: 1.05; }
-        .payment-net-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; padding-top:12px; border-top:1px solid rgba(148,163,184,.16); }
-        .payment-usdc-symbol { width:30px; height:30px; }
-        .payment-summary-card { min-height: 128px; }
-        .payment-stat-value { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.035em; }
-        .payment-stat-card::after { content: ""; position: absolute; inset: auto -28px -42px auto; width: 110px; height: 110px; border-radius: 50%; background: rgba(59,130,246,.07); pointer-events: none; }
-        .refund-status-gap { margin-left: 8px; padding-left: 16px; border-left: 1px solid rgba(148,163,184,.18); display:block; width:100%; }
-        @media (min-width: 768px) { .network-card { padding: 10px !important; } .network-card .network-logo { width: 28px !important; height: 28px !important; } .network-card .network-title { font-size: 11px !important; } .network-card .network-status { font-size: 10px !important; } }
-        @media (max-width: 639px) { .wallet-provider-list { max-height: 300px; } .wallet-qr { width: 132px; height: 132px; } }
-
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
@@ -146,7 +118,129 @@
         }
     </style>
 
-    <!-- Wallet connection: EIP-6963 multi-wallet discovery + mobile wallet handoff. -->
+    <!-- Direct injected EVM wallet connection. -->
+    <script>
+        const ARC_TESTNET = {
+            chainId: '0x4cef52',
+            chainName: 'Arc Testnet',
+            nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
+            rpcUrls: ['https://rpc.testnet.arc.network'],
+            blockExplorerUrls: ['https://testnet.arcscan.app']
+        };
+
+        let injectedWalletProvider = null;
+        let walletListenersAttachedTo = null;
+        let walletDiscoveryStarted = false;
+        const discoveredEvmProviders = [];
+
+        // EIP-6963 lets the page discover installed browser wallets without
+        // depending on a third-party connection service.
+        function startWalletDiscovery() {
+            if (walletDiscoveryStarted) return;
+            walletDiscoveryStarted = true;
+            window.addEventListener('eip6963:announceProvider', (event) => {
+                const provider = event && event.detail && event.detail.provider;
+                if (!provider || discoveredEvmProviders.includes(provider)) return;
+                discoveredEvmProviders.push(provider);
+                if (!injectedWalletProvider && provider.isMetaMask) injectedWalletProvider = provider;
+            });
+            try { window.dispatchEvent(new Event('eip6963:requestProvider')); } catch (_) {}
+        }
+
+        function getInjectedWalletProvider() {
+            startWalletDiscovery();
+            if (injectedWalletProvider) return injectedWalletProvider;
+
+            const eth = window.ethereum;
+            if (eth) {
+                if (Array.isArray(eth.providers)) {
+                    injectedWalletProvider = eth.providers.find(p => p && p.isMetaMask) || eth.providers[0] || null;
+                } else {
+                    injectedWalletProvider = eth;
+                }
+            }
+
+            if (!injectedWalletProvider && discoveredEvmProviders.length) {
+                injectedWalletProvider = discoveredEvmProviders.find(p => p && p.isMetaMask) || discoveredEvmProviders[0];
+            }
+            return injectedWalletProvider;
+        }
+
+        async function waitForInjectedWallet(timeoutMs = 2500) {
+            const existing = getInjectedWalletProvider();
+            if (existing) return existing;
+
+            return new Promise(resolve => {
+                const started = Date.now();
+                const timer = setInterval(() => {
+                    const provider = getInjectedWalletProvider();
+                    if (provider || Date.now() - started >= timeoutMs) {
+                        clearInterval(timer);
+                        resolve(provider || null);
+                    }
+                }, 100);
+            });
+        }
+
+        async function ensureArcTestnet(provider) {
+            if (!provider) return false;
+            const current = await provider.request({ method: 'eth_chainId' });
+            if (String(current).toLowerCase() === ARC_TESTNET.chainId.toLowerCase()) return true;
+
+            try {
+                await provider.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: ARC_TESTNET.chainId }]
+                });
+                return true;
+            } catch (switchError) {
+                // 4902 means the wallet does not know Arc Testnet yet.
+                if (switchError && (switchError.code === 4902 || switchError.code === -32603)) {
+                    await provider.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [ARC_TESTNET]
+                    });
+                    return true;
+                }
+                throw switchError;
+            }
+        }
+
+        function attachWalletProviderListeners(provider) {
+            if (!provider || typeof provider.on !== 'function' || walletListenersAttachedTo === provider) return;
+            walletListenersAttachedTo = provider;
+
+            provider.on('accountsChanged', async (accounts) => {
+                if (Array.isArray(accounts) && accounts.length) {
+                    await initializeWallet(accounts[0]);
+                } else {
+                    clearLocalWalletState(false);
+                }
+            });
+
+            provider.on('chainChanged', async () => {
+                if (userAccount) await initializeWallet(userAccount);
+            });
+
+            provider.on('disconnect', () => clearLocalWalletState(false));
+        }
+
+        async function restoreInjectedWalletSession() {
+            const provider = await waitForInjectedWallet(1500);
+            if (!provider) return;
+            attachWalletProviderListeners(provider);
+            try {
+                const accounts = await provider.request({ method: 'eth_accounts' });
+                if (Array.isArray(accounts) && accounts.length) await initializeWallet(accounts[0]);
+            } catch (e) {
+                console.warn('Wallet session restore failed:', e);
+            }
+        }
+
+        startWalletDiscovery();
+        window.addEventListener('DOMContentLoaded', restoreInjectedWalletSession);
+    </script>
+
 </head>
 <body class="h-screen flex overflow-hidden bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-50 transition-colors duration-200">
 
@@ -177,9 +271,6 @@
             <button onclick="switchView('transactions')" id="nav-transactions" class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition">
                 <i class="fa-solid fa-list-ul w-5"></i> Transactions
             </button>
-            <button onclick="switchView('payments')" id="nav-payments" class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition">
-                <i class="fa-solid fa-money-check-dollar text-emerald-500 dark:text-emerald-400 w-5"></i> Payments
-            </button>
             <button onclick="switchView('faucet')" id="nav-faucet" class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition">
                 <i class="fa-solid fa-droplet text-blue-500 dark:text-blue-400 w-5"></i> Faucet
             </button>
@@ -188,26 +279,26 @@
             </button>
         </nav>
 
-        <div class="mt-auto bg-slate-50 dark:bg-[#121927] p-3 rounded-2xl border border-slate-200 dark:border-darkSidebarBorder transition-colors network-card">
-            <p class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Network</p>
-            <div class="flex items-center gap-2 mb-1.5">
-                <div class="w-6 h-6 rounded-md overflow-hidden flex items-center justify-center shadow-sm border border-slate-200 dark:border-[#243048] bg-[#0c1a2e] network-logo">
+        <div class="mt-auto bg-slate-50 dark:bg-[#121927] p-4 rounded-2xl border border-slate-200 dark:border-darkSidebarBorder transition-colors">
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-2">Network</p>
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-7 h-7 rounded-md overflow-hidden flex items-center justify-center shadow-sm border border-slate-200 dark:border-[#243048] bg-[#0c1a2e]">
                     <img src="data:image/png;base64,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" alt="Arc Network" class="w-full h-full object-cover" />
                 </div>
-                <span class="font-bold text-slate-900 dark:text-white text-xs network-title">Arc Testnet</span>
+                <span class="font-bold text-slate-900 dark:text-white text-sm">Arc Testnet</span>
             </div>
-            <div class="network-status flex justify-between text-[11px] text-slate-500 dark:text-slate-400">
+            <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400">
                 <span>Status</span>
-                <span class="text-emerald-500 dark:text-emerald-400 font-semibold">● Online</span>
+                <span class="text-emerald-500 dark:text-emerald-400 font-medium">● Online</span>
             </div>
         </div>
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors pb-24 md:pb-0">
+    <div id="mainScrollContainer" class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors pb-24 md:pb-0">
         
-        <!-- Header: shown on dashboard only; inner pages start directly at the top -->
-        <div id="mainHeader" class="flex flex-wrap justify-between items-center gap-3 p-4 md:p-8 pb-4">
+        <!-- Header -->
+        <div class="flex flex-wrap justify-between items-center gap-3 p-4 md:p-8 pb-4">
             <div class="flex items-center gap-3 min-w-0">
                 <div class="w-9 h-9 rounded-lg bg-black border border-teal-400/30 flex items-center justify-center shrink-0 md:hidden">
                     <svg class="w-6 h-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -405,7 +496,7 @@
         </div>
 
         <!-- VIEW 2: CREATE PAYMENT LINK -->
-        <div id="paymentLinkView" class="p-4 md:p-8 pt-4 md:pt-6 hidden">
+        <div id="paymentLinkView" class="p-4 md:p-8 pt-2 hidden">
             <button onclick="switchView('dashboard')" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 flex items-center gap-2 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg w-fit transition">
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
             </button>
@@ -557,130 +648,59 @@
         </div>
 
         <!-- VIEW 4: TRANSACTIONS -->
-        <div id="transactionsView" class="p-4 md:p-8 pt-5 md:pt-8 hidden">
-            <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mb-5 text-slate-900 dark:text-white">All On-Chain Transactions</h2>
+        <div id="transactionsView" class="p-4 md:p-8 pt-2 hidden">
+            <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white"><span class="text-emerald-500">✓</span> All On-Chain Transactions</h2>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm overflow-x-auto">
-                <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-[1.1fr_1fr_1.35fr_112px_112px] gap-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase min-w-[720px]">
+                <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase min-w-[500px]">
                     <div>Type</div>
                     <div>Asset</div>
                     <div>Counterparty</div>
-                    <div class="text-center">Refund</div>
-                    <div class="text-center">Status</div>
+                    <div class="text-right">Status</div>
                 </div>
-                <div class="divide-y divide-slate-100 dark:divide-[#243048] min-w-[780px]" id="fullTxHistory">
+                <div class="divide-y divide-slate-100 dark:divide-[#243048] min-w-[500px]" id="fullTxHistory">
                     <div class="p-8 text-center text-slate-500 text-xs">Connect wallet to view history</div>
                 </div>
             </div>
         </div>
 
-        <!-- VIEW 5: PAYMENTS -->
-        <div id="paymentsView" class="p-4 md:p-8 pt-5 md:pt-8 hidden">
-            <div class="flex items-start justify-between gap-4 mb-7">
-                <div>
-                    <div class="payment-period-label mb-2"><span class="payment-period-dot"></span><span>Payment Center</span></div>
-                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Payments</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">Incoming payments, earnings and refunds</p>
-                </div>
-                <button onclick="refreshPayments()" id="paymentsRefreshBtn" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-[#243048] bg-white dark:bg-darkCard text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i class="fa-solid fa-rotate-right mr-1" id="paymentsRefreshIcon"></i> Refresh
-                </button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="payment-stat-card premium-payment-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="payment-period-label"><span class="payment-period-dot"></span><span>Today Earning</span></div>
-                        <span class="usdc-mark payment-usdc-symbol" aria-label="USDC">$</span>
-                    </div>
-                    <p id="paymentsTodayReceived" class="payment-stat-value text-4xl font-black text-emerald-400 mt-5">0.00</p>
-                    <div class="flex items-center justify-between gap-3 mt-3"><p id="paymentsTodayRefund" class="payment-detail refund-detail">Refunded: 0.00</p><p id="paymentsTodayNet" class="payment-detail net-detail">Net: 0.00</p></div>
-                    <p id="paymentsTodayCompare" class="payment-compare mt-3">—</p>
-                </div>
-                <div class="payment-stat-card premium-payment-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="payment-period-label"><span class="payment-period-dot"></span><span>Yesterday Earning</span></div>
-                        <span class="usdc-mark payment-usdc-symbol" aria-label="USDC">$</span>
-                    </div>
-                    <p id="paymentsYesterdayReceived" class="payment-stat-value text-4xl font-black text-emerald-400 mt-5">0.00</p>
-                    <div class="flex items-center justify-between gap-3 mt-3"><p id="paymentsYesterdayRefund" class="payment-detail refund-detail">Refunded: 0.00</p><p id="paymentsYesterdayNet" class="payment-detail net-detail">Net: 0.00</p></div>
-                    <p id="paymentsYesterdayCompare" class="payment-compare mt-3">—</p>
-                </div>
-                <div class="payment-stat-card premium-payment-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="payment-period-label"><span class="payment-period-dot"></span><span>Total Earn this Month</span></div>
-                        <span class="usdc-mark payment-usdc-symbol" aria-label="USDC">$</span>
-                    </div>
-                    <p id="paymentsMonthReceived" class="payment-stat-value text-4xl font-black text-emerald-400 mt-5">0.00</p>
-                    <div class="flex items-center justify-between gap-3 mt-3"><p id="paymentsMonthRefund" class="payment-detail refund-detail">Refunded: 0.00</p><p id="paymentsMonthNet" class="payment-detail net-detail">Net: 0.00</p></div>
-                    <p id="paymentsMonthCompare" class="payment-compare mt-3">—</p>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl overflow-hidden shadow-sm">
-                <div class="p-4 border-b border-slate-200 dark:border-[#243048] flex items-center justify-between">
-                    <div>
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Income Breakdown</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Live transaction counts and refund ratio from the loaded on-chain history.</p>
-                    </div>
-                </div>
-                <div id="paymentsSummary" class="p-4 text-xs text-slate-500 dark:text-slate-400">Connect wallet to view payment data.</div>
-            </div>
-        </div>
-
-        <!-- VIEW 6: STORE -->
-        <div id="merchantView" class="p-4 md:p-8 pt-4 md:pt-6 hidden">
-            <div class="flex items-start justify-between gap-4 mb-6">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Store</h2>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">On-chain Digital Products</p>
-                </div>
-                <button onclick="renderMerchantSales()" id="merchantSalesRefreshBtn" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-[#243048] bg-white dark:bg-darkCard text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i class="fa-solid fa-rotate-right mr-1" id="merchantSalesRefreshIcon"></i> Refresh
-                </button>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-7">
+        <!-- VIEW 5: STORE -->
+        <div id="merchantView" class="p-4 md:p-8 pt-2 hidden">
+            <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white"><span class="text-emerald-500">✓</span> On-chain Digital Product</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-4 rounded-2xl text-center shadow-sm">
                     <div class="h-28 bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 flex items-center justify-center"><i class="fa-solid fa-shirt text-3xl text-blue-500"></i></div>
                     <h4 class="font-bold text-sm text-slate-900 dark:text-white">Bullkarry Tee</h4>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">10 USDC each</p>
-                    <select id="qty-bullkarry-tee" class="w-full mb-2 bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] rounded-lg px-2 py-2 text-xs font-semibold text-slate-900 dark:text-white">
-                        <option value="1">Qty 1</option><option value="2">Qty 2</option><option value="3">Qty 3</option><option value="4">Qty 4</option><option value="5">Qty 5</option><option value="10">Qty 10</option>
-                    </select>
-                    <button onclick="buyStoreItem('Bullkarry Tee', 10, document.getElementById('qty-bullkarry-tee').value, this)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-bold transition">Buy</button>
+                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">10 USDC</p>
+                    <button onclick="buyStoreItem('Bullkarry Tee', 10)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-bold transition">Buy</button>
                 </div>
                 <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-4 rounded-2xl text-center shadow-sm">
                     <div class="h-28 bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 flex items-center justify-center"><i class="fa-solid fa-image text-3xl text-purple-500"></i></div>
                     <h4 class="font-bold text-sm text-slate-900 dark:text-white">Genesis NFT</h4>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">25 USDC each</p>
-                    <select id="qty-genesis-nft" class="w-full mb-2 bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] rounded-lg px-2 py-2 text-xs font-semibold text-slate-900 dark:text-white">
-                        <option value="1">Qty 1</option><option value="2">Qty 2</option><option value="3">Qty 3</option><option value="4">Qty 4</option><option value="5">Qty 5</option><option value="10">Qty 10</option>
-                    </select>
-                    <button onclick="buyStoreItem('Genesis NFT', 25, document.getElementById('qty-genesis-nft').value, this)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-bold transition">Buy</button>
+                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">25 USDC</p>
+                    <button onclick="buyStoreItem('Genesis NFT', 25)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-bold transition">Buy</button>
                 </div>
             </div>
 
-            <!-- MERCHANT PURCHASE HISTORY -->
-            <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl overflow-hidden shadow-sm">
-                <div class="p-4 md:p-5 border-b border-slate-200 dark:border-[#243048] flex items-center justify-between gap-3">
-                    <div>
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Merchant Purchase History</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Buyer, NFT, quantity and funds received — read from confirmed on-chain purchases.</p>
-                    </div>
-                    <span id="merchantSalesCount" class="text-[10px] font-bold px-2 py-1 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">0 sales</span>
+            <div class="mt-8 bg-white/5 dark:bg-[#0d131f] border border-slate-200 dark:border-slate-800 rounded-3xl p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <div><h3 class="font-bold text-slate-900 dark:text-white">Sales & Inventory</h3><p class="text-xs text-slate-500 dark:text-slate-400">On-chain purchase records and remaining supply</p></div>
                 </div>
-                <div id="merchantSalesSummary" class="grid grid-cols-3 gap-2 p-4 border-b border-slate-200 dark:border-[#243048]"></div>
-                <div id="merchantSalesHistory" class="p-4 text-xs text-slate-500 dark:text-slate-400">Loading purchase history…</div>
+                <div id="storeInventory" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                <div id="storeSalesHistory" class="mt-5 space-y-2 text-xs text-slate-500 dark:text-slate-400">No purchases recorded in this session.</div>
             </div>
         </div>
 
     </div>
 
     <!-- Mobile Bottom Navigation -->
-    <div class="fixed bottom-0 left-0 right-0 md:hidden bg-white dark:bg-darkSidebar border-t border-slate-200 dark:border-darkSidebarBorder flex justify-around items-center py-2 z-40 overflow-x-auto" style="padding-bottom: env(safe-area-inset-bottom);">
+    <div class="fixed bottom-0 left-0 right-0 md:hidden bg-white dark:bg-darkSidebar border-t border-slate-200 dark:border-darkSidebarBorder flex justify-around items-center py-2 z-40" style="padding-bottom: env(safe-area-inset-bottom);">
         <button onclick="switchView('dashboard')" id="mnav-dashboard" class="flex flex-col items-center gap-1 px-3 py-1 text-blue-600 dark:text-blue-400">
             <i class="fa-solid fa-house text-lg"></i>
             <span class="text-[10px] font-semibold">Home</span>
         </button>
-        <button onclick="switchView('payments')" id="mnav-payments" class="flex flex-col items-center gap-1 px-3 py-1 text-slate-500 dark:text-slate-400">
-            <i class="fa-solid fa-money-check-dollar text-lg"></i>
+        <button onclick="switchView('paymentLink')" id="mnav-paymentLink" class="flex flex-col items-center gap-1 px-3 py-1 text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-money-bill-transfer text-lg"></i>
             <span class="text-[10px] font-semibold">Payments</span>
         </button>
         <button onclick="openModal('receiveModal')" class="flex flex-col items-center justify-center -mt-6">
@@ -694,37 +714,6 @@
             <i class="fa-solid fa-store text-lg"></i>
             <span class="text-[10px] font-semibold">Store</span>
         </button>
-    </div>
-
-    <!-- Wallet Connection Modal -->
-    <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/60 dark:bg-black/80 z-[120]">
-        <div class="bg-white dark:bg-[#161f30] border border-slate-200 dark:border-[#243048] w-full max-w-md rounded-3xl p-5 relative shadow-2xl">
-            <button onclick="closeModal('connectWalletModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <div class="text-center mb-4">
-                <div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-blue-500/20"><i class="fa-solid fa-wallet text-xl"></i></div>
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Connect Wallet</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Choose a wallet, scan the QR, or open Bullkarry inside your wallet app</p>
-            </div>
-            <div id="walletProviderList" class="wallet-provider-list space-y-2"></div>
-            <div id="mobileWalletOptions" class="hidden mt-4 space-y-2">
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 text-center">No browser wallet is detected here. Use a wallet app button or scan the QR to open Bullkarry in your wallet.</p>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="openMobileWallet('metamask')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">MetaMask</span></button>
-                    <button onclick="openMobileWallet('okx')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">OKX Wallet</span></button>
-                    <button onclick="openMobileWallet('phantom')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">Phantom</span></button>
-                    <button onclick="openMobileWallet('rabby')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">Rabby</span></button>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-[#243048]">
-                <div class="flex items-center justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="text-xs font-bold text-slate-900 dark:text-white">Open on mobile wallet</p>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Use the wallet list or WalletConnect QR/deep-link option to connect.</p>
-                    </div>
-                    <img id="walletConnectQr" class="wallet-qr shrink-0" alt="Open Bullkarry in a wallet browser">
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Send Modal -->
@@ -846,262 +835,6 @@
         </div>
     </div>
 
-    <!-- Reown AppKit integration for Arc Testnet -->
-    <script type="module">
-        import { createAppKit } from 'https://esm.sh/@reown/appkit@1.8.23?bundle';
-        import { mainnet, defineChain } from 'https://esm.sh/@reown/appkit@1.8.23/networks?bundle';
-        import { Ethers5Adapter } from 'https://esm.sh/@reown/appkit-adapter-ethers5@1.8.23?bundle';
-
-        const REOWN_PROJECT_ID = '11085fdc7e3488a54a917f03c2167492';
-        const BULLKARRY_STORE_RECEIVING_ADDRESS = '0xfc37f1ee234d8037fb7b37b1fc346d0b9f880d07';
-        const ARC_TESTNET = defineChain({
-            id: 5042002,
-            caipNetworkId: 'eip155:5042002',
-            chainNamespace: 'eip155',
-            name: 'Arc Testnet',
-            nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-            rpcUrls: {
-                default: { http: ['https://rpc.testnet.arc.network'] }
-            },
-            blockExplorers: {
-                default: { name: 'Arcscan', url: 'https://testnet.arcscan.app' }
-            },
-            testnet: true
-        });
-
-        let appKit = null;
-        let reownInitPromise = null;
-        let reownDisconnecting = false;
-        let reownSyncTimer = null;
-
-        async function syncReownWalletState() {
-            if (!appKit || reownDisconnecting) return;
-
-            try {
-                const connected = !!appKit.getIsConnected?.();
-                const address = appKit.getAddress?.();
-                const provider = appKit.getWalletProvider?.();
-
-                if (connected && address) {
-                    if (provider) {
-                        window.ethereum = provider;
-                        window.__bullkarryReownProvider = provider;
-                        window.__bullkarryWalletProvider = provider;
-                        window.__bullkarryWalletProviderInfo = { name: appKit.getWalletProviderType?.() || 'Wallet' };
-                    }
-
-                    // Keep the existing Bullkarry wallet/data logic unchanged.
-                    if (typeof window.initializeWallet === 'function') {
-                        if (userAccount !== address || !isWalletConnected) {
-                            await window.initializeWallet(address);
-                        }
-                    }
-                } else if (!connected && !reownDisconnecting) {
-                    if (typeof window.clearLocalWalletState === 'function' && isWalletConnected) {
-                        window.clearLocalWalletState(false);
-                    }
-                }
-            } catch (e) {
-                console.warn('Reown wallet state sync:', e);
-            }
-        }
-
-        async function initializeReown() {
-            if (appKit) return appKit;
-            if (reownInitPromise) return reownInitPromise;
-
-            reownInitPromise = (async () => {
-                const adapter = new Ethers5Adapter();
-                const appUrl = (location.protocol === 'http:' || location.protocol === 'https:')
-                    ? window.location.origin
-                    : 'https://bullkarry-wallet.vercel.app';
-
-                const metadata = {
-                    name: 'Bullkarry',
-                    description: 'Bullkarry on Arc Testnet',
-                    // Reown requires metadata.url to match the deployed origin.
-                    // Use the live origin so mobile WalletConnect/deep-link flows
-                    // are tied to the actual site the user opened.
-                    url: 'https://bullkarry.vercel.app',
-                    icons: ['https://bullkarry.vercel.app/favicon.ico']
-                };
-
-                // Keep a standard EVM network available during WalletConnect session
-                // negotiation. Some mobile/desktop wallets reject a session proposal
-                // when the only requested chain is a custom chain they have not added
-                // yet. Arc remains the default application network and is switched to
-                // after the wallet provider is available.
-                const networks = [mainnet, ARC_TESTNET];
-
-                appKit = createAppKit({
-                    adapters: [adapter],
-                    networks,
-                    defaultNetwork: ARC_TESTNET,
-                    metadata,
-                    projectId: REOWN_PROJECT_ID,
-                    customRpcUrls: {
-                        'eip155:5042002': 'https://rpc.testnet.arc.network'
-                    },
-                    features: {
-                        analytics: false,
-                        email: false,
-                        socials: false
-                    },
-                    allWallets: 'ONLY_MOBILE',
-                    themeMode: 'dark',
-                    debug: true
-                });
-
-                window.__reownAppKit = appKit;
-
-                window.__reownDisconnect = async () => {
-                    if (!appKit || reownDisconnecting) return;
-                    try {
-                        reownDisconnecting = true;
-                        if (appKit.adapter?.connectionControllerClient?.disconnect) {
-                            await appKit.adapter.connectionControllerClient.disconnect();
-                        } else if (appKit.disconnect) {
-                            await appKit.disconnect();
-                        }
-                    } catch (e) {
-                        console.error('Reown disconnect error:', e);
-                    } finally {
-                        reownDisconnecting = false;
-                    }
-                };
-
-                // Reown's provider subscription keeps the existing Bullkarry UI/data
-                // in sync when the user connects, changes account, or changes chain.
-                if (typeof appKit.subscribeProvider === 'function') {
-                    appKit.subscribeProvider(async (state) => {
-                        try {
-                            if (state?.error) console.warn('Reown provider error:', state.error);
-                            const provider = state?.provider || appKit.getWalletProvider?.();
-                            const address = state?.address || appKit.getAddress?.();
-                            const connected = state?.isConnected ?? appKit.getIsConnected?.();
-                            if (provider) {
-                                window.ethereum = provider;
-                                window.__bullkarryReownProvider = provider;
-                                window.__bullkarryWalletProvider = provider;
-                                window.__bullkarryWalletProviderInfo = { name: state?.providerType || appKit.getWalletProviderType?.() || 'Wallet' };
-                            }
-                            // Use the provider callback's connection state directly.
-                            // Do not wait for getIsConnected() on the selected network,
-                            // because a newly negotiated WC session can briefly be on
-                            // the wallet's current chain before Arc is selected.
-                            if (connected && address && typeof window.initializeWallet === 'function') {
-                                if (userAccount !== address || !isWalletConnected) {
-                                    await window.initializeWallet(address);
-                                }
-                            } else {
-                                await syncReownWalletState();
-                            }
-                        } catch (e) {
-                            console.warn('Reown provider sync failed:', e);
-                        }
-                    });
-                }
-
-                // Also listen through the current multi-provider API when available.
-                if (typeof appKit.subscribeProviders === 'function') {
-                    appKit.subscribeProviders(async (state) => {
-                        const provider = state?.eip155;
-                        if (provider) {
-                            window.ethereum = provider;
-                            window.__bullkarryReownProvider = provider;
-                            window.__bullkarryWalletProvider = provider;
-                        }
-                        await syncReownWalletState();
-                    });
-                }
-
-                if (typeof appKit.subscribeState === 'function') {
-                    appKit.subscribeState((state) => {
-                        if (state?.open === false) {
-                            const error = appKit?.getError?.();
-                            if (error) console.warn('Reown connection error:', error);
-                        }
-                    });
-                }
-
-                // Restore an existing Reown session without requiring a page refresh.
-                await syncReownWalletState();
-
-                return appKit;
-            })();
-
-            try {
-                return await reownInitPromise;
-            } catch (error) {
-                reownInitPromise = null;
-                appKit = null;
-                window.__reownAppKit = null;
-                throw error;
-            }
-        }
-
-        // Expose initialization for the main app script. We intentionally do not
-        // initialize AppKit here because this module lives in <head> and the main
-        // Bullkarry wallet state is declared later in the document. Initializing here
-        // can race that state and break session restoration.
-        window.__initializeReown = initializeReown;
-
-        async function openReownConnection() {
-            const kit = await initializeReown();
-            await kit.open({ view: 'Connect', namespace: 'eip155' });
-        }
-
-        window.__openReownConnect = async () => {
-            try {
-                // Prefer a real injected wallet when one is available.
-                // This is faster and more reliable on desktop and inside
-                // MetaMask/OKX/Rabby/Phantom mobile browsers.
-                const preferred = localStorage.getItem('bullkarry_wallet_uuid');
-                const candidates = [...discoveredWallets.values()];
-
-                if (candidates.length) {
-                    const selected = candidates.find(x =>
-                        preferred && (x.info?.uuid === preferred || x.info?.rdns === preferred)
-                    ) || (candidates.length === 1 ? candidates[0] : null);
-
-                    if (selected?.provider) {
-                        await connectDiscoveredWallet(selected);
-                        return;
-                    }
-
-                    // Multiple injected wallets: let the user choose the real
-                    // discovered providers rather than showing a fake fallback.
-                    renderWalletProviders();
-                    openModal('connectWalletModal');
-                    return;
-                }
-
-                // Legacy provider fallback for wallets without EIP-6963.
-                if (window.ethereum) {
-                    const providers = Array.isArray(window.ethereum.providers)
-                        ? window.ethereum.providers.filter(Boolean)
-                        : [window.ethereum];
-
-                    if (providers.length === 1) {
-                        const provider = providers[0];
-                        const info = detectLegacyWalletInfo(provider, 0);
-                        await connectDiscoveredWallet({ info, provider });
-                        return;
-                    }
-                }
-
-                // No injected wallet: use the real Reown/AppKit modal for
-                // WalletConnect and mobile deep-link connection.
-                await openReownConnection();
-            } catch (error) {
-                console.error('Wallet connection failed:', error);
-                const code = error?.code || error?.data?.code || '';
-                const message = error?.message || 'Wallet connection was cancelled or failed.';
-                alert(`Wallet connection failed${code ? ` (${code})` : ''}: ${message}`);
-            }
-        };
-    </script>
-
     <script>
         // Exact On-Chain Contracts
         const TOKEN_CONTRACTS = {
@@ -1125,229 +858,34 @@
         let autoSyncInterval;
         let knownTxHashes = new Set();
         let isFirstTxLoad = true;
-        let activeWalletProvider = null;
-        let activeWalletInfo = null;
-        const discoveredWallets = new Map();
-        let pendingRefund = null;
 
-        function getActiveEip1193Provider() {
-            return activeWalletProvider || window.__bullkarryReownProvider || window.__bullkarryWalletProvider || window.ethereum || null;
-        }
+        // Mobile-only: start at the top after refresh/reload.
+        // Normal manual scrolling is unchanged.
+        (function () {
+            if (!window.matchMedia('(max-width: 767px)').matches) return;
+            try { history.scrollRestoration = 'manual'; } catch (_) {}
 
-        function getRefundRecords() {
-            try { return JSON.parse(localStorage.getItem('bullkarry_refunds') || '[]'); }
-            catch (_) { return []; }
-        }
+            function resetMobileStartPosition() {
+                const container = document.getElementById('mainScrollContainer');
+                if (container) container.scrollTop = 0;
+                window.scrollTo(0, 0);
+            }
 
-        function saveRefundRecords(records) {
-            localStorage.setItem('bullkarry_refunds', JSON.stringify(records));
-        }
-
-        function isKnownRefundHash(hash) {
-            const target = String(hash || '').toLowerCase();
-            return !!target && getRefundRecords().some(r => String(r.refundTxHash || '').toLowerCase() === target);
-        }
-
-        function getRefundRecordForSource(sourceHash) {
-            const target = String(sourceHash || '').toLowerCase();
-            if (!target) return null;
-            return getRefundRecords().find(r => String(r.sourceHash || '').toLowerCase() === target) || null;
-        }
-
-        function isRefundedSource(sourceHash) {
-            return !!getRefundRecordForSource(sourceHash);
-        }
-
-        function markRefundCompleted(txHash, amount, token, sourceHash, recipient) {
-            const records = getRefundRecords();
-            const sourceKey = String(sourceHash || '').toLowerCase();
-            const existingIndex = records.findIndex(r => String(r.sourceHash || '').toLowerCase() === sourceKey);
-            const record = { refundTxHash: txHash, amount: Number(amount) || 0, token, sourceHash, recipient, timestamp: Math.floor(Date.now()/1000) };
-            if (existingIndex >= 0) records[existingIndex] = { ...records[existingIndex], ...record };
-            else records.push(record);
-            saveRefundRecords(records);
-        }
+            window.addEventListener('DOMContentLoaded', resetMobileStartPosition, { once: true });
+            window.addEventListener('load', function () {
+                resetMobileStartPosition();
+                setTimeout(resetMobileStartPosition, 80);
+                setTimeout(resetMobileStartPosition, 300);
+            });
+            window.addEventListener('pageshow', function () {
+                resetMobileStartPosition();
+                setTimeout(resetMobileStartPosition, 80);
+            });
+        })();
 
         window.addEventListener('DOMContentLoaded', async () => {
             handleIncomingPaymentLink();
-            renderPayments();
-            // Start EIP-6963 discovery immediately so desktop extensions
-            // are available before the user presses Connect Wallet.
-            setupWalletDiscovery();
-            // Restore an already-authorized injected wallet when possible.
-            setTimeout(() => restoreAuthorizedWallet().catch(() => {}), 900);
         });
-
-        function setupWalletDiscovery() {
-            window.addEventListener('eip6963:announceProvider', (event) => {
-                const detail = event.detail;
-                if (!detail || !detail.provider || !detail.info) return;
-                const key = detail.info.uuid || detail.info.rdns || detail.info.name;
-                discoveredWallets.set(key, detail);
-                renderWalletProviders();
-            });
-            window.dispatchEvent(new Event('eip6963:requestProvider'));
-            setTimeout(() => {
-                if (discoveredWallets.size === 0 && window.ethereum) {
-                    const list = Array.isArray(window.ethereum.providers) ? window.ethereum.providers : [window.ethereum];
-                    list.filter(Boolean).forEach((provider, i) => {
-                        const info = detectLegacyWalletInfo(provider, i);
-                        discoveredWallets.set(info.uuid, { info, provider });
-                    });
-                    renderWalletProviders();
-                }
-            }, 700);
-            window.addEventListener('eip6963:announceProvider', () => {
-                // Keep the listener alive for wallet extensions that announce later.
-                renderWalletProviders();
-            });
-        }
-
-        function detectLegacyWalletInfo(provider, index) {
-            let name = 'Browser Wallet';
-            let rdns = 'unknown.browser.wallet.' + index;
-            if (provider.isMetaMask) { name = 'MetaMask'; rdns = 'io.metamask'; }
-            else if (provider.isOkxWallet || provider.isOKXWallet) { name = 'OKX Wallet'; rdns = 'com.okex.wallet'; }
-            else if (provider.isRabby) { name = 'Rabby Wallet'; rdns = 'io.rabby'; }
-            else if (provider.isPhantom) { name = 'Phantom'; rdns = 'app.phantom'; }
-            else if (provider.isCoinbaseWallet) { name = 'Coinbase Wallet'; rdns = 'com.coinbase.wallet'; }
-            return { uuid: rdns + '-' + index, name, icon: '', rdns };
-        }
-
-        function renderWalletProviders() {
-            const host = document.getElementById('walletProviderList');
-            const mobile = document.getElementById('mobileWalletOptions');
-            if (!host) return;
-            host.innerHTML = '';
-            if (discoveredWallets.size === 0) {
-                host.innerHTML = '<div class="rounded-2xl border border-slate-200 dark:border-[#243048] bg-slate-50 dark:bg-[#0f1624] p-4 text-center text-xs text-slate-500 dark:text-slate-400">No injected browser wallet detected.</div>';
-                if (mobile) mobile.classList.remove('hidden');
-                updateWalletQr();
-                return;
-            }
-            if (mobile) mobile.classList.add('hidden');
-            [...discoveredWallets.values()].forEach(detail => {
-                const info = detail.info || {};
-                const button = document.createElement('button');
-                button.className = 'wallet-provider-btn';
-                button.type = 'button';
-                const icon = document.createElement('img');
-                icon.className = 'wallet-provider-icon';
-                icon.alt = '';
-                icon.src = info.icon || walletFallbackIcon(info.name);
-                const text = document.createElement('div');
-                text.className = 'min-w-0 flex-1';
-                text.innerHTML = '<div class="font-bold text-sm text-slate-900 dark:text-white truncate"></div><div class="text-[10px] text-slate-500 dark:text-slate-400">Browser wallet</div>';
-                text.firstElementChild.textContent = info.name || 'Browser Wallet';
-                const arrow = document.createElement('i');
-                arrow.className = 'fa-solid fa-chevron-right text-slate-400';
-                button.append(icon, text, arrow);
-                button.addEventListener('click', () => connectDiscoveredWallet(detail));
-                host.appendChild(button);
-            });
-            updateWalletQr();
-        }
-
-        function walletFallbackIcon(name) {
-            const label = encodeURIComponent(String(name || 'W').slice(0,1).toUpperCase());
-            return 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" rx="22" fill="#2563eb"/><text x="48" y="60" text-anchor="middle" font-family="Arial" font-size="42" font-weight="700" fill="white">${label}</text></svg>`);
-        }
-
-        function updateWalletQr() {
-            const qr = document.getElementById('walletConnectQr');
-            if (!qr) return;
-            const url = window.location.href.split('#')[0];
-            qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(url);
-        }
-
-        async function connectDiscoveredWallet(detail) {
-            const provider = detail.provider;
-            if (!provider) return;
-            try {
-                activeWalletProvider = provider;
-                activeWalletInfo = detail.info || null;
-                const accounts = await provider.request({ method: 'eth_requestAccounts' });
-                if (!Array.isArray(accounts) || !accounts[0]) return;
-                localStorage.setItem('bullkarry_wallet_uuid', detail.info?.uuid || detail.info?.rdns || '');
-                localStorage.setItem('bullkarry_wallet_name', detail.info?.name || 'Browser Wallet');
-                attachWalletProviderListeners(provider);
-                try { await ensureArcTestnet(provider); } catch (networkError) { console.warn('Arc network switch request:', networkError); }
-                await initializeWallet(accounts[0]);
-                closeModal('connectWalletModal');
-            } catch (error) {
-                console.error('Wallet connection failed:', error);
-                alert(error?.message || 'Wallet connection was cancelled or failed.');
-            }
-        }
-
-        function attachWalletProviderListeners(provider) {
-            if (!provider || provider.__bullkarryListenersAttached) return;
-            provider.__bullkarryListenersAttached = true;
-            if (provider.on) {
-                provider.on('accountsChanged', async accounts => {
-                    if (accounts && accounts[0]) await initializeWallet(accounts[0]);
-                    else clearLocalWalletState(false);
-                });
-                provider.on('chainChanged', () => syncAllOnChainData().catch(() => {}));
-                provider.on('disconnect', () => clearLocalWalletState(false));
-            }
-        }
-
-        async function restoreAuthorizedWallet() {
-            const preferred = localStorage.getItem('bullkarry_wallet_uuid');
-            const candidates = [...discoveredWallets.values()];
-            candidates.sort((a,b) => Number((a.info?.uuid || a.info?.rdns) === preferred) * -1);
-            for (const detail of candidates) {
-                try {
-                    const accounts = await detail.provider.request({ method: 'eth_accounts' });
-                    if (accounts && accounts[0]) {
-                        activeWalletProvider = detail.provider;
-                        activeWalletInfo = detail.info || null;
-                        attachWalletProviderListeners(detail.provider);
-                        await initializeWallet(accounts[0]);
-                        return;
-                    }
-                } catch (_) {}
-            }
-        }
-
-        async function ensureArcTestnet(provider) {
-            if (!provider) return;
-            const chainId = await provider.request({ method: 'eth_chainId' }).catch(() => null);
-            if (String(chainId).toLowerCase() === '0x4cef52') return;
-            try {
-                await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x4cef52' }] });
-            } catch (switchError) {
-                if (switchError?.code === 4902 || /unrecognized|not added|unknown chain/i.test(switchError?.message || '')) {
-                    await provider.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [{
-                            chainId: '0x4cef52',
-                            chainName: 'Arc Testnet',
-                            nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-                            rpcUrls: ['https://rpc.testnet.arc.network'],
-                            blockExplorerUrls: ['https://testnet.arcscan.app']
-                        }]
-                    });
-                } else throw switchError;
-            }
-        }
-
-        function openMobileWallet(wallet) {
-            const target = window.location.href.split('#')[0];
-            const encoded = encodeURIComponent(target);
-            let url = '';
-            if (wallet === 'metamask') {
-                url = 'https://metamask.app.link/dapp/' + target.replace(/^https?:\/\//, '');
-            } else if (wallet === 'phantom') {
-                url = 'https://phantom.app/ul/browse/' + encoded + '?ref=' + encodeURIComponent(window.location.origin);
-            } else if (wallet === 'okx') {
-                url = 'okx://wallet/dapp/url?dappUrl=' + encoded;
-            } else if (wallet === 'rabby') {
-                url = 'https://rabby.io/';
-            }
-            if (url) window.location.href = url;
-        }
 
         // Reads ?pay=<address>&amt=<amount>&token=<symbol>&note=<note>
         // from the URL and shows a Payment Request modal so opening a
@@ -1380,11 +918,11 @@
             openModal('paymentRequestModal');
         }
 
-        function payPendingRequest() {
+        async function payPendingRequest() {
             if (!window.__pendingPayment) return;
             if (!userAccount) {
                 closeModal('paymentRequestModal');
-                openModal('connectWalletModal');
+                await connectWalletProvider();
                 return;
             }
             const { to, amount, token } = window.__pendingPayment;
@@ -1414,8 +952,7 @@
             document.getElementById('payWalletAddress').innerText = shortAddr;
             document.getElementById('faucetWalletAddress').innerText = shortAddr;
             document.getElementById('myRecAddr').value = userAccount;
-            document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent('ethereum:' + userAccount);
-            updateWalletQr();
+            document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:" + userAccount;
 
             document.getElementById('assetsPlaceholder').classList.add('hidden');
             document.getElementById('assetsTable').classList.remove('hidden');
@@ -1431,11 +968,12 @@
         }
 
         async function syncAllOnChainData() {
-            const eip1193 = getActiveEip1193Provider();
-            if (!userAccount || !isWalletConnected || !eip1193) return;
+            if (!userAccount || !isWalletConnected) return;
 
             try {
-                const provider = new ethers.providers.Web3Provider(eip1193);
+                const walletProvider = getInjectedWalletProvider();
+                if (!walletProvider) throw new Error('No injected wallet provider available');
+                const provider = new ethers.providers.Web3Provider(walletProvider);
 
                 // Arc uses native USDC as the gas asset. Keep this native balance as
                 // the single USDC balance; do not add an ERC-20 copy of the same asset.
@@ -1655,13 +1193,9 @@
                 type: isSent ? "Sent" : "Received",
                 token: symbol,
                 amount: (isSent ? "-" : "+") + formattedAmount + " " + symbol,
-                amountValue: amountNumber,
-                counterparty,
                 from: formatAddress(counterpart),
                 color: isSent ? "text-red-500" : "text-[#00d182]",
                 isSent,
-                isRefund: isKnownRefundHash(tx.hash),
-                isRefunded: isRefundedSource(tx.hash),
                 time: formatTxTime(tx.timeStamp || tx.timestamp || tx.block_timestamp),
                 timestamp: parseInt(tx.timeStamp || tx.timestamp || tx.block_timestamp || 0, 10),
                 blockNumber: parseInt(tx.blockNumber || tx.block_number || 0, 10),
@@ -1676,114 +1210,83 @@
             return normalized;
         }
 
-        const BLOCKSCOUT_V2_BASE = "https://testnet.arcscan.app/api/v2";
-
-        function blockscoutAmount(total, fallbackDecimals = 18) {
-            const decimals = Number(total?.decimals ?? fallbackDecimals ?? 18);
-            const raw = String(total?.value ?? total?.raw_value ?? "0");
-            try {
-                return Number(ethers.utils.formatUnits(raw, decimals));
-            } catch (_) {
-                const n = Number(raw);
-                return Number.isFinite(n) ? n / Math.pow(10, decimals) : 0;
-            }
-        }
-
-        async function blockscoutFetch(path, params = {}) {
-            const url = new URL(BLOCKSCOUT_V2_BASE + path);
-            Object.entries(params || {}).forEach(([k, v]) => {
-                if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, String(v));
-            });
-            const response = await fetch(url.toString(), { cache: "no-store", headers: { "Accept": "application/json" } });
-            if (!response.ok) throw new Error("Blockscout HTTP " + response.status);
-            const data = await response.json();
-            return data || { items: [] };
-        }
-
-        function makeBlockscoutTx(tx, transfer = null) {
-            const me = String(userAccount || "").toLowerCase();
-            const from = String(transfer?.from?.hash || tx?.from?.hash || "");
-            const to = String(transfer?.to?.hash || tx?.to?.hash || "");
-            const isSent = from.toLowerCase() === me;
-            const token = transfer?.token || null;
-            const symbol = token?.symbol || "USDC";
-            const amountValue = transfer
-                ? blockscoutAmount(transfer.total, Number(token?.decimals ?? 18))
-                : blockscoutAmount({ value: tx?.value || "0", decimals: 18 }, 18);
-            if (!Number.isFinite(amountValue) || amountValue <= 0) return null;
-
-            const timestamp = tx?.timestamp ? Math.floor(Date.parse(tx.timestamp) / 1000) : Math.floor(Date.now() / 1000);
-            const hash = tx?.hash || transfer?.transaction_hash;
-            if (!hash) return null;
-
-            return {
-                hash,
-                type: isSent ? "Sent" : "Received",
-                token: symbol,
-                amount: (isSent ? "-" : "+") + amountValue.toLocaleString(undefined, { maximumFractionDigits: 8 }) + " " + symbol,
-                amountValue,
-                counterparty: isSent ? to : from,
-                from: formatAddress(isSent ? to : from),
-                color: isSent ? "text-red-500" : "text-[#00d182]",
-                isSent,
-                isRefund: isKnownRefundHash(hash),
-                isRefunded: isRefundedSource(hash),
-                time: formatTxTime(timestamp),
-                timestamp,
-                blockNumber: Number(tx?.block_number || 0),
-                status: tx?.status === "ok" || tx?.status === "success" ? "Confirmed" : "Failed"
-            };
-        }
-
         async function fetchLiveTransactions() {
             if (!userAccount) return;
 
             try {
-                const allItems = [];
-                let nextParams = {};
+                // txlist = every indexed normal transaction involving this address.
+                // txlistinternal = value-carrying internal transfers.
+                // tokentx = ERC-20 transfer history.
+                const [normal, internal] = await Promise.all([
+                    arcscanRequest({
+                        module: "account", action: "txlist", address: userAccount,
+                        startblock: "0", endblock: "999999999", page: "1", offset: "100", sort: "desc"
+                    }).catch(err => { console.warn("Normal tx history unavailable", err); return []; }),
+                    arcscanRequest({
+                        module: "account", action: "txlistinternal", address: userAccount,
+                        startblock: "0", endblock: "999999999", page: "1", offset: "100", sort: "desc"
+                    }).catch(err => { console.warn("Internal tx history unavailable", err); return []; })
+                ]);
 
-                // Blockscout is the current backend behind Arc Testnet Explorer.
-                // It exposes address transactions with embedded token transfers,
-                // so this avoids the old Etherscan-compatible endpoints that were
-                // returning empty data on Arc Testnet.
-                for (let page = 0; page < 5; page++) {
-                    const data = await blockscoutFetch(`/addresses/${userAccount}/transactions`, nextParams);
-                    const items = Array.isArray(data.items) ? data.items : [];
-                    allItems.push(...items);
-                    if (!data.next_page_params || !items.length) break;
-                    nextParams = data.next_page_params;
-                }
-
-                const merged = [];
-                for (const tx of allItems) {
-                    const transfers = Array.isArray(tx.token_transfers) ? tx.token_transfers : [];
-                    if (transfers.length) {
-                        for (const transfer of transfers) {
-                            const normalized = makeBlockscoutTx(tx, transfer);
-                            if (normalized) merged.push(normalized);
-                        }
-                    } else {
-                        // Keep native value transfers as a fallback for simple sends.
-                        const normalized = makeBlockscoutTx(tx, null);
-                        if (normalized) merged.push(normalized);
+                // tokentx has a block-span limit, so scan backward in safe chunks.
+                let tokenTransfers = [];
+                try {
+                    const blockResponse = await fetch(`${ARCSCAN_TESTNET_API}?module=proxy&action=eth_blockNumber&_t=${Date.now()}`, { cache: "no-store" });
+                    const blockJson = await blockResponse.json();
+                    const latest = parseInt(blockJson?.result || "0", 16);
+                    const chunk = 150000;
+                    const requests = [];
+                    for (let end = latest; end >= 53500000 && requests.length < 8; end -= chunk) {
+                        const from = Math.max(53500000, end - chunk + 1);
+                        requests.push(arcscanRequest({
+                            module: "account", action: "tokentx", address: userAccount,
+                            startblock: String(from), endblock: String(end), page: "1", offset: "100", sort: "desc"
+                        }).catch(() => []));
                     }
+                    const chunks = await Promise.all(requests);
+                    tokenTransfers = chunks.flat();
+                } catch (err) {
+                    console.warn("Token transfer history unavailable", err);
                 }
 
-                merged.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                // Resolve missing token symbols/decimals from the official typed token endpoint.
+                const tokenAddresses = [...new Set(tokenTransfers.map(t => t.contractAddress || t.contract_address || t.token_address).filter(Boolean))];
+                const metadataEntries = await Promise.all(tokenAddresses.slice(0, 50).map(async address => [address, await getTokenMetadata(address)]));
+                const metadata = new Map(metadataEntries.map(([address, meta]) => [address.toLowerCase(), meta]));
+
+                const merged = [
+                    ...normal.filter(t => t.hash).map(t => normalizeTransaction(t, "native")),
+                    ...internal.filter(t => t.hash).map(t => normalizeInternalTransaction(t)),
+                    ...tokenTransfers.filter(t => t.hash).map(t => {
+                        const addr = String(t.contractAddress || t.contract_address || t.token_address || "").toLowerCase();
+                        return normalizeTransaction(t, "token", metadata.get(addr) || {});
+                    })
+                ];
 
                 const unique = [];
                 const seen = new Set();
                 for (const tx of merged) {
-                    const key = [tx.hash, tx.token, tx.counterparty, tx.amountValue, tx.isSent].join(":");
-                    if (seen.has(key)) continue;
-                    seen.add(key);
+                    if (!tx.hash || seen.has(tx.hash)) continue;
+                    seen.add(tx.hash);
                     unique.push(tx);
                 }
 
+                unique.sort((a, b) => {
+                    if ((b.blockNumber || 0) !== (a.blockNumber || 0)) return (b.blockNumber || 0) - (a.blockNumber || 0);
+                    return (b.timestamp || 0) - (a.timestamp || 0);
+                });
+
+                // Show the receive popup only for transactions that appeared
+                // since the previous successful history scan. Initial history load
+                // is silent so an old receive does not trigger a popup.
                 if (!isFirstTxLoad) {
                     const newReceived = unique.filter(t =>
-                        t.type === "Received" && t.status !== "Failed" && t.hash && !knownTxHashes.has(t.hash)
+                        t.type === "Received" &&
+                        t.status !== "Failed" &&
+                        t.hash &&
+                        !knownTxHashes.has(t.hash)
                     );
+
                     if (newReceived.length > 0) {
                         const latest = newReceived[0];
                         document.getElementById('successModalTitle').innerText = "Funds Received!";
@@ -1798,15 +1301,13 @@
                 const optimistic = transactions.filter(t => t.optimistic && !unique.some(u => u.hash === t.hash));
                 transactions = [...optimistic, ...unique].slice(0, 200);
                 renderTransactionLists();
-                renderPayments();
             } catch (err) {
-                console.error("Blockscout transaction history error:", err);
-                // Do not wipe already displayed optimistic/live data if the explorer is temporarily unavailable.
+                console.error("Tx History API error:", err);
                 renderTransactionLists();
             }
         }
 
-        function addOptimisticTransaction(txResponse, amount, tokenSymbol, recipient, refundMeta = null) {
+        function addOptimisticTransaction(txResponse, amount, tokenSymbol, recipient) {
             if (!txResponse || !txResponse.hash || !userAccount) return;
 
             const optimisticTx = {
@@ -1817,8 +1318,6 @@
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 6
                 }) + " " + tokenSymbol,
-                amountValue: Number(amount) || 0,
-                counterparty: recipient,
                 from: formatAddress(recipient),
                 color: "text-red-500",
                 isSent: true,
@@ -1826,8 +1325,7 @@
                 timestamp: Math.floor(Date.now() / 1000),
                 blockNumber: Number.MAX_SAFE_INTEGER,
                 status: "Confirmed",
-                optimistic: true,
-                isRefund: !!refundMeta
+                optimistic: true
             };
 
             transactions = [
@@ -1837,7 +1335,6 @@
 
             knownTxHashes.add(optimisticTx.hash);
             renderTransactionLists();
-            renderPayments();
         }
 
 
@@ -1978,165 +1475,21 @@
                 const iconSvg = t.isSent ? upArrowSvg : downArrowSvg;
                 const bgBox = t.isSent ? 'bg-red-500/10 border border-red-500/20' : 'bg-[#0f1624] border border-[#243048]';
 
-                const alreadyRefunded = !!t.isRefunded || isRefundedSource(t.hash);
-                const refundButton = (!t.isSent && t.status !== 'Failed' && Number(t.amountValue) > 0)
-                    ? (alreadyRefunded
-                        ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold cursor-not-allowed select-none"><i class="fa-solid fa-circle-check"></i> Refunded</span>`
-                        : `<button type="button" onclick="event.preventDefault(); event.stopPropagation(); prepareRefund('${String(t.hash).replace(/'/g, "\'")}','${String(t.counterparty || '').replace(/'/g, "\'")}','${Number(t.amountValue)}','${String(t.token || 'USDC').replace(/'/g, "\'")}')" class="inline-flex items-center justify-center min-w-[78px] px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500/20 text-[10px] font-bold transition">Refund</button>` )
-                    : `<span class="text-[10px] text-slate-600 dark:text-slate-500">—</span>`;
-
                 fullHtml += `
-                    <div class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition border-b border-slate-100 dark:border-[#243048]">
-                        <div class="p-4 grid grid-cols-[1.1fr_1fr_1.35fr_112px_112px] gap-3 items-center text-xs min-w-[780px]">
-                            <a href="https://testnet.arc-scan.org/tx/${t.hash}" target="_blank" class="flex items-center gap-2.5 min-w-0">
-                                <div class="w-7 h-7 rounded-lg ${bgBox} flex items-center justify-center shrink-0">${iconSvg}</div><span class="font-bold text-slate-900 dark:text-white">${t.type}</span>
-                            </a>
+                    <a href="https://testnet.arc-scan.org/tx/${t.hash}" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition">
+                        <div class="p-4 grid grid-cols-4 items-center text-xs">
+                            <div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-lg ${bgBox} flex items-center justify-center shrink-0">${iconSvg}</div><span class="font-bold text-slate-900 dark:text-white">${t.type}</span></div>
                             <span class="${t.color} font-bold">${t.amount}</span>
-                            <span class="font-mono text-slate-500 dark:text-slate-400 truncate">${t.from}</span>
-                            <div class="flex items-center justify-center min-w-0">${refundButton}</div>
-                            <span class="refund-status-gap text-center whitespace-nowrap ${t.status === 'Failed' ? 'text-red-500' : 'text-emerald-500 dark:text-emerald-400'} font-medium">${t.status}</span>
+                            <span class="font-mono text-slate-500 dark:text-slate-400">${t.from}</span>
+                            <span class="text-right ${t.status === 'Failed' ? 'text-red-500' : 'text-emerald-500 dark:text-emerald-400'} font-medium">${t.status}</span>
                         </div>
-                    </div>
+                    </a>
                 `;
             });
 
             document.getElementById('dashTxList').innerHTML = dashHtml;
             document.getElementById('fullTxHistory').innerHTML = fullHtml;
         }
-
-        function prepareRefund(sourceHash, recipient, amount, token) {
-            if (!userAccount) return alert('Please connect wallet first');
-            if (!recipient || !/^0x[a-fA-F0-9]{40}$/.test(recipient)) return alert('The sender address for this transaction could not be read safely.');
-            pendingRefund = { sourceHash, recipient, amount: Number(amount), token };
-            document.getElementById('directSendTo').value = recipient;
-            document.getElementById('directSendAmt').value = Number(amount).toString();
-            document.getElementById('directSendToken').value = token || 'USDC';
-            closeModal('connectWalletModal');
-            openModal('sendModal');
-        }
-        window.prepareRefund = prepareRefund;
-
-        function percentChange(current, previous) {
-            if (!previous) return current > 0 ? 100 : 0;
-            return ((current - previous) / previous) * 100;
-        }
-
-        function paymentPeriodStats(startTs, endTs) {
-            const receivedTxs = transactions.filter(t => !t.isSent && !t.isRefund && t.status !== 'Failed' && t.token === 'USDC' && t.timestamp >= startTs && t.timestamp < endTs);
-            const localRefunds = getRefundRecords().filter(r => {
-                const ts = Number(r.timestamp || 0);
-                return ts >= startTs && ts < endTs && String(r.token || 'USDC') === 'USDC';
-            });
-            const refundTxs = transactions.filter(t => t.isSent && t.isRefund && t.status !== 'Failed' && t.token === 'USDC' && t.timestamp >= startTs && t.timestamp < endTs);
-            const received = receivedTxs.reduce((sum, t) => sum + (Number(t.amountValue) || 0), 0);
-            const indexedRefunded = refundTxs.reduce((sum, t) => sum + (Number(t.amountValue) || 0), 0);
-            const indexedHashes = new Set(refundTxs.map(t => String(t.hash || '').toLowerCase()));
-            const missingLocalRefunds = localRefunds.filter(r => !indexedHashes.has(String(r.refundTxHash || '').toLowerCase()));
-            const refunded = indexedRefunded + missingLocalRefunds.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
-            const refundCount = refundTxs.length + missingLocalRefunds.length;
-            return { received, refunded, net: received - refunded, receivedCount: receivedTxs.length, refundCount };
-        }
-
-        function formatPaymentAmount(v) {
-            return (Number(v) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 });
-        }
-
-        function setPaymentCompare(id, pct, positiveIsGood = true) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            if (!Number.isFinite(pct) || pct === 0) {
-                el.textContent = 'No change';
-                el.className = 'payment-compare mt-3 text-slate-500 dark:text-slate-400';
-                return;
-            }
-            const up = pct > 0;
-            el.textContent = (up ? '↑ ' : '↓ ') + Math.abs(pct).toFixed(1) + '% vs previous period';
-            el.className = 'payment-compare mt-3 ' + ((up === positiveIsGood) ? 'text-emerald-500' : 'text-red-500');
-        }
-
-        function renderPayments() {
-            const summary = document.getElementById('paymentsSummary');
-            if (!summary) return;
-            if (!isWalletConnected) {
-                summary.innerHTML = '<div class="p-4 text-center text-slate-500 dark:text-slate-400">Connect wallet to view payment data.</div>';
-                return;
-            }
-
-            const now = new Date();
-            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
-            const yesterdayStart = todayStart - 86400;
-            const tomorrowStart = todayStart + 86400;
-            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime() / 1000;
-            const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime() / 1000;
-            const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime() / 1000;
-
-            const today = paymentPeriodStats(todayStart, tomorrowStart);
-            const yesterday = paymentPeriodStats(yesterdayStart, todayStart);
-            const previousDay = paymentPeriodStats(yesterdayStart - 86400, yesterdayStart);
-            const month = paymentPeriodStats(monthStart, nextMonthStart);
-            const prevMonth = paymentPeriodStats(prevMonthStart, monthStart);
-
-            document.getElementById('paymentsTodayReceived').textContent = formatPaymentAmount(today.received);
-            document.getElementById('paymentsTodayRefund').textContent = 'Refunded: ' + formatPaymentAmount(today.refunded);
-            document.getElementById('paymentsTodayNet').textContent = 'Net: ' + formatPaymentAmount(today.net);
-            document.getElementById('paymentsYesterdayReceived').textContent = formatPaymentAmount(yesterday.received);
-            document.getElementById('paymentsYesterdayRefund').textContent = 'Refunded: ' + formatPaymentAmount(yesterday.refunded);
-            document.getElementById('paymentsYesterdayNet').textContent = 'Net: ' + formatPaymentAmount(yesterday.net);
-            document.getElementById('paymentsMonthReceived').textContent = formatPaymentAmount(month.received);
-            document.getElementById('paymentsMonthRefund').textContent = 'Refunded: ' + formatPaymentAmount(month.refunded);
-            document.getElementById('paymentsMonthNet').textContent = 'Net: ' + formatPaymentAmount(month.net);
-
-            setPaymentCompare('paymentsTodayCompare', percentChange(today.received, yesterday.received));
-            setPaymentCompare('paymentsYesterdayCompare', percentChange(yesterday.received, previousDay.received));
-            setPaymentCompare('paymentsMonthCompare', percentChange(month.received, prevMonth.received));
-
-            const refundRatio = month.receivedCount ? (month.refundCount / month.receivedCount) * 100 : 0;
-            summary.innerHTML = `
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div class="rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-4">
-                        <div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500 dark:text-slate-400">Received</span><i class="fa-solid fa-arrow-down text-emerald-500"></i></div>
-                        <div class="payment-stat-value text-2xl font-bold text-emerald-500 mt-2">${month.receivedCount}</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">transactions this month</div>
-                    </div>
-                    <div class="rounded-2xl border border-red-500/15 bg-red-500/[0.04] p-4">
-                        <div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500 dark:text-slate-400">Refund</span><i class="fa-solid fa-arrow-up text-red-500"></i></div>
-                        <div class="text-2xl font-extrabold text-red-500 mt-2">${month.refundCount}</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">refund transactions this month</div>
-                    </div>
-                    <div class="rounded-2xl border border-blue-500/15 bg-blue-500/[0.04] p-4">
-                        <div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500 dark:text-slate-400">Refund Ratio</span><i class="fa-solid fa-chart-pie text-blue-500"></i></div>
-                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white mt-2">${refundRatio.toFixed(1)}%</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">refunds ÷ received transactions</div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">Today</div><div class="font-bold text-slate-900 dark:text-white mt-1">${today.receivedCount} received</div><div class="text-xs text-red-500 mt-1">${today.refundCount} refunded</div></div>
-                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">Yesterday</div><div class="font-bold text-slate-900 dark:text-white mt-1">${yesterday.receivedCount} received</div><div class="text-xs text-red-500 mt-1">${yesterday.refundCount} refunded</div></div>
-                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">This Month</div><div class="font-bold text-slate-900 dark:text-white mt-1">${month.receivedCount} received</div><div class="text-xs text-red-500 mt-1">${month.refundCount} refunded</div></div>
-                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">Net Transactions</div><div class="font-bold text-slate-900 dark:text-white mt-1">${Math.max(0, month.receivedCount - month.refundCount)}</div><div class="text-xs text-slate-500 mt-1">after refunds</div></div>
-                </div>`;
-        }
-
-        async function refreshPayments() {
-            if (!isWalletConnected) return alert("Please connect wallet first");
-            const btn = document.getElementById('paymentsRefreshBtn');
-            const icon = document.getElementById('paymentsRefreshIcon');
-            if (btn) btn.disabled = true;
-            if (icon) icon.classList.add('fa-spin');
-            try {
-                isFirstTxLoad = false;
-                await syncAllOnChainData();
-                renderTransactionLists();
-                renderPayments();
-            } catch (err) {
-                console.error('Payments refresh error:', err);
-                renderPayments();
-            } finally {
-                if (icon) icon.classList.remove('fa-spin');
-                if (btn) btn.disabled = false;
-            }
-        }
-        window.refreshPayments = refreshPayments;
 
         async function refreshDashboard() {
             if (!isWalletConnected) return alert("Please connect wallet first");
@@ -2194,7 +1547,6 @@
                     'paymentLink': ['Create Payment Link', 'Request crypto securely'],
                     'faucet': ['Arc Faucet', 'Claim testnet tokens'],
                     'transactions': ['Transactions', 'Your on-chain history'],
-                    'payments': ['Payments', 'Earnings and refunds'],
                     'merchant': ['Store', 'On-chain Digital Product']
                 };
                 if (titles[viewName]) {
@@ -2204,7 +1556,6 @@
             }
         }
         updateHeader('dashboard');
-        document.getElementById('mainHeader')?.classList.remove('hidden');
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -2226,20 +1577,11 @@
         }
 
         function switchView(viewName) {
-            const mainContent = document.querySelector('body > .flex-1');
-            const mainHeader = document.getElementById('mainHeader');
-
-            // Inner pages are intentionally full-width from the top. The dashboard
-            // keeps the global greeting + theme/network/wallet controls.
-            if (mainHeader) mainHeader.classList.toggle('hidden', viewName !== 'dashboard');
-            if (mainContent) { mainContent.scrollTop = 0; mainContent.querySelectorAll('.overflow-y-auto').forEach(el => { try { el.scrollTop = 0; } catch (_) {} }); }
-            window.scrollTo(0, 0);
-
-            ['dashboardView', 'paymentLinkView', 'faucetView', 'transactionsView', 'paymentsView', 'merchantView'].forEach(id => {
+            ['dashboardView', 'paymentLinkView', 'faucetView', 'transactionsView', 'merchantView'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
-            ['dashboard', 'transactions', 'payments', 'faucet', 'merchant'].forEach(id => {
+            ['dashboard', 'transactions', 'faucet', 'merchant'].forEach(id => {
                 ['nav-', 'mnav-'].forEach(prefix => {
                     const el = document.getElementById(prefix + id);
                     if (el) {
@@ -2261,9 +1603,6 @@
                 }
             });
             updateHeader(viewName);
-            if (viewName === 'merchant') {
-                renderMerchantSales();
-            }
         }
 
         function toggleCurrency() {
@@ -2371,8 +1710,6 @@
 
             usdcBalance = 0;
             transactions = [];
-            pendingRefund = null;
-            renderPayments();
 
             document.getElementById('assetsPlaceholder').classList.remove('hidden');
             document.getElementById('assetsTable').classList.add('hidden');
@@ -2387,31 +1724,54 @@
         window.clearLocalWalletState = clearLocalWalletState;
 
         function disconnectWallet() {
-            try { if (window.__reownDisconnect) window.__reownDisconnect(); } catch (e) { console.error(e); }
+            // Direct injected wallets do not expose a universal dapp-side disconnect.
+            // Clear Bullkarry's local connection state; the wallet remains under the user's control.
             clearLocalWalletState(true);
-            activeWalletProvider = null;
-            activeWalletInfo = null;
-            window.__bullkarryReownProvider = null;
-            window.__bullkarryWalletProvider = null;
-            localStorage.removeItem('bullkarry_wallet_uuid');
-            localStorage.removeItem('bullkarry_wallet_name');
         }
 
-        document.getElementById('connectBtn').addEventListener('click', () => {
+        document.getElementById('connectBtn').addEventListener('click', async () => {
             if (isWalletConnected) {
                 document.getElementById('profileDropdown').classList.toggle('hidden');
-            } else if (window.__openReownConnect) {
-                window.__openReownConnect();
             } else {
-                alert('Wallet connection is still loading. Please try again.');
+                await connectWalletProvider();
             }
         });
 
         async function connectWalletProvider() {
-            if (window.__openReownConnect) {
-                return window.__openReownConnect();
+            const provider = await waitForInjectedWallet(2500);
+            if (!provider) {
+                alert('No browser wallet was found. Install MetaMask or open this page inside a wallet browser.');
+                return false;
             }
-            alert('Wallet connection is still loading. Please try again.');
+
+            injectedWalletProvider = provider;
+            attachWalletProviderListeners(provider);
+
+            try {
+                // This is the only connection request. It opens the wallet's native popup.
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
+                if (!Array.isArray(accounts) || !accounts.length) return false;
+
+                try {
+                    await ensureArcTestnet(provider);
+                } catch (networkError) {
+                    // The wallet is already connected. If the user rejects the network
+                    // switch/add request, keep the wallet connected instead of reporting
+                    // a false connection failure.
+                    console.warn('Arc Testnet switch was not completed:', networkError);
+                }
+
+                await initializeWallet(accounts[0]);
+                return true;
+            } catch (e) {
+                console.error('Direct wallet connection failed:', e);
+                if (e && e.code === 4001) {
+                    alert('Wallet connection was rejected.');
+                } else {
+                    alert('Could not connect the wallet. Please unlock your wallet and try again.');
+                }
+                return false;
+            }
         }
 
         window.addEventListener('click', (e) => {
@@ -2435,9 +1795,9 @@
             btn.disabled = true;
 
             try {
-                const eip1193 = getActiveEip1193Provider();
-                if (!eip1193) throw new Error('No active wallet provider');
-                const provider = new ethers.providers.Web3Provider(eip1193);
+                const walletProvider = getInjectedWalletProvider();
+                if (!walletProvider) throw new Error('No injected wallet provider available');
+                const provider = new ethers.providers.Web3Provider(walletProvider);
                 const signer = provider.getSigner();
 
                 let tx;
@@ -2455,25 +1815,12 @@
 
                 // Show the confirmed transaction immediately. Arcscan's indexer can
                 // take a few seconds to expose a just-mined transaction.
-                const refundWasSubmitted = pendingRefund &&
-                    pendingRefund.recipient.toLowerCase() === to.toLowerCase() &&
-                    Number(pendingRefund.amount) === Number(amt) &&
-                    String(pendingRefund.token) === String(tokenSymbol);
                 addOptimisticTransaction(
                     confirmedTx,
                     amt,
                     tokenSymbol,
-                    to,
-                    refundWasSubmitted ? pendingRefund : null
+                    to
                 );
-                if (refundWasSubmitted) {
-                    markRefundCompleted(confirmedTx.hash, amt, tokenSymbol, pendingRefund.sourceHash, to);
-                    const refundedSource = transactions.find(t => String(t.hash || '').toLowerCase() === String(pendingRefund.sourceHash || '').toLowerCase());
-                    if (refundedSource) refundedSource.isRefunded = true;
-                    renderTransactionLists();
-                    renderPayments();
-                }
-                pendingRefund = null;
 
                 // Reconcile with the explorer/indexer in the background.
                 setTimeout(() => {
@@ -2498,178 +1845,54 @@
             document.getElementById('directSendAmt').value = '';
         }
 
-        const BULLKARRY_PURCHASE_PREFIX = 'BULLKARRY_PURCHASE_V1|';
-
-        function encodeBullkarryPurchaseData(itemName, quantity, unitPrice) {
-            const payload = BULLKARRY_PURCHASE_PREFIX + JSON.stringify({
-                item: String(itemName),
-                qty: Number(quantity),
-                unitPrice: Number(unitPrice),
-                version: 1
-            });
-            return ethers.utils.hexlify(ethers.utils.toUtf8Bytes(payload));
+        const STORE_LIMITS = { "Bullkarry Tee": 999, "Genesis NFT": 50 };
+        const STORE_KEY = "bullkarry_store_sales_v1";
+        function getStoreSales() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || "[]"); } catch (_) { return []; } }
+        function renderStoreInventory() {
+            const el = document.getElementById("storeInventory"); if (!el) return;
+            const sales = getStoreSales();
+            const html = Object.entries(STORE_LIMITS).map(([name,total]) => {
+                const sold = sales.filter(x=>x.itemName===name).reduce((n,x)=>n+Number(x.quantity||1),0);
+                const left=Math.max(0,total-sold);
+                return `<div class="bg-[#0b101a] border border-slate-800 rounded-2xl p-4"><div class="flex justify-between"><span class="font-bold text-white">${name}</span><span class="text-xs ${left?'text-emerald-400':'text-red-400'} font-bold">${left?left+' / '+total:'SOLD OUT'}</span></div><div class="mt-3 h-2 rounded-full bg-slate-800 overflow-hidden"><div class="h-full bg-emerald-500" style="width:${Math.min(100,left/total*100)}%"></div></div><p class="mt-2 text-[10px] text-slate-500">${left} remaining of ${total}</p></div>`;
+            }).join(""); el.innerHTML=html;
+            const hist=document.getElementById("storeSalesHistory"); if(hist){ hist.innerHTML=sales.length?sales.slice().reverse().map(x=>`<div class="flex justify-between bg-[#0b101a] border border-slate-800 rounded-xl p-3"><span>${x.itemName} × ${x.quantity} · ${x.wallet.slice(0,6)}...${x.wallet.slice(-4)}</span><span class="text-emerald-400 font-bold">${Number(x.amount).toFixed(3)} USDC</span></div>`).join(""):"No purchases recorded in this session."; }
         }
+        renderStoreInventory();
 
-        function decodeBullkarryPurchaseData(rawInput) {
-            if (!rawInput || rawInput === '0x') return null;
-            try {
-                const text = ethers.utils.toUtf8String(rawInput);
-                if (!text.startsWith(BULLKARRY_PURCHASE_PREFIX)) return null;
-                const data = JSON.parse(text.slice(BULLKARRY_PURCHASE_PREFIX.length));
-                const qty = Math.max(1, Number(data.qty || 1));
-                const unitPrice = Number(data.unitPrice || 0);
-                if (!data.item || !Number.isFinite(qty) || !Number.isFinite(unitPrice)) return null;
-                return { item: String(data.item), qty, unitPrice, total: qty * unitPrice, version: 1 };
-            } catch (_) {
-                return null;
-            }
-        }
-
-        function merchantTxAddress(value) {
-            return String(value?.hash || value || '').toLowerCase();
-        }
-
-        function merchantTxRawInput(tx) {
-            return tx?.raw_input || tx?.input || tx?.rawInput || tx?.data || '0x';
-        }
-
-        function formatMerchantDate(timestamp) {
-            if (!timestamp) return '—';
-            const d = new Date(Number(timestamp) * 1000);
-            return d.toLocaleString(undefined, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-        }
-
-        async function fetchMerchantPurchaseHistory() {
-            const items = [];
-            let nextParams = {};
-            for (let page = 0; page < 5; page++) {
-                const data = await blockscoutFetch(`/addresses/${BULLKARRY_STORE_RECEIVING_ADDRESS}/transactions`, nextParams);
-                const pageItems = Array.isArray(data.items) ? data.items : [];
-                items.push(...pageItems);
-                if (!data.next_page_params || !pageItems.length) break;
-                nextParams = data.next_page_params;
-            }
-
-            const purchases = [];
-            const seen = new Set();
-            for (const tx of items) {
-                const hash = String(tx?.hash || '');
-                if (!hash || seen.has(hash.toLowerCase())) continue;
-                seen.add(hash.toLowerCase());
-
-                const to = merchantTxAddress(tx?.to);
-                if (to !== BULLKARRY_STORE_RECEIVING_ADDRESS.toLowerCase()) continue;
-                if (tx?.status && !['ok', 'success', 'confirmed'].includes(String(tx.status).toLowerCase())) continue;
-
-                const meta = decodeBullkarryPurchaseData(merchantTxRawInput(tx));
-                if (!meta) continue;
-
-                let amount = 0;
-                try { amount = Number(ethers.utils.formatUnits(String(tx?.value || '0'), 18)); } catch (_) {}
-                if (!Number.isFinite(amount) || amount <= 0) continue;
-
-                const buyer = merchantTxAddress(tx?.from);
-                const timestamp = tx?.timestamp ? Math.floor(Date.parse(tx.timestamp) / 1000) : 0;
-                purchases.push({
-                    hash,
-                    buyer,
-                    buyerShort: formatAddress(buyer),
-                    item: meta.item,
-                    qty: meta.qty,
-                    unitPrice: meta.unitPrice,
-                    amount,
-                    timestamp,
-                    status: 'Confirmed'
-                });
-            }
-            purchases.sort((a, b) => b.timestamp - a.timestamp);
-            return purchases;
-        }
-
-        async function renderMerchantSales() {
-            const historyEl = document.getElementById('merchantSalesHistory');
-            const summaryEl = document.getElementById('merchantSalesSummary');
-            const countEl = document.getElementById('merchantSalesCount');
-            const icon = document.getElementById('merchantSalesRefreshIcon');
-            if (!historyEl) return;
-            icon?.classList.add('fa-spin');
-            historyEl.innerHTML = '<div class="py-6 text-center">Loading confirmed purchases…</div>';
-
-            try {
-                const purchases = await fetchMerchantPurchaseHistory();
-                const totalRevenue = purchases.reduce((sum, p) => sum + p.amount, 0);
-                const totalQty = purchases.reduce((sum, p) => sum + p.qty, 0);
-                if (countEl) countEl.textContent = `${purchases.length} sale${purchases.length === 1 ? '' : 's'}`;
-                if (summaryEl) {
-                    summaryEl.innerHTML = `
-                        <div class="rounded-xl bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] p-3"><div class="text-[9px] uppercase font-bold text-slate-500">Revenue</div><div class="text-base font-black text-emerald-500 mt-1">${totalRevenue.toLocaleString(undefined,{maximumFractionDigits:8})} USDC</div></div>
-                        <div class="rounded-xl bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] p-3"><div class="text-[9px] uppercase font-bold text-slate-500">NFTs Sold</div><div class="text-base font-black text-slate-900 dark:text-white mt-1">${totalQty}</div></div>
-                        <div class="rounded-xl bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] p-3"><div class="text-[9px] uppercase font-bold text-slate-500">Your Wallet</div><div class="text-xs font-bold text-blue-500 mt-2">${formatAddress(BULLKARRY_STORE_RECEIVING_ADDRESS)}</div></div>`;
-                }
-
-                if (!purchases.length) {
-                    historyEl.innerHTML = '<div class="py-8 text-center"><div class="font-semibold text-slate-700 dark:text-slate-300">No Bullkarry purchases recorded yet.</div><div class="text-[11px] mt-2 text-slate-500">Only purchases made through the updated Buy button carry the on-chain item and quantity record. Older direct transfers cannot reliably reveal the NFT name or quantity.</div></div>';
-                    return;
-                }
-
-                historyEl.innerHTML = `
-                    <div class="hidden md:grid grid-cols-[1.35fr_1.2fr_70px_100px_145px] gap-3 px-3 pb-2 text-[9px] uppercase font-bold text-slate-500">
-                        <div>Buyer</div><div>NFT / Product</div><div>Qty</div><div>Received</div><div>Date</div>
-                    </div>
-                    <div class="space-y-2">
-                        ${purchases.map(p => `
-                            <a href="https://testnet.arcscan.app/tx/${p.hash}" target="_blank" rel="noopener noreferrer" class="block rounded-xl border border-slate-200 dark:border-[#243048] bg-slate-50/70 dark:bg-[#0b101a] p-3 hover:border-blue-500/40 transition">
-                                <div class="grid md:grid-cols-[1.35fr_1.2fr_70px_100px_145px] gap-2 md:gap-3 items-center">
-                                    <div><div class="font-bold text-xs text-slate-900 dark:text-white">${p.buyerShort}</div><div class="text-[9px] text-slate-500 mt-0.5">${p.buyer}</div></div>
-                                    <div class="font-semibold text-xs text-slate-800 dark:text-slate-200">${p.item}</div>
-                                    <div class="text-xs font-black text-blue-500">×${p.qty}</div>
-                                    <div class="text-xs font-black text-emerald-500">${p.amount.toLocaleString(undefined,{maximumFractionDigits:8})} USDC</div>
-                                    <div class="text-[10px] text-slate-500">${formatMerchantDate(p.timestamp)}</div>
-                                </div>
-                            </a>`).join('')}
-                    </div>`;
-            } catch (err) {
-                console.error('Merchant purchase history error:', err);
-                historyEl.innerHTML = '<div class="py-7 text-center text-red-500">Could not load merchant purchase history. Please try Refresh.</div>';
-            } finally {
-                icon?.classList.remove('fa-spin');
-            }
-        }
-
-        async function buyStoreItem(itemName, price, quantity = 1, btn = null) {
+        async function buyStoreItem(itemName, price) {
             if (!userAccount) return alert("Please connect wallet first");
-            const qty = Math.max(1, Math.min(10, Number(quantity) || 1));
-            const totalPrice = Number(price) * qty;
-            const button = btn || null;
-            const originalText = button ? button.innerText : 'Buy';
-            if (button) { button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; button.disabled = true; }
+            const btn = event.currentTarget;
+            const originalText = btn.innerText;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.disabled = true;
 
             try {
-                const eip1193 = getActiveEip1193Provider();
-                if (!eip1193) throw new Error('No active wallet provider');
-                const provider = new ethers.providers.Web3Provider(eip1193);
+                const walletProvider = getInjectedWalletProvider();
+                if (!walletProvider) throw new Error('No injected wallet provider available');
+                const provider = new ethers.providers.Web3Provider(walletProvider);
                 const signer = provider.getSigner();
-                const parsedAmt = ethers.utils.parseEther(String(totalPrice));
-                const data = encodeBullkarryPurchaseData(itemName, qty, Number(price));
+                const parsedAmt = ethers.utils.parseEther((price / 1000).toString());
                 const tx = await signer.sendTransaction({
-                    to: BULLKARRY_STORE_RECEIVING_ADDRESS,
-                    value: parsedAmt,
-                    data
+                    to: "0xfc37f1ee234d8037fb7b37b1fc346d0b9f880d07",
+                    value: parsedAmt
                 });
                 await tx.wait();
+                const sales = getStoreSales();
+                sales.push({ itemName, quantity: 1, amount: price, wallet: userAccount, txHash: tx.hash, timestamp: Date.now() });
+                localStorage.setItem(STORE_KEY, JSON.stringify(sales));
+                renderStoreInventory();
 
                 document.getElementById('successModalTitle').innerText = "Purchase Successful!";
-                document.getElementById('successModalMsg').innerText = `Successfully purchased ${qty} × ${itemName} for ${totalPrice} USDC`;
+                document.getElementById('successModalMsg').innerText = `Successfully purchased ${itemName} for ${price} USDC`;
                 openModal('successModal');
-                await renderMerchantSales();
             } catch (e) {
                 console.error(e);
                 alert("Purchase Failed or Rejected by User");
-            } finally {
-                if (button) { button.innerText = originalText; button.disabled = false; }
             }
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
-
     </script>
 </body>
 </html>
