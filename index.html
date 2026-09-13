@@ -823,8 +823,8 @@
     <!-- Reown AppKit integration for Arc Testnet -->
     <script type="module">
         import { createAppKit } from 'https://esm.sh/@reown/appkit@1.8.23?bundle';
-        import { defineChain } from 'https://esm.sh/@reown/appkit@1.8.23/networks?bundle';
-        import { Ethers5Adapter } from 'https://esm.sh/@reown/appkit-adapter-ethers5@1.8.23?bundle&deps=ethers@5.7.2';
+        import { mainnet, defineChain } from 'https://esm.sh/@reown/appkit@1.8.23/networks?bundle';
+        import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.8.23?bundle';
 
         const REOWN_PROJECT_ID = '11085fdc7e3488a54a917f03c2167492';
         const ARC_TESTNET = defineChain({
@@ -855,11 +855,13 @@
                 const address = appKit.getAddress?.();
                 const provider = appKit.getWalletProvider?.();
 
-                if (connected && address && provider) {
-                    window.ethereum = provider;
-                    window.__bullkarryReownProvider = provider;
-                    window.__bullkarryWalletProvider = provider;
-                    window.__bullkarryWalletProviderInfo = { name: appKit.getWalletProviderType?.() || 'Wallet' };
+                if (connected && address) {
+                    if (provider) {
+                        window.ethereum = provider;
+                        window.__bullkarryReownProvider = provider;
+                        window.__bullkarryWalletProvider = provider;
+                        window.__bullkarryWalletProviderInfo = { name: appKit.getWalletProviderType?.() || 'Wallet' };
+                    }
 
                     // Keep the existing Bullkarry wallet/data logic unchanged.
                     if (typeof window.initializeWallet === 'function') {
@@ -882,7 +884,7 @@
             if (reownInitPromise) return reownInitPromise;
 
             reownInitPromise = (async () => {
-                const adapter = new Ethers5Adapter();
+                const adapter = new EthersAdapter();
                 const appUrl = (location.protocol === 'http:' || location.protocol === 'https:')
                     ? window.location.origin
                     : 'https://bullkarry-wallet.vercel.app';
@@ -899,12 +901,22 @@
                     icons: ['https://bullkarry-wallet.vercel.app/favicon.ico']
                 };
 
+                // Keep a standard EVM network available during WalletConnect session
+                // negotiation. Some mobile/desktop wallets reject a session proposal
+                // when the only requested chain is a custom chain they have not added
+                // yet. Arc remains the default application network and is switched to
+                // after the wallet provider is available.
+                const networks = [mainnet, ARC_TESTNET];
+
                 appKit = createAppKit({
                     adapters: [adapter],
-                    networks: [ARC_TESTNET],
+                    networks,
                     defaultNetwork: ARC_TESTNET,
                     metadata,
                     projectId: REOWN_PROJECT_ID,
+                    customRpcUrls: {
+                        'eip155:5042002': 'https://rpc.testnet.arc.network'
+                    },
                     features: {
                         analytics: false,
                         email: false,
@@ -936,15 +948,54 @@
                 // Reown's provider subscription keeps the existing Bullkarry UI/data
                 // in sync when the user connects, changes account, or changes chain.
                 if (typeof appKit.subscribeProvider === 'function') {
-                    appKit.subscribeProvider(async () => {
-                        await syncReownWalletState();
+                    appKit.subscribeProvider(async (state) => {
+                        try {
+                            if (state?.error) console.warn('Reown provider error:', state.error);
+                            const provider = state?.provider || appKit.getWalletProvider?.();
+                            const address = state?.address || appKit.getAddress?.();
+                            const connected = state?.isConnected ?? appKit.getIsConnected?.();
+                            if (provider) {
+                                window.ethereum = provider;
+                                window.__bullkarryReownProvider = provider;
+                                window.__bullkarryWalletProvider = provider;
+                                window.__bullkarryWalletProviderInfo = { name: state?.providerType || appKit.getWalletProviderType?.() || 'Wallet' };
+                            }
+                            // Use the provider callback's connection state directly.
+                            // Do not wait for getIsConnected() on the selected network,
+                            // because a newly negotiated WC session can briefly be on
+                            // the wallet's current chain before Arc is selected.
+                            if (connected && address && typeof window.initializeWallet === 'function') {
+                                if (userAccount !== address || !isWalletConnected) {
+                                    await window.initializeWallet(address);
+                                }
+                            } else {
+                                await syncReownWalletState();
+                            }
+                        } catch (e) {
+                            console.warn('Reown provider sync failed:', e);
+                        }
                     });
                 }
 
                 // Also listen through the current multi-provider API when available.
                 if (typeof appKit.subscribeProviders === 'function') {
-                    appKit.subscribeProviders(async () => {
+                    appKit.subscribeProviders(async (state) => {
+                        const provider = state?.eip155;
+                        if (provider) {
+                            window.ethereum = provider;
+                            window.__bullkarryReownProvider = provider;
+                            window.__bullkarryWalletProvider = provider;
+                        }
                         await syncReownWalletState();
+                    });
+                }
+
+                if (typeof appKit.subscribeState === 'function') {
+                    appKit.subscribeState((state) => {
+                        if (state?.open === false) {
+                            const error = appKit?.getError?.();
+                            if (error) console.warn('Reown connection error:', error);
+                        }
                     });
                 }
 
@@ -975,6 +1026,36 @@
                 const kit = await initializeReown();
                 await kit.open({ view: 'Connect', namespace: 'eip155' });
 
+                // Do not force a network switch before the wallet session exists.
+                // Once AppKit exposes the EIP-1193 provider, request Arc Testnet
+                // explicitly; wallets that already know Arc simply switch, while
+                // wallets that do not know it can be prompted by the standard RPC.
+                const trySwitchToArc = async () => {
+                    const provider = kit.getWalletProvider?.() || window.__bullkarryReownProvider;
+                    if (!provider) return;
+                    try {
+                        const current = await provider.request({ method: 'eth_chainId' });
+                        if (String(current).toLowerCase() === '0x4cef52') return;
+                        try {
+                            await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x4cef52' }] });
+                        } catch (switchError) {
+                            if (switchError?.code === 4902 || /unknown|unrecognized|not added/i.test(String(switchError?.message || ''))) {
+                                await provider.request({ method: 'wallet_addEthereumChain', params: [{
+                                    chainId: '0x4cef52',
+                                    chainName: 'Arc Testnet',
+                                    nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+                                    rpcUrls: ['https://rpc.testnet.arc.network'],
+                                    blockExplorerUrls: ['https://testnet.arcscan.app']
+                                }] });
+                            } else {
+                                throw switchError;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Arc network switch after Reown connection:', e);
+                    }
+                };
+
                 // Do not depend on a single Reown callback. After the modal opens,
                 // check the AppKit session briefly so the existing Bullkarry wallet
                 // state updates immediately after the user approves the connection.
@@ -983,6 +1064,9 @@
                 reownSyncTimer = setInterval(async () => {
                     attempts += 1;
                     await syncReownWalletState();
+                    if (appKit?.getWalletProvider?.()) {
+                        await trySwitchToArc();
+                    }
                     if (appKit?.getIsConnected?.() || attempts >= 40) {
                         clearInterval(reownSyncTimer);
                         reownSyncTimer = null;
