@@ -189,10 +189,7 @@
                         <button onclick="copyHeaderAddress()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
                             <i class="fa-regular fa-copy w-4 text-lg"></i> Copy Address
                         </button>
-                        <button onclick="connectXAccount()" class="w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-3 border-b border-slate-100 dark:border-slate-800/50">
-                            <svg class="w-4 h-4 fill-current text-slate-700 dark:text-white" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/>
-                            </svg> Connect X
+                         Connect X
                         </button>
                         <button onclick="disconnectWallet()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition flex items-center gap-3">
                             <i class="fa-solid fa-right-from-bracket w-4 text-lg"></i> Disconnect
@@ -380,6 +377,7 @@
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Amount</label>
                     <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-2 focus-within:border-blue-500 transition">
                         <input type="number" id="payAmount" placeholder="0.00" class="bg-transparent w-full p-2 text-2xl font-bold focus:outline-none text-slate-900 dark:text-white">
+                    <input id="payNote" type="text" placeholder="Add a note (optional)" class="w-full mt-3 bg-slate-100 dark:bg-[#111827] border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500">
                         <select id="payToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
                             <option value="USDC">USDC</option>
                             <option value="BUSD">BUSD</option>
@@ -390,6 +388,19 @@
                     <button onclick="generateLink()" class="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-md">
                         Create Payment Link <i class="fa-solid fa-arrow-right text-xs"></i>
                     </button>
+                    <div id="v4PaymentLinkResult" class="hidden mt-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0f1624] p-4">
+                        <div class="text-sm font-bold text-slate-900 dark:text-white mb-4">Payment Link Ready</div>
+                        <div class="flex justify-center mb-4"><div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200"><img id="v4PaymentQR" alt="Payment QR" class="w-48 h-48 object-contain"></div></div>
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400 mb-1">Receiving address</div>
+                        <div id="v4PaymentAddress" class="font-mono text-[11px] break-all text-slate-800 dark:text-slate-200 mb-3"></div>
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400 mb-1">Payment link</div>
+                        <div id="v4PaymentURL" class="font-mono text-[11px] break-all text-blue-500"></div>
+                        <div class="flex gap-2 mt-4">
+                            <button type="button" id="v4CopyPaymentLink" class="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 text-xs font-bold">Copy Link</button>
+                            <button type="button" id="v4SharePaymentLink" class="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-xs font-bold">Share</button>
+                        </div>
+                        <a id="v4OpenPaymentLink" href="#" target="_blank" rel="noopener" class="block text-center text-[10px] text-blue-500 mt-3">Open payment page</a>
+                    </div>
                 </div>
 
                 <div class="bg-slate-50 dark:bg-[#121927] p-8 flex flex-col justify-center">
@@ -1589,5 +1600,22 @@
             btn.disabled = false;
         }
     </script>
+
+<script>
+(function(){
+ let generated="";
+ const get=id=>{const e=document.getElementById(id);return e?String(e.value||"").trim():""};
+ function addr(){return window.userAccount||window.currentAccount||window.walletAddress||localStorage.getItem("bullkarry_account")||""}
+ function link(to,a,t,n){const u=new URL(location.href);u.search="";u.hash="";u.searchParams.set("payment","1");u.searchParams.set("to",to);u.searchParams.set("amount",a);u.searchParams.set("token",t);u.searchParams.set("chainId","5042002");if(n)u.searchParams.set("note",n);return u.toString()}
+ async function qr(data){const i=document.getElementById("v4PaymentQR");if(!i)return;if(window.QRCode&&typeof QRCode.toDataURL==="function"){i.src=await QRCode.toDataURL(data,{width:640,margin:2,errorCorrectionLevel:"H"});}else{i.src="https://api.qrserver.com/v1/create-qr-code/?size=640x640&margin=12&data="+encodeURIComponent(data)}}
+ async function create(){const a=get("payAmount"),t=get("payToken")||"USDC",n=get("payNote"),to=addr();if(!/^0x[a-fA-F0-9]{40}$/.test(to)){alert("Please connect your wallet first.");return}if(!a||!Number.isFinite(Number(a))||Number(a)<=0){alert("Please enter a valid amount.");return}generated=link(to,a,t,n);document.getElementById("v4PaymentLinkResult").classList.remove("hidden");document.getElementById("v4PaymentAddress").textContent=to;document.getElementById("v4PaymentURL").textContent=generated;document.getElementById("v4OpenPaymentLink").href=generated;const raw=BigInt(Math.round(Number(a)*1e18)).toString();await qr("ethereum:"+to+"?value="+raw+"&chainId=5042002")}
+ document.addEventListener("DOMContentLoaded",function(){
+  document.addEventListener("click",function(e){const b=e.target.closest("button");if(!b)return;const t=(b.innerText||b.textContent||"").trim().toLowerCase();if(t==="create link"||t==="create payment link"){e.preventDefault();e.stopImmediatePropagation();create()}},true);
+  const c=document.getElementById("v4CopyPaymentLink");if(c)c.onclick=async()=>{if(!generated)return;try{await navigator.clipboard.writeText(generated);alert("Payment link copied")}catch(_){prompt("Copy payment link:",generated)}};
+  const s=document.getElementById("v4SharePaymentLink");if(s)s.onclick=async()=>{if(!generated)return;if(navigator.share){try{await navigator.share({title:"Bullkarry Payment",url:generated});return}catch(e){if(e.name==="AbortError")return}}if(navigator.clipboard)await navigator.clipboard.writeText(generated)};
+ });
+})();
+</script>
+
 </body>
 </html>
