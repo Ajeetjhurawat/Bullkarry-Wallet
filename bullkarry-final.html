@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bullkarry</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080c14}#app{width:100%;height:100%;border:0;display:block}</style>
+</head>
+<body>
+<iframe id="app" src="/index.html" title="Bullkarry"></iframe>
+<script>
+(function(){
+  const MERCHANT='0xfc37f1ee234d8037fb7b37b1fc346d0b9f880d07'.toLowerCase();
+  const PRODUCTS={
+    tee:{name:'Bullkarry Tee',price:10,total:999},
+    genesis:{name:'Genesis NFT',price:25,total:50}
+  };
+  const API='https://testnet.arcscan.app/api/v2';
+  const V1='https://api-testnet.arc-scan.org/v1';
+  let sales=[];
+  let salesLoading=false;
+
+  function q(doc,sel){return doc.querySelector(sel)}
+  function esc(s){return String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]))}
+  function short(a){a=String(a||'');return a? a.slice(0,6)+'...'+a.slice(-4):'Unknown'}
+  function amount3(n){return (Number(n)||0).toFixed(3)}
+  function decodeMemo(input){
+    try{
+      if(!input||typeof input!=='string'||!input.startsWith('0x')) return null;
+      const hex=input.slice(2); if(!hex||hex.length%2) return null;
+      const bytes=new Uint8Array(hex.match(/.{1,2}/g).map(x=>parseInt(x,16)));
+      const text=new TextDecoder().decode(bytes).replace(/\0+$/g,'');
+      const p=text.split('|');
+      if(p[0]!=='BULLKARRY'||p[1]!=='BUY') return null;
+      const quantity=Number(p[3]);
+      if(!p[2]||!Number.isInteger(quantity)||quantity<1) return null;
+      return {product:p[2],quantity};
+    }catch(e){return null}
+  }
+  async function api(path,params){
+    const u=new URL(API+path); Object.entries(params||{}).forEach(([k,v])=>u.searchParams.set(k,String(v)));
+    const r=await fetch(u,{cache:'no-store'}); if(!r.ok) throw Error('HTTP '+r.status); return r.json();
+  }
+  async function txInput(hash){
+    try{const r=await fetch(V1+'/txs/'+hash,{cache:'no-store'});if(!r.ok)return '';const d=await r.json();return d?.input||d?.transaction?.input||''}catch(e){return ''}
+  }
+  async function loadSales(doc){
+    if(salesLoading)return; salesLoading=true;
+    const list=q(doc,'#merchantSalesList'); if(list) list.innerHTML='<div class="p-6 text-center text-xs text-slate-500">Loading verified on-chain purchases...</div>';
+    try{
+      let all=[],params={};
+      for(let i=0;i<5;i++){
+        const d=await api('/addresses/'+MERCHANT+'/transactions',params); const items=Array.isArray(d.items)?d.items:[]; all.push(...items);
+        if(!d.next_page_params||!items.length)break; params=d.next_page_params;
+      }
+      const incoming=all.filter(tx=>String(tx?.to?.hash||'').toLowerCase()===MERCHANT&&(tx?.status==='ok'||tx?.status==='success'));
+      const out=[];
+      for(const tx of incoming.slice(0,100)){
+        const memo=decodeMemo(await txInput(tx.hash)); if(!memo)continue;
+        const p=Object.values(PRODUCTS).find(x=>x.name===memo.product); if(!p)continue;
+        const value=Number((BigInt(String(tx.value||'0')))/1000000000000000000n)+Number((BigInt(String(tx.value||'0'))%1000000000000000000n).toString())/1e18;
+        const expected=p.price*memo.quantity; if(Math.abs(value-expected)>1e-8)continue;
+        out.push({hash:tx.hash,buyer:tx?.from?.hash||'',product:memo.product,quantity:memo.quantity,amount:value,timestamp:tx.timestamp?Math.floor(Date.parse(tx.timestamp)/1000):0});
+      }
+      out.sort((a,b)=>b.timestamp-a.timestamp); sales=out; renderSales(doc); renderInventory(doc);
+    }catch(e){console.error('Bullkarry merchant records:',e);if(list)list.innerHTML='<div class="p-6 text-center text-xs text-red-400">Could not load on-chain purchase records. Tap Refresh to retry.</div>'}
+    finally{salesLoading=false}
+  }
+  function renderInventory(doc){
+    Object.entries(PRODUCTS).forEach(([key,p])=>{
+      const sold=sales.filter(x=>x.product===p.name).reduce((a,x)=>a+x.quantity,0); const left=Math.max(0,p.total-sold);
+      const pill=q(doc,key==='tee'?'#teeStockPill':'#genesisStockPill'),btn=q(doc,key==='tee'?'#teeBuyBtn':'#genesisBuyBtn'),inp=q(doc,key==='tee'?'#teeQuantity':'#genesisQuantity');
+      if(!pill||!btn||!inp)return;
+      pill.textContent=left?('● '+p.total+' / '+left):'● Sold Out'; pill.className='store-stock-pill '+(left?'ok':'out');
+      inp.max=String(left); inp.disabled=!left; if(left)inp.value=String(Math.min(Math.max(Number(inp.value)||1,1),left));
+      btn.disabled=!left; btn.textContent=left?'Buy':'Sold Out';
+    });
+  }
+  function renderSales(doc){
+    const list=q(doc,'#merchantSalesList'); if(!list)return;
+    const orders=sales.length,qty=sales.reduce((a,x)=>a+x.quantity,0),funds=sales.reduce((a,x)=>a+x.amount,0);
+    const set=(id,v)=>{const e=q(doc,'#'+id);if(e)e.textContent=v};
+    set('merchantOrderCount',orders);set('merchantQtyCount',qty);set('merchantFundsTotal',amount3(funds)+' USDC');
+    if(!orders){list.innerHTML='<div class="p-6 text-center text-xs text-slate-500">No on-chain purchases recorded yet.</div>';return}
+    list.innerHTML=sales.map(r=>`<div class="store-record-row rounded-2xl border border-slate-200/10 bg-black/10 dark:bg-[#0b101a]/60 p-3 text-xs"><div class="font-mono text-slate-300 truncate" title="${esc(r.buyer)}">${esc(short(r.buyer))}</div><div class="font-bold text-white">${esc(r.product)}</div><div class="font-black text-emerald-400">${r.quantity}</div><div class="font-bold text-white">${amount3(r.amount)} USDC</div><a href="https://testnet.arc-scan.org/tx/${encodeURIComponent(r.hash)}" target="_blank" class="text-blue-400 hover:underline font-mono">${esc(short(r.hash))}</a></div>`).join('');
+  }
+  function patchStyles(doc){
+    if(q(doc,'#bullkarry-final-style'))return;
+    const st=doc.createElement('style');st.id='bullkarry-final-style';st.textContent=`
+      .final-compact-heading{display:flex!important;align-items:center;gap:8px;font-size:11px!important;font-weight:800!important;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8!important;margin:0 0 18px!important}
+      .final-compact-heading .dot{width:7px;height:7px;border-radius:999px;background:#00d182;box-shadow:0 0 0 4px rgba(0,209,130,.08);flex:none}
+      .final-merchant-glass{background:radial-gradient(circle at 100% 0%,rgba(59,130,246,.14),transparent 38%),linear-gradient(145deg,rgba(22,31,48,.78),rgba(8,12,20,.78));backdrop-filter:blur(14px);border:1px solid rgba(148,163,184,.14);box-shadow:0 18px 50px rgba(0,0,0,.14)}
+      .final-store-card{background:linear-gradient(145deg,rgba(22,31,48,.96),rgba(15,22,36,.96));border:1px solid rgba(148,163,184,.13);position:relative;overflow:hidden}
+      .final-stock{display:inline-flex;align-items:center;border-radius:999px;padding:4px 9px;font-size:10px;font-weight:800}.final-stock.ok{color:#34d399;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.18)}.final-stock.out{color:#fb7185;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.18)}
+      .final-qty{width:100%;box-sizing:border-box;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:700;background:rgba(15,23,42,.72);color:#e2e8f0;border:1px solid rgba(148,163,184,.16);outline:none}
+      .final-record{display:grid;grid-template-columns:1.15fr 1.25fr .55fr .8fr .8fr;gap:12px;align-items:center}
+      @media(max-width:767px){.final-record{grid-template-columns:1fr 1fr;gap:8px}}
+      #paymentsView .final-hide-title{display:none!important}
+    `;doc.head.appendChild(st)
+  }
+  function patchPayments(doc){
+    const pv=q(doc,'#paymentsView');if(!pv)return;
+    const h=pv.querySelector('h1');if(h){h.classList.add('final-hide-title')}
+    const fn=doc.defaultView.formatPaymentAmount;
+    if(fn&&!fn.__bullkarryFinal){const original=fn;const wrapped=function(v){return (Number(v)||0).toFixed(3)};wrapped.__bullkarryFinal=true;doc.defaultView.formatPaymentAmount=wrapped}
+    ['paymentsTodayReceived','paymentsYesterdayReceived','paymentsMonthReceived'].forEach(id=>{const e=q(doc,'#'+id);if(e&&e.textContent){const n=Number(e.textContent.replace(/,/g,''));if(Number.isFinite(n))e.textContent=n.toFixed(3)}})
+    ['paymentsTodayRefund','paymentsTodayNet','paymentsYesterdayRefund','paymentsYesterdayNet','paymentsMonthRefund','paymentsMonthNet'].forEach(id=>{const e=q(doc,'#'+id);if(!e)return;e.textContent=e.textContent.replace(/(-?\d[\d,]*\.\d+)/,m=>Number(m.replace(/,/g,'')).toFixed(3))})
+  }
+  function patchTransactions(doc){
+    const tv=q(doc,'#transactionsView');if(!tv)return;const h=tv.querySelector('h2');if(h&&!h.classList.contains('final-compact-heading')){h.outerHTML='<div class="final-compact-heading"><span class="dot"></span><span>All On-Chain Transactions</span></div>'}
+  }
+  function patchStore(doc){
+    const mv=q(doc,'#merchantView');if(!mv)return;
+    const old=mv.querySelector('h2');if(old&&!old.classList.contains('final-store-patched')){old.outerHTML='<div class="final-compact-heading final-store-patched"><span class="dot"></span><span>On Chain Digital Product</span></div>'}
+    const sub=mv.querySelector('p.text-xs.text-slate-500');if(sub&&sub.textContent.includes('On-chain Digital Product'))sub.textContent='Live inventory and on-chain purchase records';
+    if(!q(doc,'#merchantSalesList')){
+      const box=doc.createElement('div');box.className='final-merchant-glass rounded-[2rem] p-5 md:p-7 mt-6';box.innerHTML=`<div class="flex flex-wrap items-center justify-between gap-3 mb-5"><div><div class="final-compact-heading" style="margin-bottom:0!important"><span class="dot"></span><span>Merchant Purchase Records</span></div><p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Verified purchases sent to the Bullkarry merchant wallet</p></div><button id="merchantRefreshBtn" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-[#243048] bg-[#0f1624] text-xs font-bold text-slate-300"><i id="merchantRefreshIcon" class="fa-solid fa-rotate-right mr-1"></i> Refresh</button></div><div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5"><div class="rounded-2xl border border-blue-500/15 bg-blue-500/[0.04] p-4"><div class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Orders</div><div id="merchantOrderCount" class="text-2xl font-black text-white mt-1">0</div></div><div class="rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-4"><div class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Product Quantity</div><div id="merchantQtyCount" class="text-2xl font-black text-emerald-400 mt-1">0</div></div><div class="rounded-2xl border border-purple-500/15 bg-purple-500/[0.04] p-4"><div class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Funds Received</div><div id="merchantFundsTotal" class="text-2xl font-black text-white mt-1">0.000 USDC</div></div><div class="rounded-2xl border border-amber-500/15 bg-amber-500/[0.04] p-4"><div class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Merchant Wallet</div><div class="text-xs font-mono font-bold text-amber-300 mt-2">0xfc37...0d07</div></div></div><div class="hidden md:grid final-record px-3 py-2 text-[10px] uppercase tracking-wider font-bold text-slate-500 border-b border-slate-200/10"><div>Buyer Wallet</div><div>Product</div><div>Qty</div><div>Amount</div><div>Transaction</div></div><div id="merchantSalesList" class="space-y-2 mt-2"><div class="p-6 text-center text-xs text-slate-500">Loading verified on-chain purchases...</div></div>`;
+      mv.appendChild(box); q(doc,'#merchantRefreshBtn').onclick=()=>loadSales(doc)
+    }
+    renderInventory(doc)
+  }
+  function patchStoreBuy(doc){
+    const win=doc.defaultView;
+    win.buyStoreItem=async function(itemName,price,key){
+      const p=PRODUCTS[key];if(!p||p.name!==itemName)return alert('Invalid store product.');
+      const inp=q(doc,key==='tee'?'#teeQuantity':'#genesisQuantity'),btn=q(doc,key==='tee'?'#teeBuyBtn':'#genesisBuyBtn');
+      if(!win.userAccount)return alert('Please connect wallet first');
+      const quantity=Math.max(1,Math.floor(Number(inp?.value||1)));const sold=sales.filter(x=>x.product===p.name).reduce((a,x)=>a+x.quantity,0);const left=p.total-sold;if(left<1)return alert('Sold Out');if(quantity>left)return alert('Only '+left+' left.');
+      const old=btn.innerHTML;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i>';btn.disabled=true;
+      try{
+        const providerObj=win.getActiveEip1193Provider?.()||win.activeWalletProvider||win.ethereum;if(!providerObj)throw Error('No active wallet provider');
+        const provider=new win.ethers.providers.Web3Provider(providerObj),signer=provider.getSigner();
+        const total=p.price*quantity;const data=win.ethers.utils.hexlify(win.ethers.utils.toUtf8Bytes('BULLKARRY|BUY|'+itemName+'|'+quantity));
+        const tx=await signer.sendTransaction({to:MERCHANT,value:win.ethers.utils.parseEther(String(total)),data});await tx.wait();
+        const title=q(doc,'#successModalTitle'),msg=q(doc,'#successModalMsg');if(title)title.innerText='Purchase Successful!';if(msg)msg.innerText=`Successfully purchased ${quantity} × ${itemName} for ${total.toFixed(3)} USDC`;win.openModal('successModal');inp.value='1';await loadSales(doc);setTimeout(()=>win.syncAllOnChainData?.().catch(()=>{}),500)
+      }catch(e){console.error(e);alert(e?.message||'Purchase Failed or Rejected by User')}finally{btn.innerHTML=old;btn.disabled=false;renderInventory(doc)}
+    }
+  }
+  function patch(doc){
+    try{patchStyles(doc);patchPayments(doc);patchTransactions(doc);patchStore(doc);patchStoreBuy(doc)}catch(e){console.error('Bullkarry final patch',e)}
+  }
+  const iframe=document.getElementById('app');
+  iframe.addEventListener('load',()=>{
+    const doc=iframe.contentDocument,win=iframe.contentWindow;patch(doc);
+    const observer=new MutationObserver(()=>patch(doc));observer.observe(doc.body,{subtree:true,childList:true});
+    const original=win.switchView;if(original&&!original.__bullkarryFinal){win.switchView=function(v){const r=original.apply(this,arguments);setTimeout(()=>{patch(doc);if(v==='merchant')loadSales(doc)},80);return r};win.switchView.__bullkarryFinal=true}
+    setInterval(()=>{patch(doc)},1500);
+  });
+})();
+</script>
+</body>
+</html>
