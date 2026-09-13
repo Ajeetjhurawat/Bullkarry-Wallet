@@ -52,9 +52,15 @@
 
     <!-- Left Sidebar -->
     <div class="w-64 bg-white dark:bg-darkSidebar border-r border-slate-200 dark:border-darkSidebarBorder flex flex-col p-6 hidden md:flex z-10 transition-colors">
-        <!-- Exact Logo Provided -->
         <div class="flex items-center gap-3 mb-10 cursor-pointer" onclick="switchView('dashboard')">
-            <img src="Black and Teal Modern Gym & Fitness YouTube Channel Logo (1).png" alt="Bullkarry" class="w-10 h-10 rounded-xl object-cover shadow-lg border border-slate-700/50 bg-black">
+            <!-- Fast Loading Teal & Black BK Logo (SVG) -->
+            <div class="w-10 h-10 rounded-xl bg-black border border-teal-400/30 flex items-center justify-center shadow-lg shadow-teal-500/10 shrink-0">
+                <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 36H48C52.4 36 56 39.6 56 44C56 48.4 52.4 52 48 52H28V64H48C52.4 64 56 67.6 56 72C56 76.4 52.4 80 48 80H22V36Z" stroke="#00F5B8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M62 36V80" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+                    <path d="M84 36L65 58L84 80" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
             <span class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Bullkarry</span>
         </div>
         
@@ -97,6 +103,7 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors">
         
+        <!-- Header -->
         <div class="flex justify-between items-center p-6 md:p-8 pb-4">
             <div>
                 <h1 id="greeting" class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Good afternoon</h1>
@@ -251,7 +258,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Portfolio List Container -->
                         <div class="space-y-3 bg-slate-50 dark:bg-[#0f1624] p-4 rounded-2xl border border-slate-100 dark:border-[#243048]" id="portfolioListContainer">
                             <div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>
                         </div>
@@ -282,12 +288,10 @@
                         <div class="hidden md:block col-span-2">Value</div>
                         <div class="col-span-3 text-right">Contract</div>
                     </div>
-                    
-                    <!-- Assets List Container -->
-                    <div class="divide-y divide-slate-100 dark:divide-[#243048] text-xs" id="assetsTableList">
-                    </div>
+                    <div class="divide-y divide-slate-100 dark:divide-[#243048] text-xs" id="assetsTableList"></div>
                 </div>
             </div>
+
         </div>
 
         <!-- VIEW 2: CREATE PAYMENT LINK -->
@@ -459,8 +463,7 @@
 
     </div>
 
-    <!-- Modals -->
-    <!-- Connect Wallet Modal -->
+    <!-- Reown Connect Wallet Replica Modal -->
     <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[100]">
         <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-0 relative shadow-2xl text-slate-900 dark:text-white font-sans overflow-hidden border border-slate-200 dark:border-white/5 scale-95">
             <div class="flex justify-between items-center p-4 border-b border-slate-100 dark:border-white/5">
@@ -624,31 +627,20 @@
         </div>
     </div>
 
-    <!-- Success Modal -->
+    <!-- Success Modal for Sending/Receiving -->
     <div id="successModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[110]">
         <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-6 text-center relative shadow-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 scale-95 transform transition-all">
             <div class="w-16 h-16 bg-[#00d182] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
                 <i class="fa-solid fa-check text-3xl text-white"></i>
             </div>
-            <h2 id="successModalTitle" class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Success!</h2>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6" id="successModalMsg">Action completed.</p>
+            <h2 id="successModalTitle" class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Transaction Successful!</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6" id="successModalMsg">Successfully sent tokens.</p>
             <button onclick="closeModal('successModal')" class="w-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl text-sm transition">Done</button>
         </div>
     </div>
 
-    <!-- Receive Success Modal -->
-    <div id="receiveSuccessModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[110]">
-        <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-6 text-center relative shadow-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 scale-95 transform transition-all">
-            <div class="w-16 h-16 bg-[#00d182] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
-                <i class="fa-solid fa-arrow-down text-3xl text-white"></i>
-            </div>
-            <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Funds Received!</h2>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6" id="receiveSuccessModalMsg">You received tokens.</p>
-            <button onclick="closeModal('receiveSuccessModal')" class="w-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl text-sm transition">Awesome</button>
-        </div>
-    </div>
-
     <script>
+        // Exact On-Chain Contracts
         const TOKEN_CONTRACTS = {
             BUSD: { name: "Bullkarry Demo USD", symbol: "BUSD", address: "0xf42c56e47362CECB426B95a65AeCC87d8007ec97", decimals: 18, color: "bg-[#0f1624]" },
             EURC: { name: "EURC", symbol: "EURC", address: "0x89B508A89A6A12902CA4a51e60A444C3FDaD72a", decimals: 18, color: "bg-blue-600" },
@@ -672,17 +664,14 @@
         let isFirstTxLoad = true;
 
         window.addEventListener('DOMContentLoaded', async () => {
-            const savedAccount = localStorage.getItem('bullkarry_account');
-            if (savedAccount && typeof window.ethereum !== 'undefined') {
+            if (typeof window.ethereum !== 'undefined') {
                 try {
                     const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                    if (accounts.length > 0 && accounts[0].toLowerCase() === savedAccount.toLowerCase()) {
-                        await initializeWallet(savedAccount);
-                    } else {
-                        localStorage.removeItem('bullkarry_account');
+                    if (accounts.length > 0) {
+                        await initializeWallet(accounts[0]);
                     }
                 } catch (e) {
-                    console.error("Auto session recall error", e);
+                    console.error("Session auto-recall error", e);
                 }
             }
         });
@@ -702,45 +691,46 @@
             document.getElementById('assetsPlaceholder').classList.add('hidden');
             document.getElementById('assetsTable').classList.remove('hidden');
 
-            await syncLiveBlockchainData();
+            await syncAllOnChainData();
 
             if (autoSyncInterval) clearInterval(autoSyncInterval);
-            autoSyncInterval = setInterval(syncLiveBlockchainData, 2000);
+            autoSyncInterval = setInterval(syncAllOnChainData, 2000);
         }
 
-        async function syncLiveBlockchainData() {
+        async function syncAllOnChainData() {
             if (!userAccount || !isWalletConnected || typeof window.ethereum === 'undefined') return;
 
             try {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-                // 1. Direct RPC Call for Native Balance (100% Reliable, No API required)
-                const nativeBal = await provider.getBalance(userAccount).catch(() => ethers.BigNumber.from(0));
-                usdcBalance = parseFloat(ethers.utils.formatEther(nativeBal));
+                // 1. Direct RPC Call for Native USDC
+                const balanceWei = await provider.getBalance(userAccount).catch(() => ethers.BigNumber.from(0));
+                usdcBalance = parseFloat(ethers.utils.formatEther(balanceWei));
 
-                // 2. Direct Smart Contract Calls for Tokens
+                // 2. Direct Smart Contract Calls (100% Reliable, No CORS block)
                 const tokenKeys = Object.keys(TOKEN_CONTRACTS);
                 const updatedTokens = [];
 
-                const contractPromises = tokenKeys.map(async (key) => {
+                for (let key of tokenKeys) {
                     const t = TOKEN_CONTRACTS[key];
                     try {
                         const contract = new ethers.Contract(t.address, ERC20_ABI, provider);
                         const rawBal = await contract.balanceOf(userAccount);
                         const bal = parseFloat(ethers.utils.formatUnits(rawBal, t.decimals));
-                        return { ...t, balance: bal };
+                        updatedTokens.push({
+                            ...t,
+                            balance: bal
+                        });
                     } catch (err) {
-                        return { ...t, balance: 0 };
+                        updatedTokens.push({ ...t, balance: 0 });
                     }
-                });
+                }
+                liveTokens = updatedTokens;
 
-                const settledTokens = await Promise.all(contractPromises);
-                liveTokens = settledTokens.filter(t => t.balance > 0);
-
-                // 3. Update Visuals
+                // 3. Update Visual Displays
                 renderBalancesAndAssets();
 
-                // 4. Fetch History
+                // 4. Fetch Real-time On-Chain History
                 await fetchLiveTransactions();
 
             } catch (err) {
@@ -748,88 +738,191 @@
             }
         }
 
+        const ARCSCAN_API_BASE = 'https://api-testnet.arc-scan.org/api';
+        const ARC_TESTNET_INDEX_START = 53500000;
+
+        function formatTxTime(timestamp) {
+            const txSeconds = Number(timestamp || 0);
+            if (!txSeconds) return 'Just now';
+
+            const timeDiff = Math.max(0, Math.floor(Date.now() / 1000) - txSeconds);
+            if (timeDiff < 60) return 'Just now';
+            if (timeDiff < 3600) return Math.floor(timeDiff / 60) + 'm ago';
+            if (timeDiff < 86400) return Math.floor(timeDiff / 3600) + 'h ago';
+            return Math.floor(timeDiff / 86400) + 'd ago';
+        }
+
+        function formatTransferAmount(rawValue, decimals) {
+            try {
+                const exact = ethers.utils.formatUnits(rawValue || '0', decimals || 18);
+                const num = Number(exact);
+                if (!Number.isFinite(num)) return exact;
+                return num.toLocaleString(undefined, {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 6
+                });
+            } catch {
+                return '0';
+            }
+        }
+
+        function shortAddress(address) {
+            if (!address) return 'Unknown';
+            return address.substring(0, 6) + '...' + address.substring(address.length - 4);
+        }
+
+        async function fetchArcScanApi(module, action, params = {}) {
+            const query = new URLSearchParams({
+                module,
+                action,
+                ...params,
+                _: Date.now().toString()
+            });
+
+            const res = await fetch(`${ARCSCAN_API_BASE}?${query.toString()}`, {
+                cache: 'no-store',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (!res.ok) {
+                throw new Error(`ArcScan API HTTP ${res.status}`);
+            }
+
+            const data = await res.json();
+
+            if (data && data.status === '0' && Array.isArray(data.result) && data.result.length === 0) {
+                return [];
+            }
+
+            if (!data || !Array.isArray(data.result)) {
+                throw new Error(data?.message || 'Invalid ArcScan API response');
+            }
+
+            return data.result;
+        }
+
+        function normalizeTokenTransfer(tx) {
+            const wallet = userAccount.toLowerCase();
+            const from = (tx.from || '').toLowerCase();
+            const to = (tx.to || '').toLowerCase();
+            const isSent = from === wallet;
+
+            if (from !== wallet && to !== wallet) return null;
+
+            const symbol = tx.tokenSymbol || 'USDC';
+            const decimals = Number.parseInt(tx.tokenDecimal || '18', 10);
+            const amount = formatTransferAmount(tx.value || '0', decimals);
+            const counterpart = isSent ? tx.to : tx.from;
+
+            return {
+                hash: tx.hash,
+                type: isSent ? 'Sent' : 'Received',
+                token: symbol,
+                amount: (isSent ? '-' : '+') + amount + ' ' + symbol,
+                from: shortAddress(counterpart),
+                color: isSent ? 'text-red-500' : 'text-[#00d182]',
+                isSent,
+                time: formatTxTime(tx.timeStamp),
+                timestamp: Number(tx.timeStamp || 0),
+                _key: `${tx.hash}:token:${symbol}:${tx.value}:${from}:${to}`
+            };
+        }
+
+        function normalizeNativeTransaction(tx) {
+            const wallet = userAccount.toLowerCase();
+            const from = (tx.from || '').toLowerCase();
+            const to = (tx.to || '').toLowerCase();
+            const value = tx.value || '0';
+
+            if (!value || value === '0') return null;
+            if (from !== wallet && to !== wallet) return null;
+
+            const isSent = from === wallet;
+            const amount = formatTransferAmount(value, 18);
+            const counterpart = isSent ? tx.to : tx.from;
+
+            return {
+                hash: tx.hash,
+                type: isSent ? 'Sent' : 'Received',
+                token: 'USDC',
+                amount: (isSent ? '-' : '+') + amount + ' USDC',
+                from: shortAddress(counterpart),
+                color: isSent ? 'text-red-500' : 'text-[#00d182]',
+                isSent,
+                time: formatTxTime(tx.timeStamp),
+                timestamp: Number(tx.timeStamp || 0),
+                _key: `${tx.hash}:native:${value}:${from}:${to}`
+            };
+        }
+
         async function fetchLiveTransactions() {
             if (!userAccount) return;
-            const ts = Date.now(); // Cache Buster to force new API data
+
             try {
-                const [nativeRes, tokenRes] = await Promise.all([
-                    fetch(`https://testnet.arcscan.app/api?module=account&action=txlist&address=${userAccount}&sort=desc&_t=${ts}`).catch(()=>null),
-                    fetch(`https://testnet.arcscan.app/api?module=account&action=tokentx&address=${userAccount}&sort=desc&_t=${ts}`).catch(()=>null)
+                // Arcscan's old testnet.arcscan.app API is not a reliable live source for this UI.
+                // Use the current public Arcscan API and merge native USDC + ERC-20 activity.
+                const [nativeTxs, tokenTxs] = await Promise.all([
+                    fetchArcScanApi('account', 'txlist', {
+                        address: userAccount,
+                        startblock: ARC_TESTNET_INDEX_START.toString(),
+                        endblock: 'latest',
+                        sort: 'desc',
+                        page: '1',
+                        offset: '100'
+                    }),
+                    fetchArcScanApi('account', 'tokentx', {
+                        address: userAccount,
+                        startblock: ARC_TESTNET_INDEX_START.toString(),
+                        endblock: 'latest',
+                        sort: 'desc',
+                        page: '1',
+                        offset: '100'
+                    })
                 ]);
 
-                let allTx = [];
-                if (nativeRes && nativeRes.ok) {
-                    const nativeData = await nativeRes.json();
-                    if (nativeData.status === "1" && Array.isArray(nativeData.result)) {
-                        allTx = allTx.concat(nativeData.result.filter(tx => tx.value !== "0" && tx.isError !== "1").map(tx => ({ ...tx, isNative: true })));
+                const normalized = [
+                    ...nativeTxs.map(normalizeNativeTransaction).filter(Boolean),
+                    ...tokenTxs.map(normalizeTokenTransfer).filter(Boolean)
+                ];
+
+                // Remove duplicate records, then always sort newest first.
+                const unique = new Map();
+                normalized.forEach(tx => {
+                    if (!unique.has(tx._key)) unique.set(tx._key, tx);
+                });
+
+                const formatted = Array.from(unique.values())
+                    .sort((a, b) => b.timestamp - a.timestamp)
+                    .slice(0, 100)
+                    .map(({ _key, timestamp, ...tx }) => tx);
+
+                // Trigger popup only for newly discovered incoming transfers.
+                if (!isFirstTxLoad) {
+                    const newReceives = formatted.filter(t =>
+                        t.type === 'Received' && !knownTxHashes.has(t.hash)
+                    );
+
+                    if (newReceives.length > 0) {
+                        const latest = newReceives[0];
+                        document.getElementById('successModalTitle').innerText = "Funds Received!";
+                        document.getElementById('successModalMsg').innerText =
+                            `You received ${latest.amount.replace('+', '')} from ${latest.from}`;
+                        openModal('successModal');
                     }
                 }
-                if (tokenRes && tokenRes.ok) {
-                    const tokenData = await tokenRes.json();
-                    if (tokenData.status === "1" && Array.isArray(tokenData.result)) {
-                        allTx = allTx.concat(tokenData.result);
-                    }
-                }
 
-                allTx.sort((a, b) => parseInt(b.timeStamp || 0) - parseInt(a.timeStamp || 0));
-
-                const uniqueTxs = [];
-                const seen = new Set();
-                for(const t of allTx) {
-                    if(!seen.has(t.hash)) {
-                        seen.add(t.hash);
-                        uniqueTxs.push(t);
-                    }
-                }
-
-                if (uniqueTxs.length > 0) {
-                    let formattedTxs = uniqueTxs.slice(0, 100).map(tx => {
-                        const isSent = tx.from.toLowerCase() === userAccount.toLowerCase();
-                        const symbol = tx.isNative ? 'USDC' : (tx.tokenSymbol || 'Token');
-                        const decimals = tx.isNative ? 18 : parseInt(tx.tokenDecimal || 18);
-                        const amount = parseFloat(ethers.utils.formatUnits(tx.value || "0", decimals));
-                        const formattedAmount = amount > 0 ? amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 }) : amount.toString();
-
-                        const timeDiff = Math.floor(Date.now() / 1000) - parseInt(tx.timeStamp || Date.now() / 1000);
-                        let timeStr = 'Just now';
-                        if (timeDiff > 86400) timeStr = Math.floor(timeDiff / 86400) + 'd ago';
-                        else if (timeDiff > 3600) timeStr = Math.floor(timeDiff / 3600) + 'h ago';
-                        else if (timeDiff > 60) timeStr = Math.floor(timeDiff / 60) + 'm ago';
-
-                        const counterpart = isSent ? (tx.to || 'Contract') : (tx.from || 'Contract');
-
-                        return {
-                            hash: tx.hash,
-                            type: isSent ? 'Sent' : 'Received',
-                            token: symbol,
-                            amount: (isSent ? '-' : '+') + formattedAmount + ' ' + symbol,
-                            from: counterpart.substring(0, 6) + '...' + counterpart.substring(counterpart.length - 4),
-                            color: isSent ? 'text-red-500' : 'text-[#00d182]',
-                            isSent: isSent,
-                            time: timeStr
-                        };
-                    });
-
-                    // Trigger Popup on New Receive
-                    if (!isFirstTxLoad) {
-                        const newReceives = formattedTxs.filter(t => t.type === 'Received' && !knownTxHashes.has(t.hash));
-                        if (newReceives.length > 0) {
-                            const latest = newReceives[0];
-                            document.getElementById('receiveSuccessModalMsg').innerText = `You received ${latest.amount} from ${latest.from}`;
-                            openModal('receiveSuccessModal');
-                        }
-                    }
-
-                    formattedTxs.forEach(t => knownTxHashes.add(t.hash));
-                    isFirstTxLoad = false;
-                    transactions = formattedTxs;
-                } else {
-                    transactions = [];
-                }
+                knownTxHashes = new Set(formatted.map(t => t.hash));
+                isFirstTxLoad = false;
+                transactions = formatted;
                 renderTransactionLists();
             } catch (err) {
-                console.error("Tx API History error:", err);
-                renderTransactionLists();
+                console.error("Tx History API error:", err);
+
+                // Never show fake/stale transactions when the live API fails.
+                // Keep the last real records if we already have them; otherwise show an empty state.
+                if (transactions.length === 0) {
+                    renderTransactionLists();
+                }
             }
         }
 
@@ -837,83 +930,75 @@
             // Main Display
             document.getElementById('balanceDisplay').innerText = usdcBalance.toFixed(2);
             document.getElementById('availBal').innerText = usdcBalance.toFixed(2) + " USDC";
-            
-            // Total Portfolio Value (Sum of Native + Dynamic Tokens assuming 1:1 USD for demo)
-            let totalUsdValue = usdcBalance;
-            liveTokens.forEach(t => { totalUsdValue += t.balance; });
-            document.getElementById('ringTotal').innerText = "$" + totalUsdValue.toFixed(2);
-            
+            document.getElementById('ringTotal').innerText = "$" + usdcBalance.toFixed(2);
             document.getElementById('faucetBalance').innerHTML = usdcBalance.toFixed(4) + ' <span class="text-xl text-blue-600 dark:text-blue-400">USDC</span>';
             document.getElementById('viewOnArcScan').href = "https://testnet.arcscan.app/address/" + userAccount + "?tab=internal_txns";
 
-            // Populate Send Dropdown dynamically
-            const selectToken = document.getElementById('directSendToken');
-            const previousSelection = selectToken.value;
-            selectToken.innerHTML = '<option value="USDC" data-symbol="USDC">USDC</option>';
-            liveTokens.forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t.address;
-                opt.text = t.symbol;
-                opt.setAttribute('data-symbol', t.symbol);
-                selectToken.appendChild(opt);
-            });
-            if([...selectToken.options].some(o => o.value === previousSelection)) selectToken.value = previousSelection;
-
-            // Render Portfolio List
+            // Portfolio List Rendering
             let portHtml = `
                 <div class="flex justify-between items-center text-xs">
                     <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span><span class="font-semibold text-slate-700 dark:text-slate-200">USDC</span></div>
-                    <span class="font-bold text-slate-900 dark:text-white">${usdcBalance.toLocaleString(undefined, {maximumFractionDigits: 4})}</span>
-                </div>`;
+                    <span class="font-bold text-slate-900 dark:text-white">${usdcBalance.toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
+                </div>
+            `;
             liveTokens.forEach(t => {
                 portHtml += `
-                <div class="flex justify-between items-center text-xs mt-3">
-                    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full ${t.color.replace('bg-[', 'bg-').replace(']', '')}"></span><span class="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[80px]">${t.symbol}</span></div>
-                    <span class="font-bold text-slate-900 dark:text-white">${t.balance.toLocaleString(undefined, {maximumFractionDigits: 4})}</span>
-                </div>`;
+                    <div class="flex justify-between items-center text-xs mt-3">
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="font-semibold text-slate-700 dark:text-slate-200">${t.symbol}</span></div>
+                        <span class="font-bold text-slate-900 dark:text-white">${t.balance.toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
+                    </div>
+                `;
             });
             document.getElementById('portfolioListContainer').innerHTML = portHtml;
 
-            // Render Assets Table
-            let assetsHtml = `
+            // Assets Table Rendering
+            let assetHtml = `
                 <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
                     <div class="col-span-5 md:col-span-4 flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-xs shrink-0">U</div>
-                        <div class="truncate pr-2">
-                            <p class="font-bold text-slate-900 dark:text-white truncate">USD Coin</p>
-                            <p class="text-[10px] text-slate-400 truncate">USDC • Native</p>
+                        <div class="w-8 h-8 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-xs">U</div>
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white">USD Coin</p>
+                            <p class="text-[10px] text-slate-400">USDC • Native</p>
                         </div>
                     </div>
-                    <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white truncate">${usdcBalance.toLocaleString(undefined, {maximumFractionDigits: 4})} USDC</div>
+                    <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white">${usdcBalance.toLocaleString(undefined, { maximumFractionDigits: 4 })} USDC</div>
                     <div class="hidden md:block col-span-2 font-medium text-slate-900 dark:text-white">$${usdcBalance.toFixed(2)}</div>
                     <div class="col-span-3 text-right text-slate-400 text-[10px]">Native</div>
-                </div>`;
+                </div>
+            `;
             liveTokens.forEach(t => {
-                const initial = t.symbol.charAt(0).toUpperCase();
-                const shortAddr = t.address.substring(0,6) + '...' + t.address.substring(t.address.length-4);
-                assetsHtml += `
-                <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
-                    <div class="col-span-5 md:col-span-4 flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full ${t.color} flex items-center justify-center text-white font-bold text-xs shrink-0">${initial}</div>
-                        <div class="truncate pr-2">
-                            <p class="font-bold text-slate-900 dark:text-white truncate">${t.name}</p>
-                            <p class="text-[10px] text-slate-400 truncate">${t.symbol}</p>
+                const initial = t.symbol.charAt(0);
+                const shortAddr = t.address.substring(0, 6) + '...' + t.address.substring(t.address.length - 4);
+                assetHtml += `
+                    <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
+                        <div class="col-span-5 md:col-span-4 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full ${t.color} flex items-center justify-center text-white font-bold text-xs shrink-0">${initial}</div>
+                            <div class="truncate pr-2">
+                                <p class="font-bold text-slate-900 dark:text-white truncate">${t.name}</p>
+                                <p class="text-[10px] text-slate-400">${t.symbol}</p>
+                            </div>
+                        </div>
+                        <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white">${t.balance.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${t.symbol}</div>
+                        <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
+                        <div class="col-span-3 text-right">
+                            <a href="https://testnet.arcscan.app/token/${t.address}" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">${shortAddr}</a>
                         </div>
                     </div>
-                    <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white truncate">${t.balance.toLocaleString(undefined, {maximumFractionDigits: 4})} ${t.symbol}</div>
-                    <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
-                    <div class="col-span-3 text-right">
-                        <a href="https://testnet.arcscan.app/token/${t.address}" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">${shortAddr}</a>
-                    </div>
-                </div>`;
+                `;
             });
-            document.getElementById('assetsTableList').innerHTML = assetsHtml;
+            document.getElementById('assetsTableList').innerHTML = assetHtml;
         }
 
         function renderTransactionLists() {
-            if (!isWalletConnected || transactions.length === 0) {
+            if (!isWalletConnected) {
                 document.getElementById('dashTxList').innerHTML = '<div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">Connect wallet to view activity</div>';
                 document.getElementById('fullTxHistory').innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">Connect wallet to view history</div>';
+                return;
+            }
+
+            if (transactions.length === 0) {
+                document.getElementById('dashTxList').innerHTML = '<div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">No on-chain transactions found yet</div>';
+                document.getElementById('fullTxHistory').innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">No on-chain transactions found yet</div>';
                 return;
             }
 
@@ -924,7 +1009,7 @@
             transactions.slice(0, 5).forEach(t => {
                 const iconSvg = t.isSent ? upArrowSvg : downArrowSvg;
                 const bgBox = t.isSent ? 'bg-red-500/10 border border-red-500/20' : 'bg-[#0f1624] border border-[#243048]';
-                
+
                 dashHtml += `
                     <a href="https://testnet.arcscan.app/tx/${t.hash}" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/40 transition rounded-xl p-2">
                         <div class="flex justify-between items-center">
@@ -959,25 +1044,25 @@
         }
 
         async function refreshDashboard() {
-            if(!isWalletConnected) return alert("Please connect wallet first");
+            if (!isWalletConnected) return alert("Please connect wallet first");
             const btn = document.getElementById('refreshDashIcon');
-            if(btn) btn.classList.add('fa-spin');
-            
-            await syncLiveBlockchainData();
-            
+            if (btn) btn.classList.add('fa-spin');
+
+            await syncAllOnChainData();
+
             setTimeout(() => {
-                if(btn) btn.classList.remove('fa-spin');
+                if (btn) btn.classList.remove('fa-spin');
             }, 600);
         }
 
         async function updateBalances() {
             const btn = document.getElementById('refreshFaucetBtn');
-            if(btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Refreshing';
-            
-            await syncLiveBlockchainData();
-            
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Refreshing';
+
+            await syncAllOnChainData();
+
             setTimeout(() => {
-                if(btn) btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance';
+                if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Refresh Balance';
             }, 600);
         }
 
@@ -985,28 +1070,28 @@
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
             const donut = document.getElementById('donutInner');
-            if(html.classList.contains('dark')) {
+            if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
-                if(icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
-                if(donut) { donut.classList.remove('donut-inner-dark'); donut.classList.add('donut-inner-light'); }
+                if (icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
+                if (donut) { donut.classList.remove('donut-inner-dark'); donut.classList.add('donut-inner-light'); }
             } else {
                 html.classList.add('dark');
-                if(icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
-                if(donut) { donut.classList.remove('donut-inner-light'); donut.classList.add('donut-inner-dark'); }
+                if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+                if (donut) { donut.classList.remove('donut-inner-light'); donut.classList.add('donut-inner-dark'); }
             }
         }
 
         function updateHeader(viewName) {
             const currentHour = new Date().getHours();
             let timeGreeting = "Good evening";
-            if(currentHour >= 5 && currentHour < 12) timeGreeting = "Good morning";
-            else if(currentHour >= 12 && currentHour < 17) timeGreeting = "Good afternoon";
-            else if(currentHour >= 17 && currentHour < 21) timeGreeting = "Good evening";
+            if (currentHour >= 5 && currentHour < 12) timeGreeting = "Good morning";
+            else if (currentHour >= 12 && currentHour < 17) timeGreeting = "Good afternoon";
+            else if (currentHour >= 17 && currentHour < 21) timeGreeting = "Good evening";
             else timeGreeting = "Good night";
 
             const greetingEl = document.getElementById('greeting');
             const subEl = document.getElementById('pageSubtitle');
-            if(viewName === 'dashboard') {
+            if (viewName === 'dashboard') {
                 greetingEl.innerText = timeGreeting;
                 subEl.innerText = "Here is what's happening with your account today";
             } else {
@@ -1016,7 +1101,7 @@
                     'transactions': ['Transactions', 'Your on-chain history'],
                     'merchant': ['Store', 'On-chain Digital Product']
                 };
-                if(titles[viewName]) {
+                if (titles[viewName]) {
                     greetingEl.innerText = titles[viewName][0];
                     subEl.innerText = titles[viewName][1];
                 }
@@ -1030,7 +1115,7 @@
         function calculateConvert() {
             const fromVal = document.getElementById('convertFromAmt').value;
             const toInput = document.getElementById('convertToAmt');
-            if(fromVal && fromVal > 0) {
+            if (fromVal && fromVal > 0) {
                 toInput.value = (parseFloat(fromVal) * 83.45).toFixed(2);
             } else {
                 toInput.value = '';
@@ -1046,21 +1131,21 @@
         function switchView(viewName) {
             ['dashboardView', 'paymentLinkView', 'faucetView', 'transactionsView', 'merchantView'].forEach(id => {
                 const el = document.getElementById(id);
-                if(el) el.classList.add('hidden');
+                if (el) el.classList.add('hidden');
             });
             ['dashboard', 'transactions', 'faucet', 'merchant'].forEach(id => {
                 const el = document.getElementById('nav-' + id);
-                if(el) {
+                if (el) {
                     el.classList.remove('bg-blue-50', 'dark:bg-blue-600/15', 'text-blue-600', 'dark:text-blue-400', 'border-blue-200', 'dark:border-blue-500/20');
                     el.classList.add('text-slate-500', 'dark:text-slate-400');
                 }
             });
 
             const targetView = document.getElementById(viewName + 'View');
-            if(targetView) targetView.classList.remove('hidden');
+            if (targetView) targetView.classList.remove('hidden');
 
             const activeNav = document.getElementById('nav-' + viewName);
-            if(activeNav) {
+            if (activeNav) {
                 activeNav.classList.remove('text-slate-500', 'dark:text-slate-400');
                 activeNav.classList.add('bg-blue-50', 'dark:bg-blue-600/15', 'text-blue-600', 'dark:text-blue-400', 'border-blue-200', 'dark:border-blue-500/20');
             }
@@ -1071,7 +1156,7 @@
             isINR = !isINR;
             const display = document.getElementById("balanceDisplay");
             const label = document.getElementById("currencyLabel");
-            if(isINR) {
+            if (isINR) {
                 display.innerText = (usdcBalance * 83.45).toFixed(2);
                 label.innerText = "INR";
             } else {
@@ -1083,7 +1168,7 @@
         let currentWeb3URI = "";
         function generateLink() {
             const amt = document.getElementById('payAmount').value;
-            if(!amt || !userAccount) return alert("Connect wallet and enter an amount");
+            if (!amt || !userAccount) return alert("Connect wallet and enter an amount");
 
             document.getElementById('previewEmpty').classList.add('hidden');
             document.getElementById('previewGenerated').classList.remove('hidden');
@@ -1092,14 +1177,14 @@
 
             const weiAmt = ethers.utils.parseUnits(amt.toString(), 18).toString();
             currentWeb3URI = "ethereum:" + userAccount + "?value=" + weiAmt;
-            
+
             document.getElementById('genUrlLink').innerText = currentWeb3URI;
             document.getElementById('genUrlLinkHref').href = currentWeb3URI;
             document.getElementById('genQR').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentWeb3URI);
         }
 
         function copyHeaderAddress() {
-            if(userAccount) {
+            if (userAccount) {
                 navigator.clipboard.writeText(userAccount);
                 alert("Wallet address copied to clipboard");
             }
@@ -1107,7 +1192,7 @@
         }
 
         function copyReceiveAddress() {
-            if(userAccount) {
+            if (userAccount) {
                 navigator.clipboard.writeText(userAccount);
                 alert("Address copied");
             }
@@ -1149,7 +1234,7 @@
         }
 
         document.getElementById('connectBtn').addEventListener('click', () => {
-            if(isWalletConnected) {
+            if (isWalletConnected) {
                 document.getElementById('profileDropdown').classList.toggle('hidden');
             } else {
                 openModal('connectWalletModal');
@@ -1171,18 +1256,15 @@
         window.addEventListener('click', (e) => {
             const container = document.getElementById('profileMenuContainer');
             const dropdown = document.getElementById('profileDropdown');
-            if(container && !container.contains(e.target)) {
-                if(dropdown) dropdown.classList.add('hidden');
+            if (container && !container.contains(e.target)) {
+                if (dropdown) dropdown.classList.add('hidden');
             }
         });
 
         async function executeDirectSend() {
             const to = document.getElementById('directSendTo').value;
             const amt = document.getElementById('directSendAmt').value;
-            const selectToken = document.getElementById('directSendToken');
-            const selectedOption = selectToken.options[selectToken.selectedIndex];
-            const tokenSymbol = selectedOption.getAttribute('data-symbol');
-            const tokenAddress = selectedOption.value;
+            const tokenSymbol = document.getElementById('directSendToken').value;
             const btn = document.getElementById('sendTxBtn');
 
             if (!to || !amt) return alert("Please enter recipient address and amount");
@@ -1196,17 +1278,37 @@
                 const signer = provider.getSigner();
 
                 let tx;
-                if (tokenAddress === 'USDC') {
+                if (tokenSymbol === 'USDC') {
                     const parsedAmt = ethers.utils.parseEther(amt.toString());
                     tx = await signer.sendTransaction({ to: to, value: parsedAmt });
                 } else {
-                    const contract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
+                    const contractAddr = TOKEN_CONTRACTS[tokenSymbol].address;
+                    const contract = new ethers.Contract(contractAddr, ERC20_ABI, signer);
                     const parsedAmt = ethers.utils.parseUnits(amt.toString(), 18);
                     tx = await contract.transfer(to, parsedAmt);
                 }
 
-                await tx.wait();
-                await syncLiveBlockchainData();
+                const receipt = await tx.wait();
+
+                // Show the confirmed send immediately. The indexer can take a few seconds,
+                // so don't make the UI wait for Arcscan before showing a transaction we just confirmed.
+                const optimisticTx = {
+                    hash: receipt.transactionHash || tx.hash,
+                    type: 'Sent',
+                    token: tokenSymbol,
+                    amount: '-' + Number(amt).toLocaleString(undefined, { maximumFractionDigits: 6 }) + ' ' + tokenSymbol,
+                    from: shortAddress(to),
+                    color: 'text-red-500',
+                    isSent: true,
+                    time: 'Just now'
+                };
+
+                transactions = [optimisticTx, ...transactions.filter(t => t.hash !== optimisticTx.hash)].slice(0, 100);
+                knownTxHashes.add(optimisticTx.hash);
+                renderTransactionLists();
+
+                // Reconcile with the live Arcscan index in the background.
+                await syncAllOnChainData();
 
                 document.getElementById('successModalTitle').innerText = "Transaction Successful!";
                 document.getElementById('successModalMsg').innerText = `Sent ${amt} ${tokenSymbol} to ${to.substring(0, 6)}...${to.substring(to.length - 4)}`;
