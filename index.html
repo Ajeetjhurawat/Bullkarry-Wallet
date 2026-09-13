@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Bullkarry Wallet</title>
-    <!-- WALLET_CONNECTION_MODE: DIRECT_EIP1193_NO_REOWN -->
+    <!-- DIRECT_WALLET_BUILD_V12 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -118,31 +118,68 @@
         }
     </style>
 
-    <!-- Simple direct EVM wallet connection. No Reown / WalletConnect code. -->
+    <!-- Direct injected EVM wallet connection. -->
     <script>
         const ARC_TESTNET = {
             chainId: '0x4cef52',
             chainName: 'Arc Testnet',
-            nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+            nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
             rpcUrls: ['https://rpc.testnet.arc.network'],
             blockExplorerUrls: ['https://testnet.arcscan.app']
         };
 
         let injectedWalletProvider = null;
         let walletListenersAttachedTo = null;
+        let walletDiscoveryStarted = false;
+        const discoveredEvmProviders = [];
+
+        // EIP-6963 lets the page discover installed browser wallets without
+        // depending on a third-party connection service.
+        function startWalletDiscovery() {
+            if (walletDiscoveryStarted) return;
+            walletDiscoveryStarted = true;
+            window.addEventListener('eip6963:announceProvider', (event) => {
+                const provider = event && event.detail && event.detail.provider;
+                if (!provider || discoveredEvmProviders.includes(provider)) return;
+                discoveredEvmProviders.push(provider);
+                if (!injectedWalletProvider && provider.isMetaMask) injectedWalletProvider = provider;
+            });
+            try { window.dispatchEvent(new Event('eip6963:requestProvider')); } catch (_) {}
+        }
 
         function getInjectedWalletProvider() {
+            startWalletDiscovery();
             if (injectedWalletProvider) return injectedWalletProvider;
-            const eth = window.ethereum;
-            if (!eth) return null;
 
-            // Prefer MetaMask when several injected EVM wallets are present.
-            if (Array.isArray(eth.providers)) {
-                injectedWalletProvider = eth.providers.find(p => p && p.isMetaMask) || eth.providers[0] || null;
-            } else {
-                injectedWalletProvider = eth;
+            const eth = window.ethereum;
+            if (eth) {
+                if (Array.isArray(eth.providers)) {
+                    injectedWalletProvider = eth.providers.find(p => p && p.isMetaMask) || eth.providers[0] || null;
+                } else {
+                    injectedWalletProvider = eth;
+                }
+            }
+
+            if (!injectedWalletProvider && discoveredEvmProviders.length) {
+                injectedWalletProvider = discoveredEvmProviders.find(p => p && p.isMetaMask) || discoveredEvmProviders[0];
             }
             return injectedWalletProvider;
+        }
+
+        async function waitForInjectedWallet(timeoutMs = 2500) {
+            const existing = getInjectedWalletProvider();
+            if (existing) return existing;
+
+            return new Promise(resolve => {
+                const started = Date.now();
+                const timer = setInterval(() => {
+                    const provider = getInjectedWalletProvider();
+                    if (provider || Date.now() - started >= timeoutMs) {
+                        clearInterval(timer);
+                        resolve(provider || null);
+                    }
+                }, 100);
+            });
         }
 
         async function ensureArcTestnet(provider) {
@@ -157,6 +194,7 @@
                 });
                 return true;
             } catch (switchError) {
+                // 4902 means the wallet does not know Arc Testnet yet.
                 if (switchError && (switchError.code === 4902 || switchError.code === -32603)) {
                     await provider.request({
                         method: 'wallet_addEthereumChain',
@@ -173,7 +211,7 @@
             walletListenersAttachedTo = provider;
 
             provider.on('accountsChanged', async (accounts) => {
-                if (accounts && accounts.length) {
+                if (Array.isArray(accounts) && accounts.length) {
                     await initializeWallet(accounts[0]);
                 } else {
                     clearLocalWalletState(false);
@@ -188,17 +226,18 @@
         }
 
         async function restoreInjectedWalletSession() {
-            const provider = getInjectedWalletProvider();
+            const provider = await waitForInjectedWallet(1500);
             if (!provider) return;
             attachWalletProviderListeners(provider);
             try {
                 const accounts = await provider.request({ method: 'eth_accounts' });
-                if (accounts && accounts.length) await initializeWallet(accounts[0]);
+                if (Array.isArray(accounts) && accounts.length) await initializeWallet(accounts[0]);
             } catch (e) {
                 console.warn('Wallet session restore failed:', e);
             }
         }
 
+        startWalletDiscovery();
         window.addEventListener('DOMContentLoaded', restoreInjectedWalletSession);
     </script>
 
@@ -897,10 +936,12 @@
         }
 
         async function syncAllOnChainData() {
-            if (!userAccount || !isWalletConnected || typeof window.ethereum === 'undefined') return;
+            if (!userAccount || !isWalletConnected) return;
 
             try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const walletProvider = getInjectedWalletProvider();
+                if (!walletProvider) throw new Error('No injected wallet provider available');
+                const provider = new ethers.providers.Web3Provider(walletProvider);
 
                 // Arc uses native USDC as the gas asset. Keep this native balance as
                 // the single USDC balance; do not add an ERC-20 copy of the same asset.
@@ -1665,9 +1706,9 @@
         });
 
         async function connectWalletProvider() {
-            const provider = getInjectedWalletProvider();
+            const provider = await waitForInjectedWallet(2500);
             if (!provider) {
-                alert('MetaMask or another EVM wallet is not installed. Please open this page in your wallet browser or install MetaMask.');
+                alert('No browser wallet was found. Install MetaMask or open this page inside a wallet browser.');
                 return false;
             }
 
@@ -1675,18 +1716,27 @@
             attachWalletProviderListeners(provider);
 
             try {
+                // This is the only connection request. It opens the wallet's native popup.
                 const accounts = await provider.request({ method: 'eth_requestAccounts' });
-                if (!accounts || !accounts.length) return false;
+                if (!Array.isArray(accounts) || !accounts.length) return false;
 
-                await ensureArcTestnet(provider);
+                try {
+                    await ensureArcTestnet(provider);
+                } catch (networkError) {
+                    // The wallet is already connected. If the user rejects the network
+                    // switch/add request, keep the wallet connected instead of reporting
+                    // a false connection failure.
+                    console.warn('Arc Testnet switch was not completed:', networkError);
+                }
+
                 await initializeWallet(accounts[0]);
                 return true;
             } catch (e) {
-                console.error('Wallet connection failed:', e);
+                console.error('Direct wallet connection failed:', e);
                 if (e && e.code === 4001) {
                     alert('Wallet connection was rejected.');
                 } else {
-                    alert('Could not connect the wallet. Please unlock MetaMask and try again.');
+                    alert('Could not connect the wallet. Please unlock your wallet and try again.');
                 }
                 return false;
             }
@@ -1713,7 +1763,9 @@
             btn.disabled = true;
 
             try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const walletProvider = getInjectedWalletProvider();
+                if (!walletProvider) throw new Error('No injected wallet provider available');
+                const provider = new ethers.providers.Web3Provider(walletProvider);
                 const signer = provider.getSigner();
 
                 let tx;
@@ -1769,7 +1821,9 @@
             btn.disabled = true;
 
             try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const walletProvider = getInjectedWalletProvider();
+                if (!walletProvider) throw new Error('No injected wallet provider available');
+                const provider = new ethers.providers.Web3Provider(walletProvider);
                 const signer = provider.getSigner();
                 const parsedAmt = ethers.utils.parseEther((price / 1000).toString());
                 const tx = await signer.sendTransaction({
