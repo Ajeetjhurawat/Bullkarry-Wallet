@@ -113,6 +113,9 @@
         .wallet-provider-btn:hover { border-color: #3b82f6; transform: translateY(-1px); }
         .wallet-provider-icon { width: 38px; height: 38px; border-radius: 11px; object-fit: cover; background: #fff; flex: 0 0 auto; }
         .wallet-qr { width: 150px; height: 150px; border-radius: 16px; background: #fff; padding: 8px; }
+        .payment-stat-card { position: relative; overflow: hidden; }
+        .payment-stat-card::after { content: ""; position: absolute; inset: auto -28px -42px auto; width: 110px; height: 110px; border-radius: 50%; background: rgba(59,130,246,.07); pointer-events: none; }
+        .refund-status-gap { margin-left: 12px; padding-left: 12px; border-left: 1px solid rgba(148,163,184,.18); }
         @media (max-width: 639px) { .wallet-provider-list { max-height: 300px; } .wallet-qr { width: 132px; height: 132px; } }
 
         ::-webkit-scrollbar { width: 6px; }
@@ -556,28 +559,28 @@
             <div class="flex items-start justify-between gap-4 mb-6">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Payments</h2>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Incoming USDC and tracked refunds</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Incoming USDC • earnings • refunds</p>
                 </div>
                 <button onclick="renderPayments()" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-[#243048] bg-white dark:bg-darkCard text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
                     <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
                 </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
+                <div class="payment-stat-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
                     <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Today Earning</p>
                     <p id="paymentsTodayReceived" class="text-2xl font-extrabold text-emerald-500 mt-2">0.00 USDC</p>
                     <p id="paymentsTodayRefund" class="text-xs text-red-500 mt-2">Refunded: 0.00 USDC</p>
                     <p id="paymentsTodayNet" class="text-xs text-slate-500 dark:text-slate-400 mt-1">Net: 0.00 USDC</p>
                     <p id="paymentsTodayCompare" class="text-xs font-semibold mt-3">—</p>
                 </div>
-                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
+                <div class="payment-stat-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
                     <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Yesterday Earning</p>
                     <p id="paymentsYesterdayReceived" class="text-2xl font-extrabold text-emerald-500 mt-2">0.00 USDC</p>
                     <p id="paymentsYesterdayRefund" class="text-xs text-red-500 mt-2">Refunded: 0.00 USDC</p>
                     <p id="paymentsYesterdayNet" class="text-xs text-slate-500 dark:text-slate-400 mt-1">Net: 0.00 USDC</p>
                     <p id="paymentsYesterdayCompare" class="text-xs font-semibold mt-3">—</p>
                 </div>
-                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
+                <div class="payment-stat-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
                     <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Total Earn this Month</p>
                     <p id="paymentsMonthReceived" class="text-2xl font-extrabold text-emerald-500 mt-2">0.00 USDC</p>
                     <p id="paymentsMonthRefund" class="text-xs text-red-500 mt-2">Refunded: 0.00 USDC</p>
@@ -588,8 +591,8 @@
             <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl overflow-hidden shadow-sm">
                 <div class="p-4 border-b border-slate-200 dark:border-[#243048] flex items-center justify-between">
                     <div>
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Payment Summary</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Based on the transactions currently loaded from Arc Testnet.</p>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Income Breakdown</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Live transaction counts and refund ratio from the loaded on-chain history.</p>
                     </div>
                 </div>
                 <div id="paymentsSummary" class="p-4 text-xs text-slate-500 dark:text-slate-400">Connect wallet to view payment data.</div>
@@ -624,13 +627,9 @@
             <i class="fa-solid fa-house text-lg"></i>
             <span class="text-[10px] font-semibold">Home</span>
         </button>
-        <button onclick="switchView('payments')" id="mnav-payments" class="flex flex-col items-center gap-1 px-2 py-1 text-slate-500 dark:text-slate-400">
+        <button onclick="switchView('payments')" id="mnav-payments" class="flex flex-col items-center gap-1 px-3 py-1 text-slate-500 dark:text-slate-400">
             <i class="fa-solid fa-money-check-dollar text-lg"></i>
             <span class="text-[10px] font-semibold">Payments</span>
-        </button>
-        <button onclick="switchView('faucet')" id="mnav-faucet" class="flex flex-col items-center gap-1 px-3 py-1 text-slate-500 dark:text-slate-400">
-            <i class="fa-solid fa-droplet text-lg"></i>
-            <span class="text-[10px] font-semibold">Faucet</span>
         </button>
         <button onclick="openModal('receiveModal')" class="flex flex-col items-center justify-center -mt-6">
             <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30"><i class="fa-solid fa-qrcode"></i></div>
@@ -1350,83 +1349,113 @@
             return normalized;
         }
 
+        const BLOCKSCOUT_V2_BASE = "https://testnet.arcscan.app/api/v2";
+
+        function blockscoutAmount(total, fallbackDecimals = 18) {
+            const decimals = Number(total?.decimals ?? fallbackDecimals ?? 18);
+            const raw = String(total?.value ?? total?.raw_value ?? "0");
+            try {
+                return Number(ethers.utils.formatUnits(raw, decimals));
+            } catch (_) {
+                const n = Number(raw);
+                return Number.isFinite(n) ? n / Math.pow(10, decimals) : 0;
+            }
+        }
+
+        async function blockscoutFetch(path, params = {}) {
+            const url = new URL(BLOCKSCOUT_V2_BASE + path);
+            Object.entries(params || {}).forEach(([k, v]) => {
+                if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, String(v));
+            });
+            const response = await fetch(url.toString(), { cache: "no-store", headers: { "Accept": "application/json" } });
+            if (!response.ok) throw new Error("Blockscout HTTP " + response.status);
+            const data = await response.json();
+            return data || { items: [] };
+        }
+
+        function makeBlockscoutTx(tx, transfer = null) {
+            const me = String(userAccount || "").toLowerCase();
+            const from = String(transfer?.from?.hash || tx?.from?.hash || "");
+            const to = String(transfer?.to?.hash || tx?.to?.hash || "");
+            const isSent = from.toLowerCase() === me;
+            const token = transfer?.token || null;
+            const symbol = token?.symbol || "USDC";
+            const amountValue = transfer
+                ? blockscoutAmount(transfer.total, Number(token?.decimals ?? 18))
+                : blockscoutAmount({ value: tx?.value || "0", decimals: 18 }, 18);
+            if (!Number.isFinite(amountValue) || amountValue <= 0) return null;
+
+            const timestamp = tx?.timestamp ? Math.floor(Date.parse(tx.timestamp) / 1000) : Math.floor(Date.now() / 1000);
+            const hash = tx?.hash || transfer?.transaction_hash;
+            if (!hash) return null;
+
+            return {
+                hash,
+                type: isSent ? "Sent" : "Received",
+                token: symbol,
+                amount: (isSent ? "-" : "+") + amountValue.toLocaleString(undefined, { maximumFractionDigits: 8 }) + " " + symbol,
+                amountValue,
+                counterparty: isSent ? to : from,
+                from: formatAddress(isSent ? to : from),
+                color: isSent ? "text-red-500" : "text-[#00d182]",
+                isSent,
+                isRefund: isKnownRefundHash(hash),
+                time: formatTxTime(timestamp),
+                timestamp,
+                blockNumber: Number(tx?.block_number || 0),
+                status: tx?.status === "ok" || tx?.status === "success" ? "Confirmed" : "Failed"
+            };
+        }
+
         async function fetchLiveTransactions() {
             if (!userAccount) return;
 
             try {
-                // txlist = every indexed normal transaction involving this address.
-                // txlistinternal = value-carrying internal transfers.
-                // tokentx = ERC-20 transfer history.
-                const [normal, internal] = await Promise.all([
-                    arcscanRequest({
-                        module: "account", action: "txlist", address: userAccount,
-                        startblock: "0", endblock: "999999999", page: "1", offset: "100", sort: "desc"
-                    }).catch(err => { console.warn("Normal tx history unavailable", err); return []; }),
-                    arcscanRequest({
-                        module: "account", action: "txlistinternal", address: userAccount,
-                        startblock: "0", endblock: "999999999", page: "1", offset: "100", sort: "desc"
-                    }).catch(err => { console.warn("Internal tx history unavailable", err); return []; })
-                ]);
+                const allItems = [];
+                let nextParams = {};
 
-                // tokentx has a block-span limit, so scan backward in safe chunks.
-                let tokenTransfers = [];
-                try {
-                    const blockResponse = await fetch(`${ARCSCAN_TESTNET_API}?module=proxy&action=eth_blockNumber&_t=${Date.now()}`, { cache: "no-store" });
-                    const blockJson = await blockResponse.json();
-                    const latest = parseInt(blockJson?.result || "0", 16);
-                    const chunk = 150000;
-                    const requests = [];
-                    for (let end = latest; end >= 53500000 && requests.length < 8; end -= chunk) {
-                        const from = Math.max(53500000, end - chunk + 1);
-                        requests.push(arcscanRequest({
-                            module: "account", action: "tokentx", address: userAccount,
-                            startblock: String(from), endblock: String(end), page: "1", offset: "100", sort: "desc"
-                        }).catch(() => []));
-                    }
-                    const chunks = await Promise.all(requests);
-                    tokenTransfers = chunks.flat();
-                } catch (err) {
-                    console.warn("Token transfer history unavailable", err);
+                // Blockscout is the current backend behind Arc Testnet Explorer.
+                // It exposes address transactions with embedded token transfers,
+                // so this avoids the old Etherscan-compatible endpoints that were
+                // returning empty data on Arc Testnet.
+                for (let page = 0; page < 5; page++) {
+                    const data = await blockscoutFetch(`/addresses/${userAccount}/transactions`, nextParams);
+                    const items = Array.isArray(data.items) ? data.items : [];
+                    allItems.push(...items);
+                    if (!data.next_page_params || !items.length) break;
+                    nextParams = data.next_page_params;
                 }
 
-                // Resolve missing token symbols/decimals from the official typed token endpoint.
-                const tokenAddresses = [...new Set(tokenTransfers.map(t => t.contractAddress || t.contract_address || t.token_address).filter(Boolean))];
-                const metadataEntries = await Promise.all(tokenAddresses.slice(0, 50).map(async address => [address, await getTokenMetadata(address)]));
-                const metadata = new Map(metadataEntries.map(([address, meta]) => [address.toLowerCase(), meta]));
+                const merged = [];
+                for (const tx of allItems) {
+                    const transfers = Array.isArray(tx.token_transfers) ? tx.token_transfers : [];
+                    if (transfers.length) {
+                        for (const transfer of transfers) {
+                            const normalized = makeBlockscoutTx(tx, transfer);
+                            if (normalized) merged.push(normalized);
+                        }
+                    } else {
+                        // Keep native value transfers as a fallback for simple sends.
+                        const normalized = makeBlockscoutTx(tx, null);
+                        if (normalized) merged.push(normalized);
+                    }
+                }
 
-                const merged = [
-                    ...normal.filter(t => t.hash).map(t => normalizeTransaction(t, "native")),
-                    ...internal.filter(t => t.hash).map(t => normalizeInternalTransaction(t)),
-                    ...tokenTransfers.filter(t => t.hash).map(t => {
-                        const addr = String(t.contractAddress || t.contract_address || t.token_address || "").toLowerCase();
-                        return normalizeTransaction(t, "token", metadata.get(addr) || {});
-                    })
-                ];
+                merged.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
                 const unique = [];
                 const seen = new Set();
                 for (const tx of merged) {
-                    if (!tx.hash || seen.has(tx.hash)) continue;
-                    seen.add(tx.hash);
+                    const key = [tx.hash, tx.token, tx.counterparty, tx.amountValue, tx.isSent].join(":");
+                    if (seen.has(key)) continue;
+                    seen.add(key);
                     unique.push(tx);
                 }
 
-                unique.sort((a, b) => {
-                    if ((b.blockNumber || 0) !== (a.blockNumber || 0)) return (b.blockNumber || 0) - (a.blockNumber || 0);
-                    return (b.timestamp || 0) - (a.timestamp || 0);
-                });
-
-                // Show the receive popup only for transactions that appeared
-                // since the previous successful history scan. Initial history load
-                // is silent so an old receive does not trigger a popup.
                 if (!isFirstTxLoad) {
                     const newReceived = unique.filter(t =>
-                        t.type === "Received" &&
-                        t.status !== "Failed" &&
-                        t.hash &&
-                        !knownTxHashes.has(t.hash)
+                        t.type === "Received" && t.status !== "Failed" && t.hash && !knownTxHashes.has(t.hash)
                     );
-
                     if (newReceived.length > 0) {
                         const latest = newReceived[0];
                         document.getElementById('successModalTitle').innerText = "Funds Received!";
@@ -1443,7 +1472,8 @@
                 renderTransactionLists();
                 renderPayments();
             } catch (err) {
-                console.error("Tx History API error:", err);
+                console.error("Blockscout transaction history error:", err);
+                // Do not wipe already displayed optimistic/live data if the explorer is temporarily unavailable.
                 renderTransactionLists();
             }
         }
@@ -1633,7 +1663,7 @@
                             <span class="${t.color} font-bold">${t.amount}</span>
                             <span class="font-mono text-slate-500 dark:text-slate-400 truncate">${t.from}</span>
                             <div class="text-center">${refundButton}</div>
-                            <span class="text-right ${t.status === 'Failed' ? 'text-red-500' : 'text-emerald-500 dark:text-emerald-400'} font-medium">${t.status}</span>
+                            <span class="refund-status-gap text-right ${t.status === 'Failed' ? 'text-red-500' : 'text-emerald-500 dark:text-emerald-400'} font-medium">${t.status}</span>
                         </div>
                     </div>
                 `;
@@ -1661,19 +1691,25 @@
         }
 
         function paymentPeriodStats(startTs, endTs) {
-            const received = transactions.filter(t => !t.isSent && t.status !== 'Failed' && t.token === 'USDC' && t.timestamp >= startTs && t.timestamp < endTs)
-                .reduce((sum,t) => sum + (Number(t.amountValue)||0), 0);
-            const refunded = transactions.filter(t => t.isSent && t.isRefund && t.status !== 'Failed' && t.token === 'USDC' && t.timestamp >= startTs && t.timestamp < endTs)
-                .reduce((sum,t) => sum + (Number(t.amountValue)||0), 0);
-            return { received, refunded, net: received - refunded };
+            const receivedTxs = transactions.filter(t => !t.isSent && !t.isRefund && t.status !== 'Failed' && t.token === 'USDC' && t.timestamp >= startTs && t.timestamp < endTs);
+            const refundTxs = transactions.filter(t => t.isSent && t.isRefund && t.status !== 'Failed' && t.token === 'USDC' && t.timestamp >= startTs && t.timestamp < endTs);
+            const received = receivedTxs.reduce((sum, t) => sum + (Number(t.amountValue) || 0), 0);
+            const refunded = refundTxs.reduce((sum, t) => sum + (Number(t.amountValue) || 0), 0);
+            return { received, refunded, net: received - refunded, receivedCount: receivedTxs.length, refundCount: refundTxs.length };
         }
 
-        function formatPaymentAmount(v) { return (Number(v)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:8}) + ' USDC'; }
+        function formatPaymentAmount(v) {
+            return (Number(v) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 }) + ' USDC';
+        }
 
         function setPaymentCompare(id, pct, positiveIsGood = true) {
             const el = document.getElementById(id);
             if (!el) return;
-            if (!Number.isFinite(pct) || pct === 0) { el.textContent = 'No change'; el.className = 'text-xs font-semibold mt-3 text-slate-500 dark:text-slate-400'; return; }
+            if (!Number.isFinite(pct) || pct === 0) {
+                el.textContent = 'No change';
+                el.className = 'text-xs font-semibold mt-3 text-slate-500 dark:text-slate-400';
+                return;
+            }
             const up = pct > 0;
             el.textContent = (up ? '↑ ' : '↓ ') + Math.abs(pct).toFixed(1) + '% vs previous period';
             el.className = 'text-xs font-semibold mt-3 ' + ((up === positiveIsGood) ? 'text-emerald-500' : 'text-red-500');
@@ -1683,20 +1719,24 @@
             const summary = document.getElementById('paymentsSummary');
             if (!summary) return;
             if (!isWalletConnected) {
-                summary.textContent = 'Connect wallet to view payment data.';
+                summary.innerHTML = '<div class="p-4 text-center text-slate-500 dark:text-slate-400">Connect wallet to view payment data.</div>';
                 return;
             }
+
             const now = new Date();
-            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000;
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
             const yesterdayStart = todayStart - 86400;
             const tomorrowStart = todayStart + 86400;
-            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime()/1000;
-            const nextMonthStart = new Date(now.getFullYear(), now.getMonth()+1, 1).getTime()/1000;
-            const prevMonthStart = new Date(now.getFullYear(), now.getMonth()-1, 1).getTime()/1000;
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime() / 1000;
+            const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime() / 1000;
+            const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime() / 1000;
+
             const today = paymentPeriodStats(todayStart, tomorrowStart);
             const yesterday = paymentPeriodStats(yesterdayStart, todayStart);
+            const previousDay = paymentPeriodStats(yesterdayStart - 86400, yesterdayStart);
             const month = paymentPeriodStats(monthStart, nextMonthStart);
             const prevMonth = paymentPeriodStats(prevMonthStart, monthStart);
+
             document.getElementById('paymentsTodayReceived').textContent = formatPaymentAmount(today.received);
             document.getElementById('paymentsTodayRefund').textContent = 'Refunded: ' + formatPaymentAmount(today.refunded);
             document.getElementById('paymentsTodayNet').textContent = 'Net: ' + formatPaymentAmount(today.net);
@@ -1706,11 +1746,36 @@
             document.getElementById('paymentsMonthReceived').textContent = formatPaymentAmount(month.received);
             document.getElementById('paymentsMonthRefund').textContent = 'Refunded: ' + formatPaymentAmount(month.refunded);
             document.getElementById('paymentsMonthNet').textContent = 'Net: ' + formatPaymentAmount(month.net);
+
             setPaymentCompare('paymentsTodayCompare', percentChange(today.received, yesterday.received));
-            setPaymentCompare('paymentsYesterdayCompare', percentChange(yesterday.received, paymentPeriodStats(yesterdayStart-86400, yesterdayStart).received));
+            setPaymentCompare('paymentsYesterdayCompare', percentChange(yesterday.received, previousDay.received));
             setPaymentCompare('paymentsMonthCompare', percentChange(month.received, prevMonth.received));
-            const refundPct = month.received ? (month.refunded / month.received) * 100 : 0;
-            summary.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">\n                <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-slate-500">Received</div><div class="text-emerald-500 font-bold mt-1">${formatPaymentAmount(month.received)}</div></div>\n                <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-slate-500">Refunded / sent back</div><div class="text-red-500 font-bold mt-1">${formatPaymentAmount(month.refunded)}</div></div>\n                <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-slate-500">Refund ratio</div><div class="font-bold mt-1 text-slate-900 dark:text-white">${refundPct.toFixed(1)}%</div></div>\n            </div>`;
+
+            const refundRatio = month.receivedCount ? (month.refundCount / month.receivedCount) * 100 : 0;
+            summary.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-4">
+                        <div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500 dark:text-slate-400">Received</span><i class="fa-solid fa-arrow-down text-emerald-500"></i></div>
+                        <div class="text-2xl font-extrabold text-emerald-500 mt-2">${month.receivedCount}</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">transactions this month</div>
+                    </div>
+                    <div class="rounded-2xl border border-red-500/15 bg-red-500/[0.04] p-4">
+                        <div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500 dark:text-slate-400">Refund</span><i class="fa-solid fa-arrow-up text-red-500"></i></div>
+                        <div class="text-2xl font-extrabold text-red-500 mt-2">${month.refundCount}</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">refund transactions this month</div>
+                    </div>
+                    <div class="rounded-2xl border border-blue-500/15 bg-blue-500/[0.04] p-4">
+                        <div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500 dark:text-slate-400">Refund Ratio</span><i class="fa-solid fa-chart-pie text-blue-500"></i></div>
+                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white mt-2">${refundRatio.toFixed(1)}%</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">refunds ÷ received transactions</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">Today</div><div class="font-bold text-slate-900 dark:text-white mt-1">${today.receivedCount} received</div><div class="text-xs text-red-500 mt-1">${today.refundCount} refunded</div></div>
+                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">Yesterday</div><div class="font-bold text-slate-900 dark:text-white mt-1">${yesterday.receivedCount} received</div><div class="text-xs text-red-500 mt-1">${yesterday.refundCount} refunded</div></div>
+                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">This Month</div><div class="font-bold text-slate-900 dark:text-white mt-1">${month.receivedCount} received</div><div class="text-xs text-red-500 mt-1">${month.refundCount} refunded</div></div>
+                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">Net Transactions</div><div class="font-bold text-slate-900 dark:text-white mt-1">${Math.max(0, month.receivedCount - month.refundCount)}</div><div class="text-xs text-slate-500 mt-1">after refunds</div></div>
+                </div>`;
         }
 
         async function refreshDashboard() {
