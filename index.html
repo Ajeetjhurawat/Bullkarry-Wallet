@@ -185,8 +185,10 @@
                 const metadata = {
                     name: 'Bullkarry',
                     description: 'Bullkarry on Arc Testnet',
-                    // Reown requires this origin to match the allowlisted project domain.
-                    url: appUrl,
+                    // Keep this fixed to the exact production origin that is allowlisted
+                    // in the Reown Dashboard. This avoids preview/local origins being
+                    // sent to Reown when the app is deployed on Vercel.
+                    url: 'https://bullkarry-wallet.vercel.app',
                     icons: []
                 };
 
@@ -196,16 +198,14 @@
                     defaultNetwork: ARC_TESTNET,
                     metadata,
                     projectId: REOWN_PROJECT_ID,
-                    customRpcUrls: {
-                        'eip155:5042002': 'https://rpc.testnet.arc.network'
-                    },
                     features: {
                         analytics: false,
                         email: false,
                         socials: []
                     },
                     allWallets: 'SHOW',
-                    themeMode: 'dark'
+                    themeMode: 'dark',
+                    debug: true
                 });
 
                 window.__reownAppKit = appKit;
@@ -257,10 +257,11 @@
             }
         }
 
-        initializeReown().catch((error) => {
-            console.error('Reown AppKit initialization failed:', error);
-            window.__reownInitError = error;
-        });
+        // Expose initialization for the main app script. We intentionally do not
+        // initialize AppKit here because this module lives in <head> and the main
+        // Bullkarry wallet state is declared later in the document. Initializing here
+        // can race that state and break session restoration.
+        window.__initializeReown = initializeReown;
 
         window.__openReownConnect = async () => {
             try {
@@ -901,15 +902,17 @@
 
         window.addEventListener('DOMContentLoaded', async () => {
             handleIncomingPaymentLink();
-            // Reown AppKit restores an existing wallet session itself.
-            // Do not bypass the AppKit modal with an injected-wallet auto connect.
-            if (!window.__reownAppKit) {
-                try {
-                    if (typeof window.ethereum !== 'undefined') {
-                        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                        if (accounts.length > 0) await initializeWallet(accounts[0]);
-                    }
-                } catch (e) { console.error("Session auto-recall error", e); }
+
+            // Initialize Reown only after the Bullkarry wallet state variables and
+            // functions above have been created. This prevents a head-script race
+            // during AppKit session restoration.
+            try {
+                if (window.__initializeReown) {
+                    await window.__initializeReown();
+                }
+            } catch (e) {
+                console.error('Reown AppKit initialization failed:', e);
+                window.__reownInitError = e;
             }
         });
 
