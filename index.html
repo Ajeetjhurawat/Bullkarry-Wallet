@@ -2363,8 +2363,19 @@
             }
             if (btn) { btn.disabled = true; btn.dataset.originalConnectText = document.getElementById('walletAddress')?.innerText || 'Connect Wallet'; }
             try {
-                // First use an already-injected wallet when available (MetaMask, OKX, Rabby,
-                // Phantom EVM, etc.). This is the fastest path on desktop and wallet browsers.
+                const ua = navigator.userAgent || '';
+                const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+
+                // MOBILE: always use Reown AppKit first. Mobile browsers normally do not
+                // expose MetaMask/OKX/Rabby as injected EIP-1193 providers, so waiting for
+                // window.ethereum can leave the button doing nothing. Reown handles the
+                // wallet list, WalletConnect QR and wallet-app deep links.
+                if (isMobile && window.__openReownConnect) {
+                    await window.__openReownConnect();
+                    return;
+                }
+
+                // DESKTOP / wallet browser: use an already injected wallet first.
                 const injected = getInjectedWalletProvider();
                 if (injected && typeof injected.request === 'function') {
                     const accounts = await injected.request({ method: 'eth_requestAccounts' });
@@ -2376,12 +2387,13 @@
                         return;
                     }
                 }
-                // Otherwise open Reown AppKit. This is the mobile WalletConnect/deep-link path.
+
+                // Fallback for desktop and mobile if the environment did not match above.
                 if (window.__openReownConnect) {
                     await window.__openReownConnect();
                     return;
                 }
-                throw new Error('Wallet connection module did not load. Open the deployed HTTPS website and try again.');
+                throw new Error('Wallet connection module did not load. Please open the live HTTPS Bullkarry website and try again.');
             } catch (e) {
                 console.error('Wallet connection error:', e);
                 const hint = document.getElementById('walletConnectHint');
