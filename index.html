@@ -43,6 +43,10 @@
         }
         #genQR {
             image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+        .payment-qr-shell {
+            box-shadow: 0 14px 40px rgba(15,23,42,.22);
         }
         .portfolio-orbit {
             border-radius: 50%;
@@ -389,7 +393,10 @@
                             <option value="BUSD">BUSD</option>
                         </select>
                     </div>
-                    <p class="text-[10px] text-slate-500 mb-6">Standard web3 wallet transfer format</p>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Payment note <span class="font-normal text-slate-400">(optional)</span></label>
+                    <input type="text" id="payNote" placeholder="What is this payment for?" class="w-full bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 transition mb-5">
+
+                    <p class="text-[10px] text-slate-500 mb-6">Payment requests are created for your connected Arc Testnet wallet.</p>
                     
                     <button onclick="generateLink()" class="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-md">
                         Create Payment Link <i class="fa-solid fa-arrow-right text-xs"></i>
@@ -407,26 +414,105 @@
 
                     <div id="previewGenerated" class="hidden flex flex-col gap-4">
                         <div class="flex items-center gap-2">
-                            <div class="w-5 h-5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-[10px]">
+                            <div class="w-6 h-6 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-[10px]">
                                 <i class="fa-solid fa-check"></i>
                             </div>
-                            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Payment link ready</span>
-                        </div>
-                        <div class="bg-white dark:bg-[#0f1624] p-4 rounded-xl border border-slate-200 dark:border-[#243048] flex justify-between items-center shadow-sm">
-                            <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Request</span>
-                            <span class="text-2xl font-bold text-slate-900 dark:text-white"><span id="genAmount">0</span> <span class="text-xs text-blue-600 dark:text-blue-400" id="genToken">USDC</span></span>
-                        </div>
-                        <div class="bg-white p-4 rounded-2xl flex justify-center items-center shadow-lg border border-slate-200 dark:border-slate-700">
-                            <div class="w-44 h-44 flex items-center justify-center bg-white rounded-xl overflow-hidden" id="genQrFrame">
-                                <img id="genQR" src="" alt="Payment QR" class="w-44 h-44 object-contain">
+                            <div>
+                                <div class="text-sm font-bold text-slate-900 dark:text-white">Payment link ready</div>
+                                <div class="text-[10px] text-slate-500 dark:text-slate-400">Share it with your payer.</div>
                             </div>
                         </div>
-                        <a id="genUrlLinkHref" href="#" target="_blank" class="bg-white dark:bg-[#0f1624] p-3.5 rounded-xl border border-slate-200 dark:border-[#243048] hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm block">
-                            <p class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold mb-1 flex justify-between items-center">
-                                Direct Web3 URI (Click to Pay) <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </p>
-                            <p id="genUrlLink" class="text-xs text-blue-600 dark:text-blue-400 font-mono break-all"></p>
-                        </a>
+
+                        <div class="bg-white dark:bg-[#0f1624] p-4 rounded-xl border border-slate-200 dark:border-[#243048] shadow-sm">
+                            <p class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold mb-2">Amount</p>
+                            <div class="text-2xl font-extrabold text-slate-900 dark:text-white">
+                                <span id="genAmount">0</span>
+                                <span class="text-xs text-blue-600 dark:text-blue-400" id="genToken">USDC</span>
+                            </div>
+                            <p id="genNote" class="text-xs text-slate-500 dark:text-slate-400 mt-2"></p>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#0b1018] p-5 rounded-2xl border border-slate-200 dark:border-[#243048] shadow-lg">
+                            <div class="flex justify-center">
+                                <div class="w-52 h-52 p-3 bg-white rounded-2xl flex items-center justify-center shadow-xl border border-slate-200">
+                                    <img id="genQR" src="" alt="Payment QR" class="w-full h-full object-contain">
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-center text-slate-500 dark:text-slate-400 mt-3">Scan with a compatible wallet to prefill the recipient and amount.</p>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#0f1624] p-4 rounded-xl border border-slate-200 dark:border-[#243048] shadow-sm">
+                            <p class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold mb-1">Receiving address</p>
+                            <p id="genReceiver" class="text-xs font-mono text-slate-900 dark:text-white break-all"></p>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#0f1624] p-4 rounded-xl border border-slate-200 dark:border-[#243048] shadow-sm">
+                            <p class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold mb-1">Payment URL</p>
+                            <p id="genUrlLink" class="text-xs text-blue-600 dark:text-blue-400 font-mono break-all mb-3"></p>
+                            <div class="flex gap-2">
+                                <button onclick="copyPaymentLink()" class="flex-1 border border-slate-200 dark:border-[#243048] rounded-xl py-3 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                                    <i class="fa-regular fa-copy mr-1"></i> Copy Link
+                                </button>
+                                <button onclick="sharePaymentLink()" class="w-12 border border-slate-200 dark:border-[#243048] rounded-xl py-3 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </button>
+                            </div>
+                            <a id="genUrlLinkHref" href="#" target="_blank" class="block text-center text-[10px] text-blue-500 mt-3 hover:underline">Open payment page</a>
+                        </div>
+
+                        <button onclick="resetPaymentLinkForm()" class="text-[10px] text-slate-500 dark:text-slate-400 hover:text-blue-500 transition">
+                            Create another payment link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: PAYMENT REQUEST -->
+        <div id="paymentRequestView" class="p-6 md:p-8 pt-6 hidden max-w-2xl mx-auto w-full">
+            <div class="bg-white dark:bg-[#0f1012] border border-slate-200 dark:border-white/10 rounded-[28px] shadow-2xl overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-7">
+                        <div class="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-wallet text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white">Bullkarry Payment</h1>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Arc Testnet</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Amount</p>
+                            <div class="text-4xl font-extrabold text-blue-500">
+                                <span id="requestPayAmount">0</span>
+                                <span id="requestPayToken" class="text-xl">USDC</span>
+                            </div>
+                        </div>
+
+                        <div id="requestPayNoteWrap" class="hidden">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Note</p>
+                            <p id="requestPayNote" class="text-sm text-slate-900 dark:text-white"></p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Receiver</p>
+                            <p id="requestPayReceiver" class="font-mono text-sm break-all text-slate-900 dark:text-white"></p>
+                        </div>
+
+                        <div id="requestPayBalanceBox" class="border border-slate-200 dark:border-white/10 rounded-xl p-4 flex justify-between items-center">
+                            <span class="text-sm text-slate-500 dark:text-slate-400">Your USDC Balance</span>
+                            <span id="requestPayBalance" class="font-bold text-slate-900 dark:text-white">Connect wallet to check</span>
+                        </div>
+
+                        <button id="requestPayButton" onclick="payPaymentRequest()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-lg">
+                            CONNECT WALLET TO PAY
+                        </button>
+
+                        <p id="requestPayHint" class="text-[10px] text-center text-slate-500 dark:text-slate-400">
+                            Payment is sent on Arc Testnet. A compatible wallet is required.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -532,132 +618,51 @@
 
     </div>
 
-    <!-- Reown Connect Wallet Replica Modal -->
-    <div id="connectWalletModal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
-                <div class="flex items-center justify-between mb-5">
-                    <div>
-                        <div class="text-lg font-bold text-slate-900 dark:text-white">Connect your wallet</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Connect to Arc Testnet</div>
+    <!-- Simple Wallet Connect -->
+    <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/60 dark:bg-black/80 z-[100]">
+        <div class="bg-white dark:bg-[#191a1a] w-full max-w-[360px] rounded-[24px] p-4 relative shadow-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/5">
+            <div class="flex justify-between items-center px-2 py-2 mb-2">
+                <div>
+                    <h2 class="text-base font-bold">Connect Wallet</h2>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Choose a wallet to connect to Arc Testnet</p>
+                </div>
+                <button onclick="closeModal('connectWalletModal')" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-2 mt-3">
+                <button id="metamaskConnectOption" onclick="connectWalletProvider('metamask')" class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition border border-slate-200 dark:border-white/5">
+                    <div class="flex items-center gap-3">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-9 h-9 rounded-lg" alt="MetaMask">
+                        <div class="text-left">
+                            <div class="font-semibold text-sm">MetaMask</div>
+                            <div id="metamaskStatus" class="text-[10px] text-slate-500 dark:text-slate-400">Browser wallet</div>
+                        </div>
                     </div>
-                    <button onclick="closeModal('connectWalletModal')" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl">×</button>
-                </div>
-                <button id="reownConnectBridge"
-                    onclick="window.connectWalletProvider && window.connectWalletProvider()"
-                    class="w-full py-3.5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:opacity-90 transition">
-                    Connect Wallet
-                </button>
-                <div class="text-[11px] text-center text-slate-400 mt-3">WalletConnect and supported wallets are provided by Reown AppKit.</div>
-            </div>
-        </div>
-
-            <div class="p-4 space-y-3">
-                <div class="relative flex items-center">
-                    <i class="fa-regular fa-envelope absolute left-4 text-slate-400 dark:text-gray-400 text-sm"></i>
-                    <input type="email" placeholder="Email" class="w-full bg-transparent border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-slate-400 dark:focus:border-white/30 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500">
-                </div>
-                
-                <button onclick="connectWalletProvider()" class="w-full flex items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition text-sm font-semibold">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"> Continue with Google
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs"></i>
                 </button>
 
-                <div class="flex justify-center gap-2 pt-2">
-                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10"><svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/></svg></button>
-                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fa-brands fa-discord text-[#5865F2]"></i></button>
-                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fa-solid fa-n text-purple-500"></i></button>
-                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fa-brands fa-github"></i></button>
-                    <button onclick="connectWalletProvider()" class="w-9 h-9 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fa-solid fa-ellipsis"></i></button>
-                </div>
-            </div>
-
-            <div class="p-3 pt-0 text-center flex items-center justify-center gap-1 opacity-50 hover:opacity-100 transition cursor-pointer">
-                <span class="text-[10px] text-slate-500 dark:text-gray-400">UX by</span>
-                <i class="fa-solid fa-wallet text-slate-500 dark:text-gray-400 text-[10px]"></i>
-                <span class="text-[10px] text-slate-500 dark:text-gray-400 font-bold">reown</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Send Modal -->
-    <div id="sendModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
-        <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
-            <button onclick="closeModal('sendModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h2 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Send Tokens</h2>
-            
-            <input type="text" id="directSendTo" placeholder="Recipient address (0x...)" class="w-full bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-3 text-xs text-slate-900 dark:text-white mb-3 font-mono focus:outline-none focus:border-blue-500">
-            
-            <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-6 focus-within:border-blue-500 transition">
-                <input type="number" id="directSendAmt" placeholder="0.00" class="bg-transparent w-full p-2 text-xl font-bold text-slate-900 dark:text-white focus:outline-none">
-                <select id="directSendToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
-                    <option value="USDC">USDC</option>
-                    <option value="BUSD">BUSD</option>
-                    <option value="EURC">EURC</option>
-                    <option value="cirBTC">cirBTC</option>
-                </select>
-            </div>
-            <button id="sendTxBtn" onclick="executeDirectSend()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md">Send Transaction</button>
-        </div>
-    </div>
-
-    <!-- Receive Modal -->
-    <div id="receiveModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
-        <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl text-center">
-            <button onclick="closeModal('receiveModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h2 class="text-lg font-bold mb-1 text-slate-900 dark:text-white">Receive Crypto</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Scan QR to pay into your wallet</p>
-            <div class="bg-white p-4 rounded-2xl w-fit mx-auto mb-4 shadow-md border border-slate-300 dark:border-slate-700">
-                <img id="myRecQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet" class="w-40 h-40">
-            </div>
-            <div class="flex items-center gap-2">
-                <input type="text" id="myRecAddr" value="Connect wallet to view" readonly class="w-full bg-slate-50 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-3 text-xs font-mono text-center text-slate-700 dark:text-slate-300">
-                <button onclick="copyReceiveAddress()" class="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition" title="Copy Address">
-                    <i class="fa-regular fa-copy"></i>
+                <button id="okxConnectOption" onclick="connectWalletProvider('okx')" class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition border border-slate-200 dark:border-white/5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-black flex items-center justify-center border border-slate-700">
+                            <span class="text-white font-extrabold text-xs">OKX</span>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-semibold text-sm">OKX Wallet</div>
+                            <div id="okxStatus" class="text-[10px] text-slate-500 dark:text-slate-400">Browser wallet</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs"></i>
                 </button>
             </div>
+
+            <div class="text-[10px] text-center text-slate-400 mt-4">
+                Arc Testnet • Chain ID 5042002
+            </div>
         </div>
     </div>
 
-    <!-- Scan Modal -->
-    <div id="scanModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
-        <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl text-center">
-            <button onclick="closeModal('scanModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h2 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Scan to Send</h2>
-            <div class="mx-auto w-48 h-48 border-4 border-dashed border-blue-500 rounded-2xl relative mb-4 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50">
-                <div class="w-full h-1 bg-blue-500/50 absolute top-1/2 animate-ping"></div>
-                <i class="fa-solid fa-camera text-4xl text-slate-400 dark:text-slate-600"></i>
-            </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Position the QR code within the frame to scan recipient address</p>
-            <button onclick="simulateScan()" class="w-full bg-slate-100 dark:bg-darkBg border border-slate-200 dark:border-[#243048] hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl text-sm transition">Simulate Scan (Demo)</button>
-        </div>
-    </div>
-
-    <!-- Convert Modal -->
-    <div id="convertModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/75">
-        <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
-            <button onclick="closeModal('convertModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h2 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Convert Tokens</h2>
-            
-            <div class="p-4 bg-slate-50 dark:bg-darkBg border border-slate-200 dark:border-[#243048] rounded-xl mb-3 focus-within:border-blue-500 transition">
-                <div class="flex justify-between items-center">
-                    <input type="number" id="convertFromAmt" oninput="calculateConvert()" placeholder="0.0" class="bg-transparent text-xl font-bold text-slate-900 dark:text-white w-2/3 focus:outline-none">
-                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">USDC</span>
-                </div>
-            </div>
-            
-            <div class="text-center my-1 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
-            
-            <div class="p-4 bg-slate-50 dark:bg-darkBg border border-slate-200 dark:border-[#243048] rounded-xl mb-6">
-                <div class="flex justify-between items-center">
-                    <input type="number" id="convertToAmt" placeholder="0.0" readonly class="bg-transparent text-xl font-bold text-slate-500 dark:text-slate-400 w-2/3 focus:outline-none">
-                    <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 rounded">INR</span>
-                </div>
-            </div>
-            
-            <button onclick="alert('Swap route executed!')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md">Convert Now</button>
-        </div>
-    </div>
-
-    <!-- Success Modal for Sending/Receiving -->
     <div id="successModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[110]">
         <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-6 text-center relative shadow-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 scale-95 transform transition-all">
             <div class="w-16 h-16 bg-[#00d182] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
@@ -694,15 +699,35 @@
         let isFirstTxLoad = true;
 
         window.addEventListener('DOMContentLoaded', async () => {
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                    if (accounts.length > 0) {
+            try {
+                refreshWalletOptionStatus();
+
+                const providers = getInjectedProviders();
+                let provider = providers.find(p => p?.isMetaMask) || providers.find(p =>
+                    p?.isOKExWallet || p?.isOkxWallet || p?.isOKXWallet
+                ) || providers[0];
+
+                if (provider) {
+                    const accounts = await provider.request({ method: 'eth_accounts' });
+                    if (accounts?.length) {
+                        try {
+                            await ensureArcNetwork(provider);
+                        } catch (networkError) {
+                            console.warn("Arc network restore skipped:", networkError);
+                        }
+
+                        window.ethereum = provider;
+                        window.__bullkarryWalletProvider = provider;
                         await initializeWallet(accounts[0]);
+
+                        provider.on?.("accountsChanged", handleWalletAccountsChanged);
+                        provider.on?.("chainChanged", handleWalletChainChanged);
                     }
-                } catch (e) {
-                    console.error("Session auto-recall error", e);
                 }
+
+                setTimeout(applyPaymentLinkFromUrl, 100);
+            } catch (e) {
+                console.error("Session auto-recall error", e);
             }
         });
 
@@ -1335,7 +1360,7 @@
         }
 
         function switchView(viewName) {
-            ['dashboardView', 'paymentLinkView', 'faucetView', 'transactionsView', 'merchantView'].forEach(id => {
+            ['dashboardView', 'paymentLinkView', 'paymentRequestView', 'faucetView', 'transactionsView', 'merchantView'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
@@ -1373,31 +1398,26 @@
 
         let currentWeb3URI = "";
         let currentPaymentShareURL = "";
+        let currentPaymentRequest = null;
 
-        function buildPaymentRequest() {
-            if (!userAccount) throw new Error("Connect wallet first");
+        function buildPaymentRequest(receiverOverride = null) {
+            const receiver = receiverOverride || userAccount;
+            if (!receiver) throw new Error("Connect wallet first");
 
             const rawAmount = document.getElementById('payAmount').value;
             const token = document.getElementById('payToken').value || "USDC";
+            const note = (document.getElementById('payNote')?.value || "").trim();
             const amount = String(rawAmount || "").trim();
 
-            if (!amount || Number(amount) <= 0) {
-                throw new Error("Enter a valid amount");
-            }
-
-            if (!ethers.utils.isAddress(userAccount)) {
-                throw new Error("Receiving wallet address is invalid");
-            }
+            if (!amount || Number(amount) <= 0) throw new Error("Enter a valid amount");
+            if (!ethers.utils.isAddress(receiver)) throw new Error("Receiving wallet address is invalid");
 
             const chainId = 5042002;
 
             if (token === "USDC") {
-                // Arc's native asset is USDC with 18 decimals.
+                // Arc Testnet's native USDC uses 18 decimals.
                 const value = ethers.utils.parseUnits(amount, 18).toString();
-
-                // EIP-681 native payment URI. Wallets can prefill recipient + amount.
-                currentWeb3URI =
-                    `ethereum:${chainId}/${userAccount}?value=${value}`;
+                currentWeb3URI = `ethereum:${receiver}?value=${value}&chainId=${chainId}`;
             } else if (TOKEN_CONTRACTS[token]) {
                 const tokenInfo = TOKEN_CONTRACTS[token];
                 const tokenAmount = ethers.utils.parseUnits(
@@ -1405,27 +1425,37 @@
                     Number(tokenInfo.decimals || 18)
                 ).toString();
 
-                // EIP-681 ERC-20 transfer URI.
                 currentWeb3URI =
-                    `ethereum:${chainId}/${tokenInfo.address}/transfer` +
-                    `?address=${userAccount}&uint256=${tokenAmount}`;
+                    `ethereum:${tokenInfo.address}/transfer?address=${receiver}&uint256=${tokenAmount}&chainId=${chainId}`;
             } else {
                 throw new Error("Unsupported payment token");
             }
 
-            // Human/shareable URL: opening it on Bullkarry auto-fills the
-            // receiving address + amount and opens the payment-link screen.
+            // Stable shareable URL. It works even when the payer has no Bullkarry
+            // wallet connection yet: opening it shows the payment request page.
             const shareURL = new URL(window.location.href);
             shareURL.search = "";
+            shareURL.hash = "";
             shareURL.searchParams.set("payment", "1");
-            shareURL.searchParams.set("to", userAccount);
+            shareURL.searchParams.set("to", receiver);
             shareURL.searchParams.set("amount", amount);
             shareURL.searchParams.set("token", token);
             shareURL.searchParams.set("chainId", String(chainId));
+            if (note) shareURL.searchParams.set("note", note);
 
             currentPaymentShareURL = shareURL.toString();
 
-            return { amount, token, currentWeb3URI, currentPaymentShareURL };
+            currentPaymentRequest = {
+                receiver,
+                amount,
+                token,
+                note,
+                chainId,
+                web3URI: currentWeb3URI,
+                shareURL: currentPaymentShareURL
+            };
+
+            return currentPaymentRequest;
         }
 
         async function renderPaymentQR(uri) {
@@ -1434,107 +1464,232 @@
 
             try {
                 if (window.QRCode && typeof window.QRCode.toDataURL === "function") {
-                    const dataUrl = await window.QRCode.toDataURL(uri, {
-                        width: 360,
+                    img.src = await window.QRCode.toDataURL(uri, {
+                        width: 520,
                         margin: 2,
                         errorCorrectionLevel: "H",
-                        color: {
-                            dark: "#0b1220",
-                            light: "#ffffff"
-                        }
+                        color: { dark: "#07111f", light: "#ffffff" }
                     });
-                    img.src = dataUrl;
-                } else {
-                    img.src =
-                        "https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=10&data=" +
-                        encodeURIComponent(uri);
                 }
             } catch (error) {
                 console.error("QR generation error:", error);
-                img.src =
-                    "https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=10&data=" +
-                    encodeURIComponent(uri);
+                img.removeAttribute("src");
             }
+        }
+
+        function populateGeneratedPayment(request) {
+            document.getElementById('previewEmpty').classList.add('hidden');
+            document.getElementById('previewGenerated').classList.remove('hidden');
+
+            document.getElementById('genAmount').innerText = request.amount;
+            document.getElementById('genToken').innerText = request.token;
+            document.getElementById('genReceiver').innerText = request.receiver;
+            document.getElementById('genUrlLink').innerText = request.shareURL;
+            document.getElementById('genUrlLinkHref').href = request.shareURL;
+
+            const noteEl = document.getElementById('genNote');
+            noteEl.innerText = request.note || "";
+            noteEl.classList.toggle('hidden', !request.note);
+
+            renderPaymentQR(request.web3URI);
         }
 
         function generateLink() {
             try {
                 const request = buildPaymentRequest();
-
-                document.getElementById('previewEmpty').classList.add('hidden');
-                document.getElementById('previewGenerated').classList.remove('hidden');
-                document.getElementById('genAmount').innerText = request.amount;
-                document.getElementById('genToken').innerText = request.token;
-
-                // The visible link is the shareable Bullkarry URL. When opened,
-                // it automatically fills the same address/amount/token.
-                const linkEl = document.getElementById('genUrlLink');
-                const hrefEl = document.getElementById('genUrlLinkHref');
-
-                linkEl.innerText = request.currentPaymentShareURL;
-                hrefEl.href = request.currentPaymentShareURL;
-
-                // QR remains the wallet-native EIP-681 URI so scanning it in a
-                // compatible wallet pre-fills recipient and amount directly.
-                renderPaymentQR(request.currentWeb3URI);
+                populateGeneratedPayment(request);
             } catch (error) {
                 alert(error.message || "Unable to create payment link");
             }
         }
 
+        async function copyPaymentLink() {
+            if (!currentPaymentShareURL) return;
+            try {
+                await navigator.clipboard.writeText(currentPaymentShareURL);
+                alert("Payment link copied");
+            } catch (_) {
+                prompt("Copy payment link:", currentPaymentShareURL);
+            }
+        }
+
+        async function sharePaymentLink() {
+            if (!currentPaymentShareURL) return;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: "Bullkarry Payment",
+                        text: currentPaymentRequest
+                            ? `${currentPaymentRequest.amount} ${currentPaymentRequest.token} payment request`
+                            : "Bullkarry payment request",
+                        url: currentPaymentShareURL
+                    });
+                    return;
+                } catch (error) {
+                    if (error?.name === "AbortError") return;
+                }
+            }
+
+            await copyPaymentLink();
+        }
+
+        function resetPaymentLinkForm() {
+            document.getElementById('payAmount').value = "";
+            document.getElementById('payNote').value = "";
+            document.getElementById('previewGenerated').classList.add('hidden');
+            document.getElementById('previewEmpty').classList.remove('hidden');
+            currentWeb3URI = "";
+            currentPaymentShareURL = "";
+            currentPaymentRequest = null;
+        }
+
         function applyPaymentLinkFromUrl() {
             const params = new URLSearchParams(window.location.search);
-
             if (params.get("payment") !== "1") return;
 
             const to = params.get("to");
             const amount = params.get("amount");
             const token = params.get("token") || "USDC";
             const chainId = params.get("chainId") || "5042002";
+            const note = params.get("note") || "";
 
-            if (!to || !ethers.utils.isAddress(to) || !amount || Number(amount) <= 0) {
+            if (String(chainId) !== "5042002") {
+                alert("This payment link is not for Arc Testnet.");
                 return;
             }
 
-            // Only accept Arc Testnet payment links.
-            if (String(chainId) !== "5042002") return;
-
-            const payAmount = document.getElementById("payAmount");
-            const payToken = document.getElementById("payToken");
-
-            if (payAmount) payAmount.value = amount;
-            if (payToken && [...payToken.options].some(o => o.value === token)) {
-                payToken.value = token;
+            if (!to || !ethers.utils.isAddress(to) || !amount || Number(amount) <= 0) {
+                alert("Invalid payment link.");
+                return;
             }
 
-            const receiveLabel = document.getElementById("payWalletAddress");
-            if (receiveLabel) {
-                receiveLabel.innerText =
-                    to.substring(0, 6) + "..." + to.substring(38);
+            // This is a payer page, not the creator's form.
+            document.getElementById("requestPayAmount").innerText = amount;
+            document.getElementById("requestPayToken").innerText = token;
+            document.getElementById("requestPayReceiver").innerText = to;
+
+            const noteWrap = document.getElementById("requestPayNoteWrap");
+            document.getElementById("requestPayNote").innerText = note;
+            noteWrap.classList.toggle("hidden", !note);
+
+            const request = {
+                receiver: to,
+                amount: amount,
+                token: token,
+                note: note,
+                chainId: 5042002
+            };
+            window.currentPayerRequest = request;
+
+            switchView("paymentRequest");
+
+            updatePaymentPayerState();
+        }
+
+        async function updatePaymentPayerState() {
+            const request = window.currentPayerRequest;
+            if (!request) return;
+
+            const balanceEl = document.getElementById("requestPayBalance");
+            const button = document.getElementById("requestPayButton");
+
+            if (!userAccount || !isWalletConnected) {
+                balanceEl.innerText = "Connect wallet to check";
+                button.innerText = "CONNECT WALLET TO PAY";
+                return;
             }
 
-            switchView("paymentLink");
-
-            // Rebuild the request using the link recipient, even if the viewer
-            // is not connected to that wallet.
-            const originalAccount = userAccount;
-            const originalConnected = isWalletConnected;
-
-            userAccount = to;
             try {
-                const request = buildPaymentRequest();
-                document.getElementById('previewEmpty').classList.add('hidden');
-                document.getElementById('previewGenerated').classList.remove('hidden');
-                document.getElementById('genAmount').innerText = request.amount;
-                document.getElementById('genToken').innerText = request.token;
-                document.getElementById('genUrlLink').innerText = request.currentPaymentShareURL;
-                document.getElementById('genUrlLinkHref').href = request.currentPaymentShareURL;
-                renderPaymentQR(request.currentWeb3URI);
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const balance = await provider.getBalance(userAccount);
+                const formatted = ethers.utils.formatEther(balance);
+                balanceEl.innerText = `${Number(formatted).toLocaleString(undefined, {maximumFractionDigits: 6})} USDC`;
+
+                button.innerText = "PAY NOW";
             } catch (error) {
-                console.error("Payment-link hydration error:", error);
-            } finally {
-                userAccount = originalAccount;
-                isWalletConnected = originalConnected;
+                console.error("Payment balance error:", error);
+                balanceEl.innerText = "Unable to read balance";
+            }
+        }
+
+        async function payPaymentRequest() {
+            const request = window.currentPayerRequest;
+            if (!request) return;
+
+            if (!userAccount || !isWalletConnected) {
+                connectWalletProvider();
+                return;
+            }
+
+            const button = document.getElementById("requestPayButton");
+            button.disabled = true;
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processing...';
+
+            try {
+                const networkProvider = new ethers.providers.Web3Provider(window.ethereum);
+                const network = await networkProvider.getNetwork();
+
+                if (Number(network.chainId) !== 5042002) {
+                    try {
+                        await window.ethereum.request({
+                            method: "wallet_switchEthereumChain",
+                            params: [{ chainId: "0x4cef72" }]
+                        });
+                    } catch (switchError) {
+                        if (switchError?.code === 4902) {
+                            await window.ethereum.request({
+                                method: "wallet_addEthereumChain",
+                                params: [{
+                                    chainId: "0x4cef72",
+                                    chainName: "Arc Testnet",
+                                    nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
+                                    rpcUrls: ["https://rpc.testnet.arc.network"],
+                                    blockExplorerUrls: ["https://testnet.arc-scan.org"]
+                                }]
+                            });
+                        } else {
+                            throw switchError;
+                        }
+                    }
+                }
+
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+
+                let tx;
+                if (request.token === "USDC") {
+                    tx = await signer.sendTransaction({
+                        to: request.receiver,
+                        value: ethers.utils.parseUnits(request.amount, 18)
+                    });
+                } else if (TOKEN_CONTRACTS[request.token]) {
+                    const tokenInfo = TOKEN_CONTRACTS[request.token];
+                    const contract = new ethers.Contract(
+                        tokenInfo.address,
+                        ["function transfer(address to,uint256 amount) returns (bool)"],
+                        signer
+                    );
+                    tx = await contract.transfer(
+                        request.receiver,
+                        ethers.utils.parseUnits(request.amount, Number(tokenInfo.decimals || 18))
+                    );
+                } else {
+                    throw new Error("Unsupported payment token");
+                }
+
+                await tx.wait();
+
+                document.getElementById("successModalTitle").innerText = "Payment Successful!";
+                document.getElementById("successModalMsg").innerText =
+                    `Successfully paid ${request.amount} ${request.token}.`;
+                openModal("successModal");
+                button.innerText = "PAID";
+            } catch (error) {
+                console.error("Payment request error:", error);
+                alert(error?.reason || error?.message || "Payment failed");
+                button.disabled = false;
+                button.innerText = "PAY NOW";
             }
         }
 
@@ -1558,15 +1713,167 @@
             document.getElementById('profileDropdown').classList.add('hidden');
         }
 
-        function disconnectWallet() {
+        function getInjectedProviders() {
+            const providers = [];
+
+            if (Array.isArray(window.ethereum?.providers)) {
+                providers.push(...window.ethereum.providers);
+            }
+            if (window.ethereum && !providers.includes(window.ethereum)) {
+                providers.push(window.ethereum);
+            }
+            if (window.okxwallet && !providers.includes(window.okxwallet)) {
+                providers.push(window.okxwallet);
+            }
+            if (window.okxWallet && !providers.includes(window.okxWallet)) {
+                providers.push(window.okxWallet);
+            }
+
+            return providers;
+        }
+
+        function getWalletProvider(type) {
+            const providers = getInjectedProviders();
+
+            if (type === "okx") {
+                return providers.find(p =>
+                    p?.isOKExWallet || p?.isOkxWallet || p?.isOKXWallet
+                ) || window.okxwallet || window.okxWallet || null;
+            }
+
+            // MetaMask provider can coexist with OKX in window.ethereum.providers.
+            return providers.find(p => p?.isMetaMask) || (
+                window.ethereum?.isMetaMask ? window.ethereum : null
+            );
+        }
+
+        function refreshWalletOptionStatus() {
+            const metamask = getWalletProvider("metamask");
+            const okx = getWalletProvider("okx");
+
+            const metaStatus = document.getElementById("metamaskStatus");
+            const okxStatus = document.getElementById("okxStatus");
+            const metaButton = document.getElementById("metamaskConnectOption");
+            const okxButton = document.getElementById("okxConnectOption");
+
+            if (metaStatus) metaStatus.innerText = metamask ? "Installed" : "Not detected";
+            if (okxStatus) okxStatus.innerText = okx ? "Installed" : "Not detected";
+
+            if (metaButton) metaButton.classList.toggle("opacity-60", !metamask);
+            if (okxButton) okxButton.classList.toggle("opacity-60", !okx);
+        }
+
+        async function ensureArcNetwork(provider) {
+            const chainId = await provider.request({ method: "eth_chainId" });
+
+            if (String(chainId).toLowerCase() === "0x4cef72") return true;
+
+            try {
+                await provider.request({
+                    method: "wallet_switchEthereumChain",
+                    params: [{ chainId: "0x4cef72" }]
+                });
+            } catch (error) {
+                if (error?.code !== 4902) throw error;
+
+                await provider.request({
+                    method: "wallet_addEthereumChain",
+                    params: [{
+                        chainId: "0x4cef72",
+                        chainName: "Arc Testnet",
+                        nativeCurrency: {
+                            name: "USDC",
+                            symbol: "USDC",
+                            decimals: 18
+                        },
+                        rpcUrls: ["https://rpc.testnet.arc.network"],
+                        blockExplorerUrls: ["https://testnet.arc-scan.org"]
+                    }]
+                });
+            }
+
+            return true;
+        }
+
+        async function connectWalletProvider(type = "metamask") {
+            const provider = getWalletProvider(type);
+
+            if (!provider) {
+                const name = type === "okx" ? "OKX Wallet" : "MetaMask";
+                alert(`${name} is not detected. Please install the wallet extension and try again.`);
+                refreshWalletOptionStatus();
+                return;
+            }
+
+            try {
+                await provider.request({ method: "eth_requestAccounts" });
+                await ensureArcNetwork(provider);
+
+                // The rest of Bullkarry already uses ethers 5.7.2 + window.ethereum.
+                window.ethereum = provider;
+                window.__bullkarryWalletProvider = provider;
+
+                const accounts = await provider.request({ method: "eth_accounts" });
+                if (!accounts?.length) throw new Error("No wallet account returned");
+
+                closeModal("connectWalletModal");
+                await initializeWallet(accounts[0]);
+                await updatePaymentPayerState();
+
+                provider.removeListener?.("accountsChanged", handleWalletAccountsChanged);
+                provider.removeListener?.("chainChanged", handleWalletChainChanged);
+                provider.on?.("accountsChanged", handleWalletAccountsChanged);
+                provider.on?.("chainChanged", handleWalletChainChanged);
+            } catch (error) {
+                console.error("Wallet connection error:", error);
+                if (error?.code !== 4001) {
+                    alert(error?.reason || error?.message || "Wallet connection failed");
+                }
+            }
+        }
+
+        async function handleWalletAccountsChanged(accounts) {
+            if (!accounts || !accounts.length) {
+                clearDisconnectedWalletState();
+                return;
+            }
+
+            try {
+                await initializeWallet(accounts[0]);
+                await updatePaymentPayerState();
+            } catch (error) {
+                console.error("Account change error:", error);
+            }
+        }
+
+        async function handleWalletChainChanged() {
+            // Re-sync all on-chain values after a network change.
+            if (window.__bullkarryWalletProvider) {
+                try {
+                    await ensureArcNetwork(window.__bullkarryWalletProvider);
+                } catch (error) {
+                    console.error("Chain change error:", error);
+                }
+            }
+
+            if (userAccount && isWalletConnected) {
+                await syncAllOnChainData();
+                await updatePaymentPayerState();
+            }
+        }
+
+        function clearDisconnectedWalletState() {
             userAccount = null;
             isWalletConnected = false;
             localStorage.removeItem('bullkarry_account');
+
             if (autoSyncInterval) clearInterval(autoSyncInterval);
 
             knownTxHashes.clear();
             isFirstTxLoad = true;
             liveTokens = [];
+            transactions = [];
+            usdcBalance = 0;
 
             document.getElementById('walletAddress').innerText = "Connect Wallet";
             document.getElementById('payWalletAddress').innerText = "Not Connected";
@@ -1574,39 +1881,33 @@
             document.getElementById('myRecAddr').value = "Connect wallet to view";
             document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet";
 
-            usdcBalance = 0;
-            transactions = [];
-
             document.getElementById('assetsPlaceholder').classList.remove('hidden');
             document.getElementById('assetsTable').classList.add('hidden');
-            document.getElementById('portfolioListContainer').innerHTML = '<div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>';
+            document.getElementById('portfolioListContainer').innerHTML =
+                '<div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>';
 
             renderBalancesAndAssets();
             renderTransactionLists();
 
-            document.getElementById('profileDropdown').classList.add('hidden');
-            alert("Wallet disconnected successfully");
+            document.getElementById('profileDropdown')?.classList.add('hidden');
+        }
+
+        function disconnectWallet() {
+            // Injected browser wallets do not expose a standard disconnect RPC.
+            // Clearing Bullkarry's session is the correct behavior; the user can
+            // still disconnect the extension itself from its own wallet UI.
+            clearDisconnectedWalletState();
+            alert("Wallet disconnected from Bullkarry");
         }
 
         document.getElementById('connectBtn').addEventListener('click', () => {
             if (isWalletConnected) {
                 document.getElementById('profileDropdown').classList.toggle('hidden');
             } else {
+                refreshWalletOptionStatus();
                 openModal('connectWalletModal');
             }
         });
-
-        async function connectWalletProvider() {
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    if (accounts.length > 0) {
-                        closeModal('connectWalletModal');
-                        await initializeWallet(accounts[0]);
-                    }
-                } catch (e) { console.error(e); }
-            } else { alert("MetaMask or Web3 Wallet not found"); }
-        }
 
         window.addEventListener('click', (e) => {
             const container = document.getElementById('profileMenuContainer');
@@ -1704,242 +2005,6 @@
             btn.innerText = originalText;
             btn.disabled = false;
         }
-    </script>
-
-    <!-- Reown AppKit integration -->
-    <script type="module">
-        import { createAppKit } from "https://esm.sh/@reown/appkit@1.8.23?bundle";
-        import { Ethers5Adapter } from "https://esm.sh/@reown/appkit-adapter-ethers5@1.8.23?bundle";
-        import { defineChain } from "https://esm.sh/@reown/appkit@1.8.23/networks?bundle";
-
-        const REOWN_PROJECT_ID = "c9287f8264a6836a5b67a6016ed69076";
-
-        const arcTestnet = defineChain({
-            id: 5042002,
-            caipNetworkId: "eip155:5042002",
-            chainNamespace: "eip155",
-            name: "Arc Testnet",
-            nativeCurrency: {
-                name: "USDC",
-                symbol: "USDC",
-                decimals: 18
-            },
-            rpcUrls: {
-                default: {
-                    http: ["https://rpc.testnet.arc.network"]
-                }
-            },
-            blockExplorers: {
-                default: {
-                    name: "Arcscan",
-                    url: "https://testnet.arc-scan.org"
-                }
-            },
-            testnet: true
-        });
-
-        const metadata = {
-            name: "Bullkarry",
-            description: "Bullkarry on Arc Testnet",
-            url: window.location.origin,
-            icons: []
-        };
-
-        const ethers5Adapter = new Ethers5Adapter();
-
-        const reownAppKit = createAppKit({
-            adapters: [ethers5Adapter],
-            networks: [arcTestnet],
-            defaultNetwork: arcTestnet,
-            metadata,
-            projectId: REOWN_PROJECT_ID,
-            features: {
-                analytics: true,
-                email: true,
-                socials: [
-                    "google",
-                    "x",
-                    "discord",
-                    "github",
-                    "apple",
-                    "facebook",
-                    "farcaster"
-                ]
-            },
-            themeMode: "dark"
-        });
-
-        window.bullkarryAppKit = reownAppKit;
-
-        function resetBullkarryWalletUI() {
-            userAccount = null;
-            isWalletConnected = false;
-            localStorage.removeItem("bullkarry_account");
-
-            if (autoSyncInterval) clearInterval(autoSyncInterval);
-
-            knownTxHashes.clear();
-            isFirstTxLoad = true;
-            liveTokens = [];
-            transactions = [];
-            usdcBalance = 0;
-
-            document.getElementById("walletAddress").innerText = "Connect Wallet";
-            document.getElementById("payWalletAddress").innerText = "Not Connected";
-            document.getElementById("faucetWalletAddress").innerText = "Not Connected";
-            document.getElementById("myRecAddr").value = "Connect wallet to view";
-            document.getElementById("myRecQr").src =
-                "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet";
-
-            document.getElementById("assetsPlaceholder").classList.remove("hidden");
-            document.getElementById("assetsTable").classList.add("hidden");
-            document.getElementById("portfolioListContainer").innerHTML =
-                '<div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>';
-
-            renderBalancesAndAssets();
-            renderTransactionLists();
-
-            const dropdown = document.getElementById("profileDropdown");
-            if (dropdown) dropdown.classList.add("hidden");
-        }
-
-        window.clearWalletUiState = resetBullkarryWalletUI;
-
-        async function syncReownConnection(state) {
-            if (state && state.error) {
-                console.error("Reown connection error:", state.error);
-            }
-
-            const provider = state?.provider;
-            const address = state?.address;
-            const connected = !!(state?.isConnected && provider && address);
-
-            if (!connected) {
-                if (isWalletConnected || userAccount) {
-                    resetBullkarryWalletUI();
-                }
-                return;
-            }
-
-            // This is an EIP-1193 provider and is now used by the existing
-            // ethers 5.7.2 send/balance code.
-            window.ethereum = provider;
-            window.__bullkarryReownProvider = provider;
-
-            closeModal("connectWalletModal");
-            await initializeWallet(address);
-        }
-
-        // Official AppKit provider subscription API.
-        reownAppKit.subscribeProvider(async (state) => {
-            try {
-                await syncReownConnection(state);
-            } catch (error) {
-                console.error("Reown provider sync error:", error);
-            }
-        });
-
-        reownAppKit.subscribeEvents(({ data }) => {
-            if (
-                data?.event === "ACCOUNT_DISCONNECTED" ||
-                data?.event === "DISCONNECT_SUCCESS"
-            ) {
-                resetBullkarryWalletUI();
-            }
-        });
-
-        // Existing Connect Wallet buttons now always open the real AppKit modal.
-        window.connectWalletProvider = function () {
-            if (!window.bullkarryAppKit) {
-                alert("Wallet connection is still loading. Please try again.");
-                return;
-            }
-
-            window.bullkarryAppKit.open({
-                view: "Connect",
-                namespace: "eip155",
-                preferredWalletIds: []
-            });
-        };
-
-        // Use the official AppKit disconnect action.
-        window.disconnectWallet = async function () {
-            try {
-                await window.bullkarryAppKit.adapter?.connectionControllerClient?.disconnect();
-            } catch (error) {
-                console.error("Reown disconnect error:", error);
-            } finally {
-                resetBullkarryWalletUI();
-            }
-        };
-
-        // Override only the old custom connect-modal route. Everything else
-        // in Bullkarry keeps using its existing modal system.
-        const existingOpenModal = window.openModal;
-        window.openModal = function (id) {
-            if (id === "connectWalletModal") {
-                window.connectWalletProvider();
-                return;
-            }
-            return existingOpenModal(id);
-        };
-
-        // Restore an AppKit session after refresh.
-        setTimeout(async () => {
-            try {
-                if (reownAppKit.getIsConnected()) {
-                    const provider = reownAppKit.getWalletProvider();
-                    const address = reownAppKit.getAddress();
-
-                    if (provider && address) {
-                        window.ethereum = provider;
-                        window.__bullkarryReownProvider = provider;
-                        await initializeWallet(address);
-                    }
-                }
-            } catch (error) {
-                console.error("Reown session restore error:", error);
-            }
-        }, 500);
-
-        // If a shareable payment link was opened, hydrate it after the page is ready.
-        setTimeout(() => {
-            try {
-                applyPaymentLinkFromUrl();
-            } catch (error) {
-                console.error("Payment-link URL error:", error);
-            }
-        }, 250);
-    </script>
-
-
-    <script>
-        (function () {
-            function openRealWalletConnect() {
-                if (window.connectWalletProvider) {
-                    window.connectWalletProvider();
-                } else if (window.bullkarryAppKit && window.bullkarryAppKit.open) {
-                    window.bullkarryAppKit.open({ view: "Connect", namespace: "eip155" });
-                }
-            }
-
-            window.openRealWalletConnect = openRealWalletConnect;
-
-            // Reuse any existing "Connect Wallet" buttons without changing their design.
-            document.addEventListener("click", function (event) {
-                const button = event.target.closest("button, a");
-                if (!button) return;
-
-                const text = (button.innerText || button.textContent || "").trim().toLowerCase();
-                if (text === "connect wallet" || text === "connect your wallet") {
-                    if (!window.isWalletConnected) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        openRealWalletConnect();
-                    }
-                }
-            }, true);
-        })();
     </script>
 
 </body>
