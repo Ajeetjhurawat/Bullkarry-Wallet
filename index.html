@@ -97,9 +97,12 @@
             border-right-color: rgba(16,185,129,.55);
             animation: portfolioSpin 7s linear infinite;
         }
-        .balance-hero-card { background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); }
+        .balance-hero-card { background: radial-gradient(circle at 100% 0%, rgba(37, 99, 235, .16), transparent 44%), linear-gradient(135deg, #dce7f5 0%, #f8fafc 100%); box-shadow: 0 16px 34px rgba(51, 65, 85, .16) !important; }
         .dark .balance-hero-card { background: radial-gradient(circle at 100% 0%, rgba(13, 148, 136, .36), transparent 47%), linear-gradient(120deg, #111827 0%, #101827 100%); }
         .balance-amount { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.055em; }
+        .balance-refresh { box-shadow: 0 6px 16px rgba(51, 65, 85, .16); }
+        .payment-qr-frame { position:relative; padding:14px; border-radius:26px; background:linear-gradient(145deg,#e0f2fe,#dcfce7); border:1px solid rgba(16,185,129,.20); box-shadow:0 14px 28px rgba(15,23,42,.12); }
+        .dark .payment-qr-frame { background:linear-gradient(145deg,rgba(20,184,166,.18),rgba(30,41,59,.82)); border-color:rgba(94,234,212,.22); box-shadow:0 14px 28px rgba(0,0,0,.22); }
         @keyframes portfolioSpin {
             to { transform: rotate(360deg); }
         }
@@ -150,13 +153,15 @@
     .compact-page-heading{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin:0 0 18px}
         .compact-page-dot{width:7px;height:7px;border-radius:999px;background:#00d182;box-shadow:0 0 0 4px rgba(0,209,130,.08);flex:none}
         .all-minted-badge{font-size:10px;font-weight:800;letter-spacing:.12em;color:#64748b;white-space:nowrap}
-        .store-nft-card{background:linear-gradient(145deg,rgba(22,31,48,.96),rgba(10,15,24,.98));border:1px solid rgba(148,163,184,.14);border-radius:22px;overflow:hidden;box-shadow:0 18px 42px rgba(0,0,0,.12);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
-        .store-nft-card:hover{transform:translateY(-3px);border-color:rgba(96,165,250,.32);box-shadow:0 24px 55px rgba(0,0,0,.22)}
+        .store-nft-card{background:linear-gradient(145deg,#ffffff,#f8fafc);border:1px solid rgba(148,163,184,.28);border-radius:22px;overflow:hidden;box-shadow:0 14px 30px rgba(15,23,42,.10);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+        .dark .store-nft-card{background:linear-gradient(145deg,rgba(22,31,48,.96),rgba(10,15,24,.98));border-color:rgba(148,163,184,.14);box-shadow:0 18px 42px rgba(0,0,0,.12)}
+        .store-nft-card:hover{transform:translateY(-3px);border-color:rgba(37,99,235,.45);box-shadow:0 20px 38px rgba(15,23,42,.16)}
+        .dark .store-nft-card:hover{border-color:rgba(96,165,250,.32);box-shadow:0 24px 55px rgba(0,0,0,.22)}
         .store-art{aspect-ratio:1/1;overflow:hidden;background:#020617}.store-art svg{display:block;width:100%;height:100%}
-        .store-nft-name{font-size:13px;font-weight:800;color:#f8fafc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.store-symbol{font-size:9px;font-weight:800;letter-spacing:.08em;color:#64748b}.store-price{font-size:15px;font-weight:900;color:#f8fafc;white-space:nowrap}.store-stock{font-size:9px;font-weight:800;color:#94a3b8;white-space:nowrap;text-align:right}
-        .store-progress{height:4px;background:rgba(148,163,184,.13);border-radius:999px;overflow:hidden;margin:10px 0 12px}.store-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#3b82f6,#00d182);border-radius:999px;transition:width .3s ease}
+        .store-nft-name{font-size:13px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dark .store-nft-name{color:#f8fafc}.store-symbol{font-size:9px;font-weight:800;letter-spacing:.08em;color:#64748b}.store-price{font-size:15px;font-weight:900;color:#0f172a;white-space:nowrap}.dark .store-price{color:#f8fafc}.store-stock{font-size:9px;font-weight:800;color:#64748b;white-space:nowrap;text-align:right}.dark .store-stock{color:#94a3b8}
+        .store-progress{height:4px;background:rgba(148,163,184,.22);border-radius:999px;overflow:hidden;margin:10px 0 12px}.dark .store-progress{background:rgba(148,163,184,.13)}.store-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#2563eb,#00a878);border-radius:999px;transition:width .3s ease}
         .store-buy-btn{width:100%;border:0;border-radius:11px;padding:9px 10px;background:#2563eb;color:#fff;font-size:11px;font-weight:800;cursor:pointer;transition:.18s ease}.store-buy-btn:hover:not(:disabled){background:#1d4ed8;transform:translateY(-1px)}.store-buy-btn:disabled{background:#334155;color:#94a3b8;cursor:not-allowed}
-        .merchant-glass-card{background:radial-gradient(circle at 100% 0%,rgba(59,130,246,.12),transparent 38%),linear-gradient(145deg,rgba(22,31,48,.72),rgba(8,12,20,.82));backdrop-filter:blur(14px);border:1px solid rgba(148,163,184,.13);box-shadow:0 18px 50px rgba(0,0,0,.14)}.merchant-summary-card{border-radius:16px;padding:14px;background:rgba(15,23,42,.55);border:1px solid rgba(148,163,184,.12)}.merchant-record{display:grid;grid-template-columns:1.25fr 1fr 60px 100px 110px;gap:12px;align-items:center}@media(max-width:767px){.merchant-record{grid-template-columns:1fr 1fr;gap:8px}}
+        .merchant-glass-card{background:radial-gradient(circle at 100% 0%,rgba(37,99,235,.10),transparent 42%),linear-gradient(145deg,#ffffff,#f8fafc);backdrop-filter:blur(14px);border:1px solid rgba(148,163,184,.24);box-shadow:0 18px 40px rgba(15,23,42,.10)}.dark .merchant-glass-card{background:radial-gradient(circle at 100% 0%,rgba(59,130,246,.12),transparent 38%),linear-gradient(145deg,rgba(22,31,48,.72),rgba(8,12,20,.82));border-color:rgba(148,163,184,.13);box-shadow:0 18px 50px rgba(0,0,0,.14)}.merchant-summary-card{border-radius:16px;padding:14px;background:#ffffff;border:1px solid rgba(148,163,184,.22);box-shadow:0 4px 14px rgba(15,23,42,.05)}.dark .merchant-summary-card{background:rgba(15,23,42,.55);border-color:rgba(148,163,184,.12);box-shadow:none}.merchant-record{display:grid;grid-template-columns:1.25fr 1fr 60px 100px 110px;gap:12px;align-items:center}@media(max-width:767px){.merchant-record{grid-template-columns:1fr 1fr;gap:8px}}
     </style>
 
     <!-- Wallet connection: EIP-6963 multi-wallet discovery + mobile wallet handoff. -->
@@ -232,22 +237,22 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 md:gap-3">
-                <button onclick="toggleTheme()" class="w-9 h-9 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center shadow-sm shrink-0">
-                    <i id="themeIcon" class="fa-solid fa-sun text-[15px]"></i>
+                <button type="button" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle theme" class="w-11 h-11 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center shadow-sm shrink-0">
+                    <i id="themeIcon" class="fa-solid fa-sun text-base"></i>
                 </button>
 
-                <div class="hidden sm:flex items-center gap-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-700 dark:text-white">
+                <div class="hidden sm:flex h-11 items-center gap-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder px-3 rounded-xl text-xs font-semibold text-slate-700 dark:text-white shadow-sm shrink-0">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
                     <span>Arc Testnet</span>
                 </div>
 
-                <button type="button" aria-label="Notifications" title="Notifications" class="hidden md:flex w-[66px] h-[66px] bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-200 rounded-[20px] hover:bg-slate-100 dark:hover:bg-slate-800 transition items-center justify-center shadow-sm shrink-0">
-                    <i class="fa-solid fa-bell text-xl"></i>
+                <button type="button" aria-label="Notifications" title="Notifications" class="hidden md:flex w-11 h-11 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition items-center justify-center shadow-sm shrink-0">
+                    <i class="fa-solid fa-bell text-base"></i>
                 </button>
                 
                 <div class="relative inline-block" id="profileMenuContainer">
-                    <button id="connectBtn" aria-label="Connect Wallet" class="connect-wallet-btn bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-3 md:px-5 h-11 md:h-[66px] rounded-xl md:rounded-[20px] hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2.5 md:gap-3 text-sm md:text-base shadow-sm max-w-[150px] sm:max-w-none">
-                        <div class="wallet-connect-icon w-7 h-7 md:w-11 md:h-11 bg-cyan-400 rounded-full flex items-center justify-center text-xs md:text-base text-slate-950 shrink-0"><i class="fa-solid fa-wallet"></i></div>
+                    <button id="connectBtn" aria-label="Connect Wallet" class="connect-wallet-btn bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-3 md:px-4 h-11 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2.5 text-sm shadow-sm max-w-[150px] sm:max-w-[215px]">
+                        <div class="wallet-connect-icon w-7 h-7 bg-cyan-400 rounded-lg flex items-center justify-center text-xs text-slate-950 shrink-0"><i class="fa-solid fa-wallet"></i></div>
                         <span id="walletAddress" class="font-mono font-semibold truncate">Connect Wallet</span>
                         <i class="fa-solid fa-chevron-down hidden sm:block text-xs text-slate-400 shrink-0"></i>
                     </button>
@@ -284,7 +289,7 @@
                                 </div>
                                 <p id="availBal" class="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">≈ $0.00 USD</p>
                             </div>
-                            <button type="button" onclick="refreshDashboard()" aria-label="Refresh balance" title="Refresh balance" class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-slate-100/90 dark:bg-teal-950/60 border border-slate-200 dark:border-teal-200/10 text-slate-700 dark:text-white hover:bg-slate-200 dark:hover:bg-teal-900 transition flex items-center justify-center shrink-0">
+                            <button type="button" onclick="refreshDashboard()" aria-label="Refresh balance" title="Refresh balance" class="balance-refresh w-12 h-12 md:w-14 md:h-14 rounded-full bg-slate-200/90 dark:bg-teal-950/60 border border-slate-300 dark:border-teal-200/10 text-slate-700 dark:text-white hover:bg-slate-300 dark:hover:bg-teal-900 transition flex items-center justify-center shrink-0">
                                 <i id="refreshDashIcon" class="fa-solid fa-rotate text-lg"></i>
                             </button>
                         </div>
@@ -684,7 +689,7 @@
                 </div>
             </div>
             <div class="merchant-glass-card rounded-[2rem] p-5 md:p-7">
-                <div class="flex items-center justify-between gap-3 mb-5"><div><div class="compact-page-heading mb-1"><span class="compact-page-dot"></span><span>Merchant Purchase Records</span></div><p class="text-xs text-slate-500 dark:text-slate-400">Buyer wallet, NFT, quantity, amount and confirmed on-chain transaction</p></div><button onclick="renderMerchantSales()" id="merchantSalesRefreshBtn" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-[#243048] bg-white/5 text-xs font-semibold text-slate-500 dark:text-slate-300 hover:bg-slate-800/60"><i class="fa-solid fa-rotate-right mr-1" id="merchantSalesRefreshIcon"></i> Refresh</button></div>
+                <div class="flex items-center justify-between gap-3 mb-5"><div><div class="compact-page-heading mb-1"><span class="compact-page-dot"></span><span>NFT Holders</span></div><p class="text-xs text-slate-500 dark:text-slate-400">Confirmed holder address, NFT, quantity and purchase value</p></div><button type="button" onclick="renderMerchantSales()" id="merchantSalesRefreshBtn" aria-label="Refresh NFT holders" title="Refresh NFT holders" class="w-10 h-10 rounded-full border border-blue-500/25 bg-blue-500/10 text-blue-600 dark:text-blue-300 hover:bg-blue-500 hover:text-white transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-rotate-right" id="merchantSalesRefreshIcon"></i></button></div>
                 <div id="merchantSalesSummary" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5"></div><div id="merchantSalesHistory" class="text-xs text-slate-500 dark:text-slate-400">Loading purchase history…</div>
             </div>
         </div>
@@ -2529,6 +2534,9 @@
 
                 const meta = decodeBullkarryPurchaseData(merchantTxRawInput(tx));
                 if (!meta) continue;
+                // Ignore arbitrary transaction metadata so the holder panel only
+                // shows products that actually exist in this store.
+                if (!STORE_PRODUCTS[meta.item]) continue;
 
                 let amount = 0;
                 try { amount = Number(ethers.utils.formatUnits(String(tx?.value || '0'), 18)); } catch (_) {}
@@ -2552,6 +2560,38 @@
             return purchases;
         }
 
+        function buildNftHolderRows(purchases) {
+            const holdersByWalletAndNft = new Map();
+
+            for (const purchase of purchases) {
+                const wallet = String(purchase?.buyer || '').toLowerCase();
+                // Only expose a holder row when the explorer returned a valid EVM
+                // wallet address. Purchase quantities come from confirmed on-chain
+                // Bullkarry payment records; this app does not invent NFT balances.
+                if (!ethers.utils.isAddress(wallet)) continue;
+
+                const key = `${wallet}:${purchase.item}`;
+                const current = holdersByWalletAndNft.get(key) || {
+                    wallet,
+                    walletShort: formatAddress(wallet),
+                    item: purchase.item,
+                    qty: 0,
+                    value: 0,
+                    timestamp: 0,
+                    hash: purchase.hash
+                };
+                current.qty += Number(purchase.qty || 0);
+                current.value += Number(purchase.amount || 0);
+                if (Number(purchase.timestamp || 0) >= current.timestamp) {
+                    current.timestamp = Number(purchase.timestamp || 0);
+                    current.hash = purchase.hash;
+                }
+                holdersByWalletAndNft.set(key, current);
+            }
+
+            return [...holdersByWalletAndNft.values()].sort((a, b) => b.timestamp - a.timestamp);
+        }
+
         function renderStoreInventory(purchases) {
             Object.entries(STORE_PRODUCTS).forEach(([name, product]) => {
                 const sold = purchases.filter(p => p.item === name).reduce((sum, p) => sum + Number(p.qty || 1), 0);
@@ -2572,25 +2612,28 @@
             const icon = document.getElementById('merchantSalesRefreshIcon');
             if (!historyEl) return;
             icon?.classList.add('fa-spin');
-            historyEl.innerHTML = '<div class="py-6 text-center">Loading confirmed purchases…</div>';
+            historyEl.innerHTML = '<div class="py-6 text-center">Loading verified NFT holders…</div>';
             try {
                 const purchases = await fetchMerchantPurchaseHistory();
                 renderStoreInventory(purchases);
+                const holders = buildNftHolderRows(purchases);
                 const totalRevenue = purchases.reduce((sum, p) => sum + p.amount, 0);
                 const totalQty = purchases.reduce((sum, p) => sum + p.qty, 0);
+                const uniqueHolders = new Set(holders.map(holder => holder.wallet)).size;
+                const latestHolder = holders[0];
                 if (summaryEl) summaryEl.innerHTML = `
-                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">Orders</div><div class="text-2xl font-black text-white mt-1">${purchases.length}</div></div>
-                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">NFT Quantity</div><div class="text-2xl font-black text-emerald-400 mt-1">${totalQty}</div></div>
-                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">Funds Received</div><div class="text-2xl font-black text-white mt-1">${totalRevenue.toFixed(3)} <span class="text-xs text-slate-500">USDC</span></div></div>
-                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">Merchant Wallet</div><div class="text-xs font-mono font-bold text-blue-400 mt-2">${formatAddress(BULLKARRY_STORE_RECEIVING_ADDRESS)}</div></div>`;
-                if (!purchases.length) { historyEl.innerHTML = '<div class="py-8 text-center"><div class="font-semibold text-slate-700 dark:text-slate-300">No Bullkarry purchases recorded yet.</div><div class="text-[11px] mt-2 text-slate-500">Confirmed purchases made through the Buy button store the NFT name and quantity in the transaction input.</div></div>'; return; }
+                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">Verified Holders</div><div class="text-2xl font-black text-slate-900 dark:text-white mt-1">${uniqueHolders}</div></div>
+                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">NFT Quantity</div><div class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">${totalQty}</div></div>
+                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">Purchase Value</div><div class="text-2xl font-black text-slate-900 dark:text-white mt-1">${totalRevenue.toFixed(3)} <span class="text-xs text-slate-500">USDC</span></div></div>
+                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">Latest Holder</div><div class="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 mt-2">${latestHolder ? latestHolder.walletShort : '—'}</div></div>`;
+                if (!holders.length) { historyEl.innerHTML = '<div class="py-8 text-center"><div class="font-semibold text-slate-700 dark:text-slate-300">No verified NFT holders yet.</div><div class="text-[11px] mt-2 text-slate-500">Confirmed Buy transactions will appear here with their wallet address, NFT, quantity and value.</div></div>'; return; }
                 historyEl.innerHTML = `
-                    <div class="hidden md:grid merchant-record px-3 pb-2 text-[9px] uppercase font-bold text-slate-500"><div>Buyer Wallet</div><div>NFT / Product</div><div>Qty</div><div>Received</div><div>Date</div></div>
-                    <div class="space-y-2">${purchases.map(p => `
-                        <a href="https://testnet.arcscan.app/tx/${p.hash}" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border border-slate-200 dark:border-[#243048] bg-slate-50/60 dark:bg-[#0b101a]/70 p-3 hover:border-blue-500/40 transition">
-                            <div class="merchant-record"><div><div class="font-bold text-xs text-slate-900 dark:text-white">${p.buyerShort}</div><div class="text-[9px] text-slate-500 mt-0.5 break-all">${p.buyer}</div></div><div class="font-semibold text-xs text-slate-800 dark:text-slate-200">${p.item}</div><div class="text-xs font-black text-blue-500">${p.qty}</div><div class="text-xs font-black text-emerald-500">${p.amount.toFixed(3)} USDC</div><div class="text-[10px] text-slate-500">${formatMerchantDate(p.timestamp)}</div></div>
+                    <div class="hidden md:grid merchant-record px-3 pb-2 text-[9px] uppercase font-bold text-slate-500"><div>Holder Address</div><div>NFT</div><div>Quantity</div><div>Value</div><div>Last Purchase</div></div>
+                    <div class="space-y-2">${holders.map(holder => `
+                        <a href="https://testnet.arcscan.app/tx/${holder.hash}" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border border-slate-200 dark:border-[#243048] bg-white dark:bg-[#0b101a]/70 p-3 hover:border-blue-500/40 hover:shadow-sm transition">
+                            <div class="merchant-record"><div><div class="font-bold text-xs text-slate-900 dark:text-white">${holder.walletShort}</div><div class="text-[9px] text-slate-500 mt-0.5 break-all">${holder.wallet}</div></div><div class="font-semibold text-xs text-slate-800 dark:text-slate-200">${holder.item}</div><div class="text-xs font-black text-blue-600 dark:text-blue-400">${holder.qty}</div><div class="text-xs font-black text-emerald-600 dark:text-emerald-400">${holder.value.toFixed(3)} USDC</div><div class="text-[10px] text-slate-500">${formatMerchantDate(holder.timestamp)}</div></div>
                         </a>`).join('')}</div>`;
-            } catch (err) { console.error('Merchant purchase history error:', err); historyEl.innerHTML = '<div class="py-7 text-center text-red-500">Could not load merchant purchase history. Please try Refresh.</div>'; }
+            } catch (err) { console.error('NFT holder history error:', err); historyEl.innerHTML = '<div class="py-7 text-center text-red-500">Could not load NFT holders. Please try Refresh.</div>'; }
             finally { icon?.classList.remove('fa-spin'); }
         }
 
