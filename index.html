@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Bullkarry Wallet</title>
+    <title>Bullkarry</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -144,6 +144,16 @@
         @media (max-width: 767px) {
             .modal .relative, .modal > div { max-height: 92vh; overflow-y: auto; }
         }
+    .compact-page-heading{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin:0 0 18px}
+        .compact-page-dot{width:7px;height:7px;border-radius:999px;background:#00d182;box-shadow:0 0 0 4px rgba(0,209,130,.08);flex:none}
+        .all-minted-badge{font-size:10px;font-weight:800;letter-spacing:.12em;color:#64748b;white-space:nowrap}
+        .store-nft-card{background:linear-gradient(145deg,rgba(22,31,48,.96),rgba(10,15,24,.98));border:1px solid rgba(148,163,184,.14);border-radius:22px;overflow:hidden;box-shadow:0 18px 42px rgba(0,0,0,.12);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+        .store-nft-card:hover{transform:translateY(-3px);border-color:rgba(96,165,250,.32);box-shadow:0 24px 55px rgba(0,0,0,.22)}
+        .store-art{aspect-ratio:1/1;overflow:hidden;background:#020617}.store-art svg{display:block;width:100%;height:100%}
+        .store-nft-name{font-size:13px;font-weight:800;color:#f8fafc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.store-symbol{font-size:9px;font-weight:800;letter-spacing:.08em;color:#64748b}.store-price{font-size:15px;font-weight:900;color:#f8fafc;white-space:nowrap}.store-stock{font-size:9px;font-weight:800;color:#94a3b8;white-space:nowrap;text-align:right}
+        .store-progress{height:4px;background:rgba(148,163,184,.13);border-radius:999px;overflow:hidden;margin:10px 0 12px}.store-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#3b82f6,#00d182);border-radius:999px;transition:width .3s ease}
+        .store-buy-btn{width:100%;border:0;border-radius:11px;padding:9px 10px;background:#2563eb;color:#fff;font-size:11px;font-weight:800;cursor:pointer;transition:.18s ease}.store-buy-btn:hover:not(:disabled){background:#1d4ed8;transform:translateY(-1px)}.store-buy-btn:disabled{background:#334155;color:#94a3b8;cursor:not-allowed}
+        .merchant-glass-card{background:radial-gradient(circle at 100% 0%,rgba(59,130,246,.12),transparent 38%),linear-gradient(145deg,rgba(22,31,48,.72),rgba(8,12,20,.82));backdrop-filter:blur(14px);border:1px solid rgba(148,163,184,.13);box-shadow:0 18px 50px rgba(0,0,0,.14)}.merchant-summary-card{border-radius:16px;padding:14px;background:rgba(15,23,42,.55);border:1px solid rgba(148,163,184,.12)}.merchant-record{display:grid;grid-template-columns:1.25fr 1fr 60px 100px 110px;gap:12px;align-items:center}@media(max-width:767px){.merchant-record{grid-template-columns:1fr 1fr;gap:8px}}
     </style>
 
     <!-- Wallet connection: EIP-6963 multi-wallet discovery + mobile wallet handoff. -->
@@ -232,7 +242,7 @@
                 </div>
                 
                 <div class="relative inline-block" id="profileMenuContainer">
-                    <button id="connectBtn" type="button" onclick="connectWalletProvider()" aria-label="Connect Wallet" class="connect-wallet-btn bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-3 md:px-4 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 text-sm shadow-sm max-w-[150px] sm:max-w-none">
+                    <button id="connectBtn" aria-label="Connect Wallet" class="connect-wallet-btn bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-3 md:px-4 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 text-sm shadow-sm max-w-[150px] sm:max-w-none">
                         <div class="wallet-connect-icon w-5 h-5 bg-blue-600 rounded-lg flex items-center justify-center text-[10px] text-white shrink-0"><i class="fa-solid fa-wallet"></i></div>
                         <span id="walletAddress" class="font-mono font-semibold truncate">Connect Wallet</span>
                     </button>
@@ -558,7 +568,7 @@
 
         <!-- VIEW 4: TRANSACTIONS -->
         <div id="transactionsView" class="p-4 md:p-8 pt-5 md:pt-8 hidden">
-            <div class="payment-period-label mb-4"><span class="payment-period-dot"></span><span>All On-Chain Transactions</span></div>
+            <div class="compact-page-heading"><span class="compact-page-dot"></span><span>All On-Chain Transactions</span></div>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm overflow-x-auto">
                 <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-[1.1fr_1fr_1.35fr_112px_112px] gap-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase min-w-[720px]">
                     <div>Type</div>
@@ -624,34 +634,44 @@
             </div>
         </div>
 
-        <!-- VIEW 6: STORE -->
-        <div id="merchantView" class="p-4 md:p-8 pt-4 md:pt-6 hidden">
-            <div class="payment-period-label mb-2"><span class="payment-period-dot"></span><span>On-chain Digital Product</span></div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">One wallet can purchase each item only once. Quantity is fixed at 1.</p>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 mb-6">
-                <div class="bg-white/80 dark:bg-darkCard/80 backdrop-blur-xl border border-slate-200 dark:border-darkBorder p-4 md:p-5 rounded-3xl text-center shadow-sm">
-                    <div class="h-24 md:h-32 bg-slate-100 dark:bg-slate-800 rounded-2xl mb-4 flex items-center justify-center"><i class="fa-solid fa-shirt text-4xl text-blue-500"></i></div>
-                    <div class="flex items-center justify-between gap-3 mb-1"><h4 class="font-bold text-sm text-slate-900 dark:text-white text-left">Bullkarry Tee</h4><span id="stock-bullkarry-tee" class="text-[10px] font-bold text-slate-500">999 / 999</span></div>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">10 USDC · Quantity 1</p>
-                    <button id="buy-bullkarry-tee" onclick="buyStoreItem('Bullkarry Tee', 10, 'bullkarry-tee', this)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-xs font-bold transition">Buy</button>
+        <!-- VIEW 6: STORE / NFT MINTING -->
+        <div id="merchantView" class="p-4 md:p-8 pt-5 md:pt-8 hidden">
+            <div class="flex items-center justify-between gap-4 mb-6">
+                <div>
+                    <div class="compact-page-heading mb-2"><span class="compact-page-dot"></span><span>Minting on ARC Chain</span></div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">On-chain digital collectibles • one wallet, one NFT, one purchase</p>
                 </div>
-                <div class="bg-white/80 dark:bg-darkCard/80 backdrop-blur-xl border border-slate-200 dark:border-darkBorder p-4 md:p-5 rounded-3xl text-center shadow-sm">
-                    <div class="h-24 md:h-32 bg-slate-100 dark:bg-slate-800 rounded-2xl mb-4 flex items-center justify-center"><i class="fa-solid fa-image text-4xl text-purple-500"></i></div>
-                    <div class="flex items-center justify-between gap-3 mb-1"><h4 class="font-bold text-sm text-slate-900 dark:text-white text-left">Genesis NFT</h4><span id="stock-genesis-nft" class="text-[10px] font-bold text-slate-500">50 / 50</span></div>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 font-bold my-2">25 USDC · Quantity 1</p>
-                    <button id="buy-genesis-nft" onclick="buyStoreItem('Genesis NFT', 25, 'genesis-nft', this)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-xs font-bold transition">Buy</button>
+                <span class="all-minted-badge">ALL MINTS <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i></span>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-7" id="storeProductsGrid">
+                <div class="store-nft-card" data-product="Genesis NFT">
+                    <div class="store-art">
+                        <svg viewBox="0 0 400 400" role="img" aria-label="Genesis NFT 3D art"><defs><radialGradient id="genesisBg" cx="50%" cy="35%"><stop offset="0" stop-color="#334155"/><stop offset="1" stop-color="#020617"/></radialGradient><linearGradient id="genesisShell" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8fafc"/><stop offset=".42" stop-color="#94a3b8"/><stop offset="1" stop-color="#0f172a"/></linearGradient><linearGradient id="genesisGlow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><rect width="400" height="400" rx="34" fill="url(#genesisBg)"/><circle cx="200" cy="188" r="132" fill="#1e293b" stroke="#475569" stroke-width="4"/><path d="M100 230 Q200 74 300 230 L274 284 Q200 330 126 284Z" fill="url(#genesisShell)"/><path d="M137 213 Q200 150 263 213 L250 258 Q200 283 150 258Z" fill="#020617" stroke="#60a5fa" stroke-width="6"/><circle cx="170" cy="224" r="14" fill="url(#genesisGlow)"/><circle cx="230" cy="224" r="14" fill="url(#genesisGlow)"/><path d="M156 286 Q200 306 244 286" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round"/><text x="200" y="365" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="800" letter-spacing="4">GENESIS</text></svg>
+                    </div>
+                    <div class="p-3 md:p-4"><div class="flex items-center justify-between gap-2"><h3 class="store-nft-name">Genesis NFT</h3><span class="store-symbol">GEN</span></div><div class="flex items-end justify-between gap-2 mt-3"><span class="store-price">99 USDC</span><span class="store-stock" id="stock-Genesis-NFT">99 total • 99 left</span></div><div class="store-progress"><span id="progress-Genesis-NFT"></span></div><button id="buy-Genesis-NFT" onclick="buyStoreItem('Genesis NFT',99,this)" class="store-buy-btn">Buy</button></div>
+                </div>
+                <div class="store-nft-card" data-product="ARC Monster">
+                    <div class="store-art">
+                        <svg viewBox="0 0 400 400" role="img" aria-label="ARC Monster 3D art"><defs><radialGradient id="arcBg"><stop stop-color="#064e3b"/><stop offset="1" stop-color="#020617"/></radialGradient><linearGradient id="arcBody" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5eead4"/><stop offset=".5" stop-color="#14b8a6"/><stop offset="1" stop-color="#0f172a"/></linearGradient></defs><rect width="400" height="400" rx="34" fill="url(#arcBg)"/><ellipse cx="200" cy="278" rx="112" ry="55" fill="#022c22"/><path d="M110 260 L126 132 L170 94 L200 128 L230 94 L274 132 L290 260 Q200 324 110 260Z" fill="url(#arcBody)" stroke="#99f6e4" stroke-width="5"/><path d="M137 165 L173 142 L188 166 L170 190 L140 184Z M263 165 L227 142 L212 166 L230 190 L260 184Z" fill="#020617"/><circle cx="164" cy="169" r="9" fill="#ecfeff"/><circle cx="236" cy="169" r="9" fill="#ecfeff"/><path d="M160 220 Q200 248 240 220" fill="none" stroke="#022c22" stroke-width="14" stroke-linecap="round"/><path d="M174 220 L182 238 M226 220 L218 238" stroke="#5eead4" stroke-width="5"/><text x="200" y="365" text-anchor="middle" fill="#99f6e4" font-size="18" font-weight="800" letter-spacing="4">ARC MONSTER</text></svg>
+                    </div>
+                    <div class="p-3 md:p-4"><div class="flex items-center justify-between gap-2"><h3 class="store-nft-name">ARC Monster</h3><span class="store-symbol">ARC</span></div><div class="flex items-end justify-between gap-2 mt-3"><span class="store-price">10 USDC</span><span class="store-stock" id="stock-ARC-Monster">300 total • 300 left</span></div><div class="store-progress"><span id="progress-ARC-Monster"></span></div><button id="buy-ARC-Monster" onclick="buyStoreItem('ARC Monster',10,this)" class="store-buy-btn">Buy</button></div>
+                </div>
+                <div class="store-nft-card" data-product="Pulse NFT">
+                    <div class="store-art">
+                        <svg viewBox="0 0 400 400" role="img" aria-label="Pulse NFT 3D art"><defs><radialGradient id="pulseBg"><stop stop-color="#831843"/><stop offset="1" stop-color="#09090b"/></radialGradient><radialGradient id="pulseOrb"><stop stop-color="#fbcfe8"/><stop offset=".35" stop-color="#ec4899"/><stop offset="1" stop-color="#7e22ce"/></radialGradient></defs><rect width="400" height="400" rx="34" fill="url(#pulseBg)"/><circle cx="200" cy="195" r="118" fill="#111827" stroke="#f472b6" stroke-width="4"/><circle cx="200" cy="195" r="82" fill="url(#pulseOrb)" opacity=".92"/><circle cx="170" cy="165" r="28" fill="#fff" opacity=".45"/><path d="M90 204 C130 160 145 250 185 205 S240 156 310 205" fill="none" stroke="#f9a8d4" stroke-width="8" stroke-linecap="round"/><path d="M126 262 Q200 304 274 262" fill="none" stroke="#f472b6" stroke-width="5" opacity=".8"/><text x="200" y="365" text-anchor="middle" fill="#fbcfe8" font-size="18" font-weight="800" letter-spacing="4">PULSE</text></svg>
+                    </div>
+                    <div class="p-3 md:p-4"><div class="flex items-center justify-between gap-2"><h3 class="store-nft-name">Pulse NFT</h3><span class="store-symbol">PLS</span></div><div class="flex items-end justify-between gap-2 mt-3"><span class="store-price">5 USDC</span><span class="store-stock" id="stock-Pulse-NFT">400 total • 400 left</span></div><div class="store-progress"><span id="progress-Pulse-NFT"></span></div><button id="buy-Pulse-NFT" onclick="buyStoreItem('Pulse NFT',5,this)" class="store-buy-btn">Buy</button></div>
+                </div>
+                <div class="store-nft-card" data-product="LARPer NFT">
+                    <div class="store-art">
+                        <svg viewBox="0 0 400 400" role="img" aria-label="LARPer NFT 3D art"><defs><radialGradient id="larpBg"><stop stop-color="#312e81"/><stop offset="1" stop-color="#020617"/></radialGradient><linearGradient id="larpHood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c4b5fd"/><stop offset=".5" stop-color="#6366f1"/><stop offset="1" stop-color="#1e1b4b"/></linearGradient></defs><rect width="400" height="400" rx="34" fill="url(#larpBg)"/><path d="M94 284 Q110 104 200 82 Q290 104 306 284 L260 318 L140 318Z" fill="url(#larpHood)" stroke="#a5b4fc" stroke-width="5"/><path d="M132 194 Q200 120 268 194 L250 276 Q200 316 150 276Z" fill="#0f172a"/><circle cx="174" cy="222" r="12" fill="#a5b4fc"/><circle cx="226" cy="222" r="12" fill="#a5b4fc"/><path d="M165 258 Q200 274 235 258" fill="none" stroke="#818cf8" stroke-width="7" stroke-linecap="round"/><path d="M90 302 Q200 352 310 302" fill="none" stroke="#4f46e5" stroke-width="8"/><text x="200" y="365" text-anchor="middle" fill="#c4b5fd" font-size="18" font-weight="800" letter-spacing="4">LARPER</text></svg>
+                    </div>
+                    <div class="p-3 md:p-4"><div class="flex items-center justify-between gap-2"><h3 class="store-nft-name">LARPer NFT</h3><span class="store-symbol">LRP</span></div><div class="flex items-end justify-between gap-2 mt-3"><span class="store-price">1 USDC</span><span class="store-stock" id="stock-LARPer-NFT">1000 total • 1000 left</span></div><div class="store-progress"><span id="progress-LARPer-NFT"></span></div><button id="buy-LARPer-NFT" onclick="buyStoreItem('LARPer NFT',1,this)" class="store-buy-btn">Buy</button></div>
                 </div>
             </div>
-
-            <div class="bg-white/70 dark:bg-darkCard/70 backdrop-blur-xl border border-slate-200 dark:border-darkBorder rounded-3xl overflow-hidden shadow-sm">
-                <div class="p-5 border-b border-slate-200 dark:border-[#243048] flex items-center justify-between gap-3">
-                    <div>
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Merchant Purchase History</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Confirmed purchases received by the Bullkarry merchant wallet.</p>
-                    </div>
-                    <button onclick="loadStorePurchases(true)" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-[#243048] text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fa-solid fa-rotate-right mr-1"></i> Refresh</button>
-                </div>
-                <div id="merchantPurchaseHistory" class="divide-y divide-slate-100 dark:divide-[#243048]"><div class="p-6 text-center text-xs text-slate-500">Loading purchase history…</div></div>
+            <div class="merchant-glass-card rounded-[2rem] p-5 md:p-7">
+                <div class="flex items-center justify-between gap-3 mb-5"><div><div class="compact-page-heading mb-1"><span class="compact-page-dot"></span><span>Merchant Purchase Records</span></div><p class="text-xs text-slate-500 dark:text-slate-400">Buyer wallet, NFT, quantity, amount and confirmed on-chain transaction</p></div><button onclick="renderMerchantSales()" id="merchantSalesRefreshBtn" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-[#243048] bg-white/5 text-xs font-semibold text-slate-500 dark:text-slate-300 hover:bg-slate-800/60"><i class="fa-solid fa-rotate-right mr-1" id="merchantSalesRefreshIcon"></i> Refresh</button></div>
+                <div id="merchantSalesSummary" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5"></div><div id="merchantSalesHistory" class="text-xs text-slate-500 dark:text-slate-400">Loading purchase history…</div>
             </div>
         </div>
 
@@ -678,38 +698,6 @@
             <i class="fa-solid fa-store text-lg"></i>
             <span class="text-[10px] font-semibold">Store</span>
         </button>
-    </div>
-
-    <!-- Wallet Connection Modal -->
-    <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/60 dark:bg-black/80 z-[120]">
-        <div class="bg-white dark:bg-[#161f30] border border-slate-200 dark:border-[#243048] w-full max-w-md rounded-3xl p-5 relative shadow-2xl">
-            <button onclick="closeModal('connectWalletModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <div class="text-center mb-4">
-                <div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-blue-500/20"><i class="fa-solid fa-wallet text-xl"></i></div>
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Connect Wallet</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Choose a wallet, scan the QR, or open Bullkarry inside your wallet app</p>
-            </div>
-            <div id="walletProviderList" class="wallet-provider-list space-y-2"></div>
-            <div id="walletConnectHint" class="hidden mt-3 rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-2 text-[10px] text-red-400 break-words"></div>
-            <div id="mobileWalletOptions" class="hidden mt-4 space-y-2">
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 text-center">No browser wallet is detected here. Use a wallet app button or scan the QR to open Bullkarry in your wallet.</p>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="openMobileWallet('metamask')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">MetaMask</span></button>
-                    <button onclick="openMobileWallet('okx')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">OKX Wallet</span></button>
-                    <button onclick="openMobileWallet('phantom')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">Phantom</span></button>
-                    <button onclick="openMobileWallet('rabby')" class="wallet-provider-btn justify-center"><span class="font-semibold text-sm">Rabby</span></button>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-[#243048]">
-                <div class="flex items-center justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="text-xs font-bold text-slate-900 dark:text-white">Open on mobile wallet</p>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Use the wallet list or WalletConnect QR/deep-link option to connect.</p>
-                    </div>
-                    <img id="walletConnectQr" class="wallet-qr shrink-0" alt="Open Bullkarry in a wallet browser">
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Send Modal -->
@@ -834,10 +822,11 @@
     <!-- Reown AppKit integration for Arc Testnet -->
     <script type="module">
         import { createAppKit } from 'https://esm.sh/@reown/appkit@1.8.23?bundle';
-        import { defineChain } from 'https://esm.sh/@reown/appkit@1.8.23/networks?bundle';
+        import { mainnet, defineChain } from 'https://esm.sh/@reown/appkit@1.8.23/networks?bundle';
         import { Ethers5Adapter } from 'https://esm.sh/@reown/appkit-adapter-ethers5@1.8.23?bundle';
 
         const REOWN_PROJECT_ID = '11085fdc7e3488a54a917f03c2167492';
+        const BULLKARRY_STORE_RECEIVING_ADDRESS = '0xfc37f1ee234d8037fb7b37b1fc346d0b9f880d07';
         const ARC_TESTNET = defineChain({
             id: 5042002,
             caipNetworkId: 'eip155:5042002',
@@ -906,15 +895,16 @@
                     // Reown requires metadata.url to match the deployed origin.
                     // Use the live origin so mobile WalletConnect/deep-link flows
                     // are tied to the actual site the user opened.
-                    url: (location.protocol === 'http:' || location.protocol === 'https:')
-                        ? window.location.origin
-                        : 'https://bullkarry-wallet.vercel.app',
-                    icons: [(window.location.origin || 'https://bullkarry-wallet.vercel.app') + '/favicon.ico']
+                    url: 'https://bullkarry.vercel.app',
+                    icons: ['https://bullkarry.vercel.app/favicon.ico']
                 };
 
-                // Request only Arc Testnet. Adding unrelated chains can cause some
-                // mobile wallets to reject the session proposal or open the wrong flow.
-                const networks = [ARC_TESTNET];
+                // Keep a standard EVM network available during WalletConnect session
+                // negotiation. Some mobile/desktop wallets reject a session proposal
+                // when the only requested chain is a custom chain they have not added
+                // yet. Arc remains the default application network and is switched to
+                // after the wallet provider is available.
+                const networks = [mainnet, ARC_TESTNET];
 
                 appKit = createAppKit({
                     adapters: [adapter],
@@ -1036,19 +1026,15 @@
 
         window.__openReownConnect = async () => {
             try {
-                // AppKit is the single connection path. It handles EIP-6963 injected
-                // wallets on desktop and WalletConnect/deep-links on mobile.
-                const kit = await openReownConnection();
-                return kit;
+                // Reown AppKit is the single wallet connection path.
+                // It handles EIP-6963 browser wallets on desktop and
+                // WalletConnect/deep-links on mobile.
+                await openReownConnection();
             } catch (error) {
-                console.error('Reown wallet connection failed:', error);
+                console.error('Wallet connection failed:', error);
                 const code = error?.code || error?.data?.code || '';
-                const message = error?.message || 'Wallet connection failed. Please try again.';
-                const hint = document.getElementById('walletConnectHint');
-                if (hint) {
-                    hint.textContent = `${code ? `Error ${code}: ` : ''}${message}`;
-                    hint.classList.remove('hidden');
-                }
+                const message = error?.message || 'Wallet connection was cancelled or failed.';
+                alert(`Wallet connection failed${code ? ` (${code})` : ''}: ${message}`);
             }
         };
     </script>
@@ -1224,7 +1210,7 @@
                 attachWalletProviderListeners(provider);
                 try { await ensureArcTestnet(provider); } catch (networkError) { console.warn('Arc network switch request:', networkError); }
                 await initializeWallet(accounts[0]);
-                closeModal('connectWalletModal');
+                
             } catch (error) {
                 console.error('Wallet connection failed:', error);
                 alert(error?.message || 'Wallet connection was cancelled or failed.');
@@ -1335,7 +1321,7 @@
             if (!window.__pendingPayment) return;
             if (!userAccount) {
                 closeModal('paymentRequestModal');
-                openModal('connectWalletModal');
+                if (window.__openReownConnect) window.__openReownConnect();
                 return;
             }
             const { to, amount, token } = window.__pendingPayment;
@@ -1412,13 +1398,6 @@
         const ARCSCAN_TESTNET_API = "https://api-testnet.arc-scan.org/api";
         const ARCSCAN_TESTNET_V1 = "https://api-testnet.arc-scan.org/v1";
         const ARC_NATIVE_USDC_PRECOMPILE = "0x3600000000000000000000000000000000000000";
-        const MERCHANT_ADDRESS = "0xfc37f1ee234d8037fb7b37b1fc346d0b9f880d07";
-        const STORE_ITEMS = {
-            "bullkarry-tee": { name: "Bullkarry Tee", price: 10, total: 999 },
-            "genesis-nft": { name: "Genesis NFT", price: 25, total: 50 }
-        };
-        const STORE_PURCHASE_PREFIX = "BULLKARRY_PURCHASE|";
-        let storePurchaseCache = [];
         const tokenMetadataCache = new Map();
 
         function formatTxTime(timestamp) {
@@ -1969,7 +1948,6 @@
             document.getElementById('directSendTo').value = recipient;
             document.getElementById('directSendAmt').value = Number(amount).toString();
             document.getElementById('directSendToken').value = token || 'USDC';
-            closeModal('connectWalletModal');
             openModal('sendModal');
         }
         window.prepareRefund = prepareRefund;
@@ -1996,7 +1974,7 @@
         }
 
         function formatPaymentAmount(v) {
-            return (Number(v) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+            return (Number(v) || 0).toFixed(3);
         }
 
         function setPaymentCompare(id, pct, positiveIsGood = true) {
@@ -2151,9 +2129,9 @@
                 const titles = {
                     'paymentLink': ['Create Payment Link', 'Request crypto securely'],
                     'faucet': ['Arc Faucet', 'Claim testnet tokens'],
-                    'transactions': ['Transactions', 'Your on-chain history'],
-                    'payments': ['Payments', 'Earnings and refunds'],
-                    'merchant': ['Store', 'On-chain Digital Product']
+                    'transactions': ['All On-Chain Transactions', 'Your on-chain history'],
+                    'payments': ['Payment Center', 'Earnings and refunds'],
+                    'merchant': ['On-chain Digital Product', 'Live NFT inventory and purchase records']
                 };
                 if (titles[viewName]) {
                     greetingEl.innerText = titles[viewName][0];
@@ -2162,6 +2140,7 @@
             }
         }
         updateHeader('dashboard');
+        try { renderStoreInventory([]); } catch (_) {}
         document.getElementById('mainHeader')?.classList.remove('hidden');
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
@@ -2220,7 +2199,7 @@
             });
             updateHeader(viewName);
             if (viewName === 'merchant') {
-                loadStorePurchases(false).catch(err => console.error('Store purchase history:', err));
+                renderMerchantSales();
             }
         }
 
@@ -2355,56 +2334,22 @@
             localStorage.removeItem('bullkarry_wallet_name');
         }
 
-        async function connectWalletProvider() {
-            const btn = document.getElementById('connectBtn');
+        document.getElementById('connectBtn').addEventListener('click', () => {
             if (isWalletConnected) {
                 document.getElementById('profileDropdown').classList.toggle('hidden');
-                return;
+            } else if (window.__openReownConnect) {
+                window.__openReownConnect();
+            } else {
+                alert('Wallet connection is still loading. Please try again.');
             }
-            if (btn) { btn.disabled = true; btn.dataset.originalConnectText = document.getElementById('walletAddress')?.innerText || 'Connect Wallet'; }
-            try {
-                const ua = navigator.userAgent || '';
-                const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+        });
 
-                // MOBILE: always use Reown AppKit first. Mobile browsers normally do not
-                // expose MetaMask/OKX/Rabby as injected EIP-1193 providers, so waiting for
-                // window.ethereum can leave the button doing nothing. Reown handles the
-                // wallet list, WalletConnect QR and wallet-app deep links.
-                if (isMobile && window.__openReownConnect) {
-                    await window.__openReownConnect();
-                    return;
-                }
-
-                // DESKTOP / wallet browser: use an already injected wallet first.
-                const injected = getInjectedWalletProvider();
-                if (injected && typeof injected.request === 'function') {
-                    const accounts = await injected.request({ method: 'eth_requestAccounts' });
-                    if (accounts && accounts[0]) {
-                        activeWalletProvider = injected;
-                        activeWalletInfo = { name: injected.isMetaMask ? 'MetaMask' : injected.isRabby ? 'Rabby' : injected.isOkxWallet ? 'OKX Wallet' : 'Browser Wallet' };
-                        window.__bullkarryWalletProvider = injected;
-                        await initializeWallet(accounts[0]);
-                        return;
-                    }
-                }
-
-                // Fallback for desktop and mobile if the environment did not match above.
-                if (window.__openReownConnect) {
-                    await window.__openReownConnect();
-                    return;
-                }
-                throw new Error('Wallet connection module did not load. Please open the live HTTPS Bullkarry website and try again.');
-            } catch (e) {
-                console.error('Wallet connection error:', e);
-                const hint = document.getElementById('walletConnectHint');
-                const msg = e?.message || 'Wallet connection failed. Please try again.';
-                if (hint) { hint.textContent = msg; hint.classList.remove('hidden'); }
-                else alert(msg);
-            } finally {
-                if (btn) btn.disabled = false;
+        async function connectWalletProvider() {
+            if (window.__openReownConnect) {
+                return window.__openReownConnect();
             }
+            alert('Wallet connection is still loading. Please try again.');
         }
-        window.connectWalletProvider = connectWalletProvider;
 
         window.addEventListener('click', (e) => {
             const container = document.getElementById('profileMenuContainer');
@@ -2490,170 +2435,169 @@
             document.getElementById('directSendAmt').value = '';
         }
 
-        function decodeStorePurchaseInput(input) {
+        const STORE_PRODUCTS = {
+            'Genesis NFT': { price: 99, total: 99, symbol: 'GEN' },
+            'ARC Monster': { price: 10, total: 300, symbol: 'ARC' },
+            'Pulse NFT': { price: 5, total: 400, symbol: 'PLS' },
+            'LARPer NFT': { price: 1, total: 1000, symbol: 'LRP' }
+        };
+
+        const BULLKARRY_PURCHASE_PREFIX = 'BULLKARRY_PURCHASE_V1|';
+
+        function encodeBullkarryPurchaseData(itemName, quantity, unitPrice) {
+            const payload = BULLKARRY_PURCHASE_PREFIX + JSON.stringify({
+                item: String(itemName),
+                qty: Number(quantity),
+                unitPrice: Number(unitPrice),
+                version: 1
+            });
+            return ethers.utils.hexlify(ethers.utils.toUtf8Bytes(payload));
+        }
+
+        function decodeBullkarryPurchaseData(rawInput) {
+            if (!rawInput || rawInput === '0x') return null;
             try {
-                if (!input || input === '0x') return null;
-                const text = ethers.utils.toUtf8String(input);
-                if (!text.startsWith(STORE_PURCHASE_PREFIX)) return null;
-                const parts = text.split('|');
-                const itemId = parts[1];
-                if (!STORE_ITEMS[itemId]) return null;
-                const version = parts[2] || '';
-                if (version === 'v2') {
-                    const qtyPart = parts.find(p => p.startsWith('qty:'));
-                    const pricePart = parts.find(p => p.startsWith('price:'));
-                    const namePart = parts.find(p => p.startsWith('name:'));
-                    return {
-                        itemId,
-                        qty: Number((qtyPart || 'qty:1').slice(4)) || 1,
-                        price: Number((pricePart || '').slice(6)) || STORE_ITEMS[itemId].price,
-                        name: (namePart || '').slice(5) || STORE_ITEMS[itemId].name
-                    };
-                }
-                if (version === 'v1') return { itemId, qty: 1, price: STORE_ITEMS[itemId].price, name: STORE_ITEMS[itemId].name };
-                return null;
+                const text = ethers.utils.toUtf8String(rawInput);
+                if (!text.startsWith(BULLKARRY_PURCHASE_PREFIX)) return null;
+                const data = JSON.parse(text.slice(BULLKARRY_PURCHASE_PREFIX.length));
+                const qty = Math.max(1, Number(data.qty || 1));
+                const unitPrice = Number(data.unitPrice || 0);
+                if (!data.item || !Number.isFinite(qty) || !Number.isFinite(unitPrice)) return null;
+                return { item: String(data.item), qty, unitPrice, total: qty * unitPrice, version: 1 };
             } catch (_) {
                 return null;
             }
         }
 
-        async function fetchMerchantPurchaseRows() {
-            const url = `${ARCSCAN_TESTNET_API}?module=account&action=txlist&address=${MERCHANT_ADDRESS}&startblock=0&endblock=999999999&page=1&offset=10000&sort=desc&_t=${Date.now()}`;
-            const response = await fetch(url, { cache: 'no-store' });
-            const json = await response.json();
-            const rows = Array.isArray(json?.result) ? json.result : [];
-            return rows.filter(row => {
-                const to = String(row.to || '').toLowerCase();
-                return to === MERCHANT_ADDRESS.toLowerCase() && String(row.isError ?? '0') === '0' && String(row.txreceipt_status ?? '1') !== '0';
-            }).map(row => ({
-                hash: row.hash,
-                from: row.from,
-                to: row.to,
-                value: Number(ethers.utils.formatEther(String(row.value || '0'))),
-                timestamp: Number(row.timeStamp || 0),
-                purchase: decodeStorePurchaseInput(row.input)
-            })).filter(row => row.purchase).map(row => ({
-                ...row,
-                itemId: row.purchase.itemId,
-                qty: row.purchase.qty,
-                purchasePrice: row.purchase.price,
-                purchaseName: row.purchase.name
-            }));
+        function merchantTxAddress(value) {
+            return String(value?.hash || value || '').toLowerCase();
         }
 
-        function formatStoreDate(ts) {
-            if (!ts) return '—';
-            return new Date(ts * 1000).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+        function merchantTxRawInput(tx) {
+            return tx?.raw_input || tx?.input || tx?.rawInput || tx?.data || '0x';
         }
 
-        function renderStorePurchaseHistory(rows) {
-            const host = document.getElementById('merchantPurchaseHistory');
-            if (!host) return;
-            if (!rows.length) {
-                host.innerHTML = '<div class="p-7 text-center text-xs text-slate-500 dark:text-slate-400">No confirmed store purchases yet.</div>';
-                return;
+        function formatMerchantDate(timestamp) {
+            if (!timestamp) return '—';
+            const d = new Date(Number(timestamp) * 1000);
+            return d.toLocaleString(undefined, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        async function fetchMerchantPurchaseHistory() {
+            const items = [];
+            let nextParams = {};
+            for (let page = 0; page < 5; page++) {
+                const data = await blockscoutFetch(`/addresses/${BULLKARRY_STORE_RECEIVING_ADDRESS}/transactions`, nextParams);
+                const pageItems = Array.isArray(data.items) ? data.items : [];
+                items.push(...pageItems);
+                if (!data.next_page_params || !pageItems.length) break;
+                nextParams = data.next_page_params;
             }
-            host.innerHTML = rows.map(row => {
-                const item = STORE_ITEMS[row.itemId];
-                return `<div class="p-4 grid grid-cols-1 sm:grid-cols-[1.4fr_1fr_.7fr_1fr] gap-3 items-center">\
-                    <div class="min-w-0"><div class="font-bold text-sm text-slate-900 dark:text-white">${row.purchaseName || item.name}</div><div class="text-[10px] text-slate-500 font-mono truncate mt-1">${row.from}</div></div>\
-                    <div><div class="text-xs font-semibold text-emerald-500">${row.value.toFixed(3)} USDC</div><div class="text-[10px] text-slate-500 mt-1">Funds received</div></div>\
-                    <div><div class="text-xs font-bold text-slate-900 dark:text-white">${row.qty || 1}</div><div class="text-[10px] text-slate-500 mt-1">Quantity</div></div>\
-                    <div class="sm:text-right"><div class="text-[10px] text-slate-500">${formatStoreDate(row.timestamp)}</div><a class="text-[10px] text-blue-500 hover:underline font-mono" target="_blank" rel="noopener" href="https://testnet.arc-scan.org/tx/${row.hash}">View tx</a></div>\
-                </div>`;
-            }).join('');
-        }
 
-        function updateStoreInventory(rows) {
-            const counts = { 'bullkarry-tee': 0, 'genesis-nft': 0 };
-            const buyerSets = { 'bullkarry-tee': new Set(), 'genesis-nft': new Set() };
-            rows.forEach(row => {
-                if (counts[row.itemId] !== undefined) {
-                    counts[row.itemId] += Number(row.qty || 1);
-                    if (row.from) buyerSets[row.itemId].add(row.from.toLowerCase());
-                }
-            });
-            Object.entries(STORE_ITEMS).forEach(([id, item]) => {
-                const remaining = Math.max(0, item.total - counts[id]);
-                const stock = document.getElementById('stock-' + id);
-                const btn = document.getElementById('buy-' + id);
-                if (stock) stock.textContent = `${item.total} / ${remaining}`;
-                if (btn) {
-                    if (remaining <= 0) {
-                        btn.textContent = 'Sold Out';
-                        btn.disabled = true;
-                        btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                        btn.classList.add('bg-slate-400', 'cursor-not-allowed');
-                    } else {
-                        btn.textContent = 'Buy';
-                        btn.disabled = false;
-                        btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                        btn.classList.remove('bg-slate-400', 'cursor-not-allowed');
-                    }
-                }
-            });
-            return buyerSets;
-        }
+            const purchases = [];
+            const seen = new Set();
+            for (const tx of items) {
+                const hash = String(tx?.hash || '');
+                if (!hash || seen.has(hash.toLowerCase())) continue;
+                seen.add(hash.toLowerCase());
 
-        async function loadStorePurchases(force = false) {
-            const host = document.getElementById('merchantPurchaseHistory');
-            if (host && force) host.innerHTML = '<div class="p-6 text-center text-xs text-slate-500">Refreshing on-chain purchase history…</div>';
-            try {
-                storePurchaseCache = await fetchMerchantPurchaseRows();
-                renderStorePurchaseHistory(storePurchaseCache);
-                updateStoreInventory(storePurchaseCache);
-                return storePurchaseCache;
-            } catch (e) {
-                console.error('Store purchase history fetch failed:', e);
-                if (host) host.innerHTML = '<div class="p-6 text-center text-xs text-red-500">Could not load purchase history. Please refresh.</div>';
-                return storePurchaseCache;
-            }
-        }
-        window.loadStorePurchases = loadStorePurchases;
+                const to = merchantTxAddress(tx?.to);
+                if (to !== BULLKARRY_STORE_RECEIVING_ADDRESS.toLowerCase()) continue;
+                if (tx?.status && !['ok', 'success', 'confirmed'].includes(String(tx.status).toLowerCase())) continue;
 
-        async function buyStoreItem(itemName, price, itemId, btn) {
-            if (!userAccount) return alert("Please connect wallet first");
-            const item = STORE_ITEMS[itemId];
-            if (!item) return alert('This product is not configured.');
-            if (item.name !== itemName || item.price !== price) return alert('Product details do not match.');
+                const meta = decodeBullkarryPurchaseData(merchantTxRawInput(tx));
+                if (!meta) continue;
 
-            const rows = await loadStorePurchases(false);
-            const alreadyBought = rows.some(row => row.itemId === itemId && String(row.from).toLowerCase() === String(userAccount).toLowerCase());
-            const soldCount = rows.filter(row => row.itemId === itemId).length;
-            if (alreadyBought) return alert(`You have already purchased ${itemName}. One wallet can purchase this item only once.`);
-            if (soldCount >= item.total) return alert(`${itemName} is sold out.`);
+                let amount = 0;
+                try { amount = Number(ethers.utils.formatUnits(String(tx?.value || '0'), 18)); } catch (_) {}
+                if (!Number.isFinite(amount) || amount <= 0) continue;
 
-            const button = btn || event?.currentTarget;
-            const originalText = button?.innerText || 'Buy';
-            if (button) { button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; button.disabled = true; }
-
-            try {
-                const eip1193 = getActiveEip1193Provider();
-                if (!eip1193) throw new Error('No active wallet provider');
-                const provider = new ethers.providers.Web3Provider(eip1193);
-                const signer = provider.getSigner();
-                const data = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(`${STORE_PURCHASE_PREFIX}${itemId}|v2|qty:1|price:${price}|name:${item.name}`));
-                // Arc Testnet uses native USDC with 18 decimals. Send the full listed price
-                // directly to the Bullkarry merchant wallet, not a burn/dead address.
-                const tx = await signer.sendTransaction({
-                    to: MERCHANT_ADDRESS,
-                    value: ethers.utils.parseEther(String(price)),
-                    data
+                const buyer = merchantTxAddress(tx?.from);
+                const timestamp = tx?.timestamp ? Math.floor(Date.parse(tx.timestamp) / 1000) : 0;
+                purchases.push({
+                    hash,
+                    buyer,
+                    buyerShort: formatAddress(buyer),
+                    item: meta.item,
+                    qty: meta.qty,
+                    unitPrice: meta.unitPrice,
+                    amount,
+                    timestamp,
+                    status: 'Confirmed'
                 });
-                await tx.wait();
-
-                await loadStorePurchases(true);
-                document.getElementById('successModalTitle').innerText = "Purchase Successful!";
-                document.getElementById('successModalMsg').innerText = `Successfully purchased ${itemName} for ${price.toFixed(3)} USDC. Quantity: 1`;
-                openModal('successModal');
-            } catch (e) {
-                console.error(e);
-                alert(e?.code === 4001 ? "Purchase cancelled in wallet" : "Purchase failed or was rejected by the wallet");
-            } finally {
-                if (button) { button.innerText = originalText; button.disabled = false; }
-                await loadStorePurchases(false);
             }
+            purchases.sort((a, b) => b.timestamp - a.timestamp);
+            return purchases;
         }
+
+        function renderStoreInventory(purchases) {
+            Object.entries(STORE_PRODUCTS).forEach(([name, product]) => {
+                const sold = purchases.filter(p => p.item === name).reduce((sum, p) => sum + Number(p.qty || 1), 0);
+                const left = Math.max(0, product.total - sold);
+                const id = name.replace(/[^a-zA-Z0-9]/g, '-');
+                const stock = document.getElementById(`stock-${id}`);
+                const progress = document.getElementById(`progress-${id}`);
+                const button = document.getElementById(`buy-${id}`);
+                if (stock) stock.textContent = left > 0 ? `${product.total} total • ${left} left` : 'Sold Out';
+                if (progress) progress.style.width = `${Math.min(100, (sold / product.total) * 100)}%`;
+                if (button) { button.disabled = left <= 0; button.textContent = left > 0 ? 'Buy' : 'Sold Out'; }
+            });
+        }
+
+        async function renderMerchantSales() {
+            const historyEl = document.getElementById('merchantSalesHistory');
+            const summaryEl = document.getElementById('merchantSalesSummary');
+            const icon = document.getElementById('merchantSalesRefreshIcon');
+            if (!historyEl) return;
+            icon?.classList.add('fa-spin');
+            historyEl.innerHTML = '<div class="py-6 text-center">Loading confirmed purchases…</div>';
+            try {
+                const purchases = await fetchMerchantPurchaseHistory();
+                renderStoreInventory(purchases);
+                const totalRevenue = purchases.reduce((sum, p) => sum + p.amount, 0);
+                const totalQty = purchases.reduce((sum, p) => sum + p.qty, 0);
+                if (summaryEl) summaryEl.innerHTML = `
+                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">Orders</div><div class="text-2xl font-black text-white mt-1">${purchases.length}</div></div>
+                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">NFT Quantity</div><div class="text-2xl font-black text-emerald-400 mt-1">${totalQty}</div></div>
+                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">Funds Received</div><div class="text-2xl font-black text-white mt-1">${totalRevenue.toFixed(3)} <span class="text-xs text-slate-500">USDC</span></div></div>
+                    <div class="merchant-summary-card"><div class="text-[9px] uppercase font-bold tracking-wider text-slate-500">Merchant Wallet</div><div class="text-xs font-mono font-bold text-blue-400 mt-2">${formatAddress(BULLKARRY_STORE_RECEIVING_ADDRESS)}</div></div>`;
+                if (!purchases.length) { historyEl.innerHTML = '<div class="py-8 text-center"><div class="font-semibold text-slate-700 dark:text-slate-300">No Bullkarry purchases recorded yet.</div><div class="text-[11px] mt-2 text-slate-500">Confirmed purchases made through the Buy button store the NFT name and quantity in the transaction input.</div></div>'; return; }
+                historyEl.innerHTML = `
+                    <div class="hidden md:grid merchant-record px-3 pb-2 text-[9px] uppercase font-bold text-slate-500"><div>Buyer Wallet</div><div>NFT / Product</div><div>Qty</div><div>Received</div><div>Date</div></div>
+                    <div class="space-y-2">${purchases.map(p => `
+                        <a href="https://testnet.arcscan.app/tx/${p.hash}" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border border-slate-200 dark:border-[#243048] bg-slate-50/60 dark:bg-[#0b101a]/70 p-3 hover:border-blue-500/40 transition">
+                            <div class="merchant-record"><div><div class="font-bold text-xs text-slate-900 dark:text-white">${p.buyerShort}</div><div class="text-[9px] text-slate-500 mt-0.5 break-all">${p.buyer}</div></div><div class="font-semibold text-xs text-slate-800 dark:text-slate-200">${p.item}</div><div class="text-xs font-black text-blue-500">${p.qty}</div><div class="text-xs font-black text-emerald-500">${p.amount.toFixed(3)} USDC</div><div class="text-[10px] text-slate-500">${formatMerchantDate(p.timestamp)}</div></div>
+                        </a>`).join('')}</div>`;
+            } catch (err) { console.error('Merchant purchase history error:', err); historyEl.innerHTML = '<div class="py-7 text-center text-red-500">Could not load merchant purchase history. Please try Refresh.</div>'; }
+            finally { icon?.classList.remove('fa-spin'); }
+        }
+
+        async function buyStoreItem(itemName, price, btn = null) {
+            if (!userAccount) return alert('Please connect wallet first');
+            const product = STORE_PRODUCTS[itemName];
+            if (!product || Number(price) !== product.price) return alert('Invalid NFT purchase details.');
+            const button = btn || null; const originalText = button ? button.innerText : 'Buy';
+            if (button) { button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; button.disabled = true; }
+            try {
+                // Fresh on-chain check: one wallet can buy each NFT only once.
+                const purchases = await fetchMerchantPurchaseHistory();
+                const wallet = String(userAccount).toLowerCase();
+                if (purchases.some(p => String(p.buyer).toLowerCase() === wallet && p.item === itemName)) throw new Error('You already purchased this NFT. One wallet can purchase each NFT only once.');
+                const sold = purchases.filter(p => p.item === itemName).reduce((sum, p) => sum + Number(p.qty || 1), 0);
+                if (product.total - sold <= 0) throw new Error('Sold Out');
+                const eip1193 = getActiveEip1193Provider(); if (!eip1193) throw new Error('No active wallet provider');
+                const provider = new ethers.providers.Web3Provider(eip1193); const signer = provider.getSigner();
+                const data = encodeBullkarryPurchaseData(itemName, 1, product.price);
+                const tx = await signer.sendTransaction({ to: BULLKARRY_STORE_RECEIVING_ADDRESS, value: ethers.utils.parseEther(String(product.price)), data });
+                await tx.wait();
+                document.getElementById('successModalTitle').innerText = 'Purchase Successful!';
+                document.getElementById('successModalMsg').innerText = `Successfully purchased ${itemName} for ${product.price.toFixed(3)} USDC`;
+                openModal('successModal'); await renderMerchantSales();
+            } catch (e) { console.error(e); alert(e?.message || 'Purchase Failed or Rejected by User'); }
+            finally { if (button) { button.innerText = originalText; button.disabled = false; } try { renderStoreInventory(await fetchMerchantPurchaseHistory()); } catch (_) {} }
+        }
+
+
     </script>
 </body>
 </html>
