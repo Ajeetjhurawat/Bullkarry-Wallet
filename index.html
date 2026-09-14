@@ -2011,7 +2011,7 @@
                 return;
             }
             const up = pct > 0;
-            el.textContent = (up ? '↑ ' : '↓ ') + Math.abs(pct).toFixed(1) + '% vs previous period';
+            el.textContent = (up ? '↑ ' : '↓ ') + Math.abs(pct).toFixed(1) + '% ';
             el.className = 'payment-compare mt-3 ' + ((up === positiveIsGood) ? 'text-emerald-500' : 'text-red-500');
         }
 
