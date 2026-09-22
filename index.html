@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -1182,6 +1182,7 @@
 
 
     <script>
+
         // Multi-Chain Network Configuration
         const NETWORKS_CONFIG = {
             1: {
@@ -1405,6 +1406,7 @@
 
         window.addEventListener('DOMContentLoaded', async () => {
             populateNetworkSelectors();
+            initMultiChainState();
             handleIncomingPaymentLink();
             renderPayments();
             setupWalletDiscovery();
@@ -1560,8 +1562,6 @@
             }
             const calc = avail * pct;
             amtInput.value = (calc < 0.0001) ? calc.toFixed(6) : (pct === 1.0 ? calc.toFixed(4) : calc.toFixed(4));
-        });
-            }
         }
 
 
@@ -1905,7 +1905,7 @@
         }
 
 
-        async async function syncAllOnChainData() {
+        async function syncAllOnChainData() {
             if (!userAccount || !isWalletConnected) return;
 
             try {
@@ -3091,6 +3091,31 @@
             } catch (e) { console.error(e); alert(e?.message || 'Purchase Failed or Rejected by User'); }
             finally { if (button) { button.innerText = originalText; button.disabled = false; } try { renderStoreInventory(await fetchMerchantPurchaseHistory()); } catch (_) {} }
         }
+    
+        function initMultiChainState() {
+            if (allMultiChainAssets.length === 0) {
+                allMultiChainAssets = [
+                    { chainId: 'solana', chainName: 'Solana', name: 'Solana', symbol: 'SOL', balance: 4.85, decimals: 9, isNative: true, color: 'bg-purple-500', badgeColor: NETWORKS_CONFIG['solana'].badgeColor, price: 152.50, valueUSD: 4.85 * 152.50, explorer: 'https://solscan.io' },
+                    { chainId: 'solana', chainName: 'Solana', name: 'USD Coin', symbol: 'USDC', balance: 250.00, decimals: 6, isNative: false, color: 'bg-blue-500', badgeColor: NETWORKS_CONFIG['solana'].badgeColor, price: 1.0, valueUSD: 250.00, explorer: 'https://solscan.io' },
+                    { chainId: 1, chainName: 'Ethereum', name: 'Ether', symbol: 'ETH', balance: 1.45, decimals: 18, isNative: true, color: 'bg-indigo-600', badgeColor: NETWORKS_CONFIG[1].badgeColor, price: 2650.0, valueUSD: 1.45 * 2650.0, explorer: 'https://etherscan.io' },
+                    { chainId: 1, chainName: 'Ethereum', name: 'Tether USD', symbol: 'USDT', balance: 450.00, decimals: 6, isNative: false, color: 'bg-emerald-500', badgeColor: NETWORKS_CONFIG[1].badgeColor, price: 1.0, valueUSD: 450.00, explorer: 'https://etherscan.io' },
+                    { chainId: 56, chainName: 'BNB Chain', name: 'BNB', symbol: 'BNB', balance: 2.10, decimals: 18, isNative: true, color: 'bg-amber-500', badgeColor: NETWORKS_CONFIG[56].badgeColor, price: 580.0, valueUSD: 2.10 * 580.0, explorer: 'https://bscscan.com' },
+                    { chainId: 137, chainName: 'Polygon', name: 'Polygon', symbol: 'POL', balance: 380.00, decimals: 18, isNative: true, color: 'bg-purple-600', badgeColor: NETWORKS_CONFIG[137].badgeColor, price: 0.42, valueUSD: 380.0 * 0.42, explorer: 'https://polygonscan.com' },
+                    { chainId: 5042001, chainName: 'Arc Mainnet', name: 'Arc USDC', symbol: 'USDC', balance: 180.00, decimals: 18, isNative: true, color: 'bg-teal-500', badgeColor: NETWORKS_CONFIG[5042001].badgeColor, price: 1.0, valueUSD: 180.00, explorer: 'https://arc-scan.org' },
+                    { chainId: 5042001, chainName: 'Arc Mainnet', name: 'Arc Token', symbol: 'ARC', balance: 120.00, decimals: 18, isNative: false, color: 'bg-teal-400', badgeColor: NETWORKS_CONFIG[5042001].badgeColor, price: 1.0, valueUSD: 120.00, explorer: 'https://arc-scan.org' },
+                    { chainId: 42161, chainName: 'Arbitrum One', name: 'Arbitrum Ether', symbol: 'ETH', balance: 0.35, decimals: 18, isNative: true, color: 'bg-blue-600', badgeColor: NETWORKS_CONFIG[42161].badgeColor, price: 2650.0, valueUSD: 0.35 * 2650.0, explorer: 'https://arbiscan.io' },
+                    { chainId: 8453, chainName: 'Base', name: 'Base Ether', symbol: 'ETH', balance: 0.20, decimals: 18, isNative: true, color: 'bg-blue-500', badgeColor: NETWORKS_CONFIG[8453].badgeColor, price: 2650.0, valueUSD: 0.20 * 2650.0, explorer: 'https://basescan.org' },
+                    { chainId: 10, chainName: 'Optimism', name: 'OP Ether', symbol: 'ETH', balance: 0.15, decimals: 18, isNative: true, color: 'bg-red-500', badgeColor: NETWORKS_CONFIG[10].badgeColor, price: 2650.0, valueUSD: 0.15 * 2650.0, explorer: 'https://optimistic.etherscan.io' }
+                ];
+            }
+            if (transactions.length === 0) {
+                transactions = generateInitial30Transactions(userAccount || '0x71C...89e2');
+            }
+            renderBalancesAndAssets();
+            renderTransactionLists();
+            onSendTokenChange();
+        }
+
     </script>
 </body>
 </html>
