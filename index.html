@@ -765,6 +765,92 @@
     </div>
 
 
+    
+    <!-- Connect Wallet Modal -->
+    <div id="connectWalletModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/60 dark:bg-black/80 z-[120]">
+        <div class="bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#26334a] w-full max-w-md rounded-[32px] p-6 md:p-8 relative shadow-2xl">
+            <button type="button" onclick="closeModal('connectWalletModal')" aria-label="Close" class="absolute top-6 right-6 w-9 h-9 rounded-full bg-slate-100 dark:bg-[#202938] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-2xl bg-cyan-400/10 text-cyan-500 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Connect Wallet</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Choose how to connect to Bullkarry</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 mt-6">
+                <!-- Option 1: Laptop Browser Extension (MetaMask / Injected EVM) -->
+                <button type="button" onclick="connectInjectedEthereum()" class="w-full flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 dark:border-[#243048] bg-slate-50 dark:bg-[#0f1624] hover:border-blue-500 dark:hover:border-blue-500 hover:bg-white dark:hover:bg-[#162032] transition group text-left">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 text-lg shrink-0">
+                            <i class="fa-solid fa-cube"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-slate-900 dark:text-white">Browser Extension</span>
+                                <span id="injectedEvmBadge" class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Laptop Ready</span>
+                            </div>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">MetaMask, OKX, Rabby, Coinbase extension</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-blue-500 group-hover:translate-x-0.5 transition"></i>
+                </button>
+
+                <!-- Option 2: Solana Wallet (Phantom / Solflare) -->
+                <button type="button" onclick="connectInjectedSolana()" class="w-full flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 dark:border-[#243048] bg-slate-50 dark:bg-[#0f1624] hover:border-purple-500 dark:hover:border-purple-500 hover:bg-white dark:hover:bg-[#162032] transition group text-left">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-lg shrink-0">
+                            <i class="fa-solid fa-ghost"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-slate-900 dark:text-white">Solana Wallet</span>
+                                <span id="injectedSolBadge" class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">SOL & SPL</span>
+                            </div>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">Phantom, Solflare extension or mobile</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-purple-500 group-hover:translate-x-0.5 transition"></i>
+                </button>
+
+                <!-- Option 3: WalletConnect (Mobile QR & All Wallets) -->
+                <button type="button" onclick="openReownWithMobileSync()" class="w-full flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 dark:border-[#243048] bg-slate-50 dark:bg-[#0f1624] hover:border-cyan-500 dark:hover:border-cyan-500 hover:bg-white dark:hover:bg-[#162032] transition group text-left">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 text-lg shrink-0">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-slate-900 dark:text-white">WalletConnect & Mobile</span>
+                                <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Mobile Sync</span>
+                            </div>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">Scan QR code or open 300+ mobile apps</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-cyan-500 group-hover:translate-x-0.5 transition"></i>
+                </button>
+
+                <!-- Option 4: Quick Test Connect -->
+                <button type="button" onclick="connectDemoWallet()" class="w-full flex items-center justify-between p-3 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-transparent hover:bg-slate-100 dark:hover:bg-[#151f30] transition group text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-xs shrink-0">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold text-xs text-slate-800 dark:text-slate-200">Instant Demo Connect</span>
+                            <span class="block text-[10px] text-slate-400">Preview 8-chain portfolio & transactions right away</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold text-emerald-500">1-Click</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Send Modal -->
     <div id="sendModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/60 dark:bg-black/80">
         <div class="bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#26334a] w-full max-w-md rounded-[32px] p-7 md:p-8 relative shadow-2xl">
@@ -1779,7 +1865,7 @@
             localStorage.setItem('bullkarry_account', userAccount);
 
 
-            const shortAddr = userAccount.substring(0, 6) + "..." + userAccount.substring(38);
+            const shortAddr = (userAccount.length > 10) ? (userAccount.substring(0, 6) + "..." + userAccount.substring(userAccount.length - 4)) : userAccount;
             document.getElementById('walletAddress').innerText = shortAddr;
             document.getElementById('payWalletAddress').innerText = shortAddr;
             document.getElementById('faucetWalletAddress').innerText = shortAddr;
@@ -2737,10 +2823,9 @@
         document.getElementById('connectBtn').addEventListener('click', () => {
             if (isWalletConnected) {
                 document.getElementById('profileDropdown').classList.toggle('hidden');
-            } else if (window.__openReownConnect) {
-                window.__openReownConnect();
             } else {
-                alert('Wallet connection is still loading. Please try again.');
+                checkInjectedWalletsUI();
+                openModal('connectWalletModal');
             }
         });
 
@@ -3092,6 +3177,113 @@
             finally { if (button) { button.innerText = originalText; button.disabled = false; } try { renderStoreInventory(await fetchMerchantPurchaseHistory()); } catch (_) {} }
         }
     
+        
+        function checkInjectedWalletsUI() {
+            const evmBadge = document.getElementById('injectedEvmBadge');
+            const solBadge = document.getElementById('injectedSolBadge');
+            if (window.ethereum && evmBadge) {
+                if (window.ethereum.isMetaMask) evmBadge.innerText = 'MetaMask Detected';
+                else if (window.ethereum.isOkxWallet) evmBadge.innerText = 'OKX Detected';
+                else if (window.ethereum.isCoinbaseWallet) evmBadge.innerText = 'Coinbase Detected';
+                else evmBadge.innerText = 'Extension Detected';
+                evmBadge.className = 'text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+            }
+            if ((window.phantom?.solana || window.solana) && solBadge) {
+                solBadge.innerText = 'Phantom Detected';
+                solBadge.className = 'text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30';
+            }
+        }
+
+        async function connectInjectedEthereum() {
+            try {
+                if (!window.ethereum) {
+                    alert("MetaMask or browser extension not detected. If on mobile, please open this link in the MetaMask app in-app browser or use WalletConnect below.");
+                    return;
+                }
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (accounts && accounts[0]) {
+                    activeWalletProvider = window.ethereum;
+                    attachWalletProviderListeners(window.ethereum);
+                    await initializeWallet(accounts[0]);
+                    closeModal('connectWalletModal');
+                }
+            } catch (err) {
+                console.error("Browser extension connection error:", err);
+                alert("Connection failed: " + (err.message || "User cancelled"));
+            }
+        }
+
+        async function connectInjectedSolana() {
+            try {
+                const solProvider = window.phantom?.solana || window.solana;
+                if (!solProvider) {
+                    alert("Phantom or Solana wallet extension not detected. Please install Phantom extension on your laptop or open in Phantom mobile app.");
+                    return;
+                }
+                const resp = await solProvider.connect();
+                const solAddr = resp.publicKey ? resp.publicKey.toString() : "";
+                if (solAddr) {
+                    await initializeWallet(solAddr);
+                    closeModal('connectWalletModal');
+                }
+            } catch (err) {
+                console.error("Solana wallet connection error:", err);
+                alert("Solana connection failed: " + (err.message || "User cancelled"));
+            }
+        }
+
+        async function openReownWithMobileSync() {
+            closeModal('connectWalletModal');
+            if (window.__openReownConnect) {
+                window.__openReownConnect();
+            }
+
+            // Mobile sync polling: when returning from mobile wallet app
+            let polls = 0;
+            const syncTimer = setInterval(async () => {
+                polls++;
+                if (polls > 120 || isWalletConnected) {
+                    clearInterval(syncTimer);
+                    return;
+                }
+                if (window.__reownAppKit) {
+                    const connected = window.__reownAppKit.getIsConnected?.();
+                    const addr = window.__reownAppKit.getAddress?.();
+                    if (connected && addr && addr !== userAccount) {
+                        clearInterval(syncTimer);
+                        await initializeWallet(addr);
+                    }
+                }
+            }, 800);
+        }
+
+        async function connectDemoWallet() {
+            closeModal('connectWalletModal');
+            const demoAddress = "0x71C8F4a552C32D9e5E1446788f4B0121B72089e2";
+            window.__isDemoWallet = true;
+            await initializeWallet(demoAddress);
+        }
+
+        // Auto-detect when returning to browser tab (mobile wallet app switch)
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'visible' && !isWalletConnected) {
+                if (window.__reownAppKit && window.__reownAppKit.getIsConnected?.()) {
+                    const addr = window.__reownAppKit.getAddress?.();
+                    if (addr) await initializeWallet(addr);
+                } else if (window.ethereum && window.ethereum.selectedAddress) {
+                    await initializeWallet(window.ethereum.selectedAddress);
+                }
+            }
+        });
+        window.addEventListener('focus', async () => {
+            if (!isWalletConnected) {
+                if (window.__reownAppKit && window.__reownAppKit.getIsConnected?.()) {
+                    const addr = window.__reownAppKit.getAddress?.();
+                    if (addr) await initializeWallet(addr);
+                }
+            }
+        });
+
         function initMultiChainState() {
             if (allMultiChainAssets.length === 0) {
                 allMultiChainAssets = [
