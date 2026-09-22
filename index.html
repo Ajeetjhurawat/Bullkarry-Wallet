@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -26,6 +26,14 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
+        .tx-grid-row {
+            display: grid;
+            grid-template-columns: 1.4fr 1.15fr 1.15fr 90px 105px;
+            gap: 16px;
+            align-items: center;
+            min-width: 780px;
+        }
+
         .donut-chart {
             background: conic-gradient(#334155 0% 100%);
             border-radius: 50%;
@@ -92,10 +100,12 @@
             position: absolute;
             inset: 4px;
             border-radius: 50%;
-            border: 2px solid transparent;
-            border-top-color: rgba(59,130,246,.8);
-            border-right-color: rgba(16,185,129,.55);
-            animation: portfolioSpin 7s linear infinite;
+            animation: portfolioEnter 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform: rotate(0deg);
+        }
+        @keyframes portfolioEnter {
+            0% { opacity: 0; transform: rotate(-90deg) scale(0.85); filter: blur(4px); }
+            100% { opacity: 1; transform: rotate(0deg) scale(1); filter: blur(0px); }
         }
         .balance-hero-card { background: radial-gradient(circle at 100% 0%, rgba(37, 99, 235, .16), transparent 44%), linear-gradient(135deg, #dce7f5 0%, #f8fafc 100%); box-shadow: 0 16px 34px rgba(51, 65, 85, .16) !important; }
         .dark .balance-hero-card { background: radial-gradient(circle at 100% 0%, rgba(13, 148, 136, .36), transparent 47%), linear-gradient(120deg, #111827 0%, #101827 100%); }
@@ -236,8 +246,12 @@
                         <path d="M84 36L65 58L84 80" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
+                <!-- Bell Icon Placed in Front of Greeting -->
+                <button type="button" aria-label="Notifications" title="Notifications" class="w-10 h-10 md:w-11 md:h-11 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center shadow-sm shrink-0">
+                    <i class="fa-solid fa-bell text-sm md:text-base"></i>
+                </button>
                 <div class="min-w-0">
-                    <h1 id="greeting" class="text-xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white truncate">Good afternoon</h1>
+                    <h1 id="greeting" class="text-xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white truncate">Good evening</h1>
                     <p id="pageSubtitle" class="hidden sm:block text-slate-500 dark:text-slate-400 text-xs mt-1">Welcome back to your Multi-Chain Web3 merchant dashboard.</p>
                 </div>
             </div>
@@ -266,9 +280,7 @@
                 </div>
 
 
-                <button type="button" aria-label="Notifications" title="Notifications" class="hidden md:flex w-11 h-11 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition items-center justify-center shadow-sm shrink-0">
-                    <i class="fa-solid fa-bell text-base"></i>
-                </button>
+
                 
                 <div class="relative inline-block" id="profileMenuContainer">
                     <button id="connectBtn" aria-label="Connect Wallet" class="connect-wallet-btn bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-900 dark:text-white px-3 md:px-4 h-11 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2.5 text-sm shadow-sm max-w-[150px] sm:max-w-[215px]">
@@ -481,17 +493,18 @@
                     </div>
 
 
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Amount</label>
+                    <!-- Network Selection for Payment Request -->
+                    <label for="payNetwork" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">NETWORK</label>
+                    <select id="payNetwork" onchange="onPayNetworkChange()" class="w-full h-[46px] bg-slate-100 dark:bg-[#080d15] border border-slate-300 dark:border-[#202b3d] rounded-xl px-4 text-xs font-bold text-slate-900 dark:text-white mb-4 focus:outline-none focus:border-blue-500">
+                    </select>
+
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">AMOUNT & ASSET</label>
                     <div class="flex items-center bg-slate-100 dark:bg-darkBg border border-slate-300 dark:border-[#243048] rounded-xl p-2 mb-2 focus-within:border-blue-500 transition">
-                        <input type="number" id="payAmount" placeholder="0.00" class="bg-transparent w-full p-2 text-2xl font-bold focus:outline-none text-slate-900 dark:text-white">
+                        <input type="number" id="payAmount" placeholder="0.00" step="any" class="bg-transparent w-full p-2 text-2xl font-bold focus:outline-none text-slate-900 dark:text-white">
                         <select id="payToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
-                            <option value="USDC">USDC</option>
-                            <option value="ETH">ETH</option>
-                            <option value="USDT">USDT</option>
-                            <option value="BUSD">BUSD</option>
                         </select>
                     </div>
-                    <p class="text-[10px] text-slate-500 mb-4">Standard web3 wallet transfer format</p>
+                    <p class="text-[10px] text-slate-500 mb-4">Select any of the 8 supported networks and your desired token.</p>
 
 
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Note (optional)</label>
@@ -528,8 +541,10 @@
                             <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold block mb-1">Note</span>
                             <span id="genNoteText" class="text-slate-700 dark:text-slate-200"></span>
                         </div>
-                        <div class="bg-white p-4 rounded-2xl flex justify-center items-center shadow-sm border border-slate-100 dark:border-none">
-                            <img id="genQR" src="" alt="Payment QR" class="w-44 h-44">
+                        <div class="flex justify-center my-2">
+                            <div class="payment-qr-frame w-fit mx-auto shadow-lg">
+                                <img id="genQR" src="" alt="Payment QR" class="w-44 h-44 rounded-2xl bg-white p-2">
+                            </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <button onclick="copyGeneratedLink()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
@@ -627,12 +642,12 @@
         <div id="transactionsView" class="p-4 md:p-8 pt-5 md:pt-8 hidden">
             <div class="compact-page-heading"><span class="compact-page-dot"></span><span>All On-Chain Transactions</span></div>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm overflow-x-auto">
-                <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-[1.1fr_1fr_1.35fr_112px_112px] gap-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase min-w-[720px]">
-                    <div>Type & Network</div>
-                    <div>Asset</div>
-                    <div>Counterparty</div>
-                    <div class="text-center">Refund</div>
-                    <div class="text-center">Status</div>
+                <div class="p-4 border-b border-slate-200 dark:border-[#243048] tx-grid-row text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">
+                    <div>TYPE & NETWORK</div>
+                    <div>ASSET & AMOUNT</div>
+                    <div>COUNTERPARTY</div>
+                    <div class="text-center">EXPLORER</div>
+                    <div class="text-center">STATUS</div>
                 </div>
                 <div class="divide-y divide-slate-100 dark:divide-[#243048] min-w-[780px]" id="fullTxHistory">
                     <div class="p-8 text-center text-slate-500 text-xs">Connect wallet to view history</div>
@@ -652,33 +667,42 @@
                     <i class="fa-solid fa-rotate-right mr-1" id="paymentsRefreshIcon"></i> Refresh
                 </button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="payment-stat-card premium-payment-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl p-6 shadow-sm transition-colors">
                     <div class="flex items-center justify-between gap-3">
-                        <div class="payment-period-label"><span class="payment-period-dot"></span><span>Today Earning</span></div>
-                        <span class="usdc-mark payment-usdc-symbol" aria-label="USDC">$</span>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">Today Earning</span>
+                        <span class="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-500 font-bold flex items-center justify-center text-xs shadow-sm">$</span>
                     </div>
-                    <p id="paymentsTodayReceived" class="payment-stat-value text-4xl font-black text-emerald-400 mt-5">0.00</p>
-                    <div class="flex items-center justify-between gap-3 mt-3"><p id="paymentsTodayRefund" class="payment-detail refund-detail">Refunded: 0.00</p><p id="paymentsTodayNet" class="payment-detail net-detail">Net: 0.00</p></div>
-                    <p id="paymentsTodayCompare" class="payment-compare mt-3">—</p>
+                    <p id="paymentsTodayReceived" class="text-4xl font-extrabold text-slate-900 dark:text-white mt-4 tracking-tight">0.00</p>
+                    <div class="flex items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                        <span id="paymentsTodayRefund" class="text-red-500 font-bold">Refunded: 0.00</span>
+                        <span id="paymentsTodayNet" class="text-slate-500 dark:text-slate-400 font-semibold">Net: 0.00</span>
+                    </div>
+                    <p id="paymentsTodayCompare" class="mt-2 text-xs font-bold text-slate-400">—</p>
                 </div>
-                <div class="payment-stat-card premium-payment-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl p-6 shadow-sm transition-colors">
                     <div class="flex items-center justify-between gap-3">
-                        <div class="payment-period-label"><span class="payment-period-dot"></span><span>Yesterday Earning</span></div>
-                        <span class="usdc-mark payment-usdc-symbol" aria-label="USDC">$</span>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">Yesterday Earning</span>
+                        <span class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 font-bold flex items-center justify-center text-xs shadow-sm">$</span>
                     </div>
-                    <p id="paymentsYesterdayReceived" class="payment-stat-value text-4xl font-black text-emerald-400 mt-5">0.00</p>
-                    <div class="flex items-center justify-between gap-3 mt-3"><p id="paymentsYesterdayRefund" class="payment-detail refund-detail">Refunded: 0.00</p><p id="paymentsYesterdayNet" class="payment-detail net-detail">Net: 0.00</p></div>
-                    <p id="paymentsYesterdayCompare" class="payment-compare mt-3">—</p>
+                    <p id="paymentsYesterdayReceived" class="text-4xl font-extrabold text-slate-900 dark:text-white mt-4 tracking-tight">0.00</p>
+                    <div class="flex items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                        <span id="paymentsYesterdayRefund" class="text-red-500 font-bold">Refunded: 0.00</span>
+                        <span id="paymentsYesterdayNet" class="text-slate-500 dark:text-slate-400 font-semibold">Net: 0.00</span>
+                    </div>
+                    <p id="paymentsYesterdayCompare" class="mt-2 text-xs font-bold text-slate-400">—</p>
                 </div>
-                <div class="payment-stat-card premium-payment-card bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm">
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl p-6 shadow-sm transition-colors">
                     <div class="flex items-center justify-between gap-3">
-                        <div class="payment-period-label"><span class="payment-period-dot"></span><span>Total Earn this Month</span></div>
-                        <span class="usdc-mark payment-usdc-symbol" aria-label="USDC">$</span>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">This Month Earning</span>
+                        <span class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 font-bold flex items-center justify-center text-xs shadow-sm">$</span>
                     </div>
-                    <p id="paymentsMonthReceived" class="payment-stat-value text-4xl font-black text-emerald-400 mt-5">0.00</p>
-                    <div class="flex items-center justify-between gap-3 mt-3"><p id="paymentsMonthRefund" class="payment-detail refund-detail">Refunded: 0.00</p><p id="paymentsMonthNet" class="payment-detail net-detail">Net: 0.00</p></div>
-                    <p id="paymentsMonthCompare" class="payment-compare mt-3">—</p>
+                    <p id="paymentsMonthReceived" class="text-4xl font-extrabold text-slate-900 dark:text-white mt-4 tracking-tight">0.00</p>
+                    <div class="flex items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                        <span id="paymentsMonthRefund" class="text-red-500 font-bold">Refunded: 0.00</span>
+                        <span id="paymentsMonthNet" class="text-slate-500 dark:text-slate-400 font-semibold">Net: 0.00</span>
+                    </div>
+                    <p id="paymentsMonthCompare" class="mt-2 text-xs font-bold text-slate-400">—</p>
                 </div>
             </div>
             <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl overflow-hidden shadow-sm">
@@ -878,10 +902,10 @@
                 </select>
             </div>
             <div class="grid grid-cols-4 gap-2 mb-6">
-                <button type="button" onclick="setSendPercentage(0.25)" class="py-1.5 px-2 bg-slate-100 dark:bg-[#151e2d] hover:bg-emerald-500/15 text-slate-700 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700/60 transition">25%</button>
-                <button type="button" onclick="setSendPercentage(0.50)" class="py-1.5 px-2 bg-slate-100 dark:bg-[#151e2d] hover:bg-emerald-500/15 text-slate-700 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700/60 transition">50%</button>
-                <button type="button" onclick="setSendPercentage(0.75)" class="py-1.5 px-2 bg-slate-100 dark:bg-[#151e2d] hover:bg-emerald-500/15 text-slate-700 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700/60 transition">75%</button>
-                <button type="button" onclick="setSendPercentage(1.0)" class="py-1.5 px-2 bg-emerald-500/15 text-emerald-600 dark:text-teal-300 hover:bg-emerald-500/25 rounded-xl text-xs font-extrabold border border-emerald-500/30 transition">100%</button>
+                <button type="button" onclick="setSendPercentage(0.25, this)" class="send-pct-btn py-2 px-2 bg-slate-100 dark:bg-[#151e2d] hover:bg-emerald-500/15 text-slate-700 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700/60 transition">25%</button>
+                <button type="button" onclick="setSendPercentage(0.50, this)" class="send-pct-btn py-2 px-2 bg-slate-100 dark:bg-[#151e2d] hover:bg-emerald-500/15 text-slate-700 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700/60 transition">50%</button>
+                <button type="button" onclick="setSendPercentage(0.75, this)" class="send-pct-btn py-2 px-2 bg-slate-100 dark:bg-[#151e2d] hover:bg-emerald-500/15 text-slate-700 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700/60 transition">75%</button>
+                <button type="button" onclick="setSendPercentage(1.0, this)" class="send-pct-btn py-2 px-2 bg-slate-100 dark:bg-[#151e2d] hover:bg-emerald-500/15 text-slate-700 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700/60 transition">100%</button>
             </div>
             <button id="sendTxBtn" onclick="executeDirectSend()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-extrabold py-4 rounded-2xl text-sm transition shadow-md">Confirm Transfer</button>
         </div>
@@ -1504,6 +1528,8 @@
         function populateNetworkSelectors() {
             const listEl = document.getElementById('networkDropdownList');
             const sendNetEl = document.getElementById('directSendNetwork');
+            const payNetEl = document.getElementById('payNetwork');
+
             if (listEl) {
                 listEl.innerHTML = '';
                 Object.values(NETWORKS_CONFIG).forEach(net => {
@@ -1516,7 +1542,6 @@
                 });
             }
 
-
             if (sendNetEl) {
                 sendNetEl.innerHTML = '';
                 Object.values(NETWORKS_CONFIG).forEach(net => {
@@ -1526,6 +1551,55 @@
                     sendNetEl.appendChild(opt);
                 });
                 onSendNetworkChange();
+            }
+
+            if (payNetEl) {
+                payNetEl.innerHTML = '';
+                Object.values(NETWORKS_CONFIG).forEach(net => {
+                    const opt = document.createElement('option');
+                    opt.value = net.id;
+                    opt.textContent = `${net.name} (${net.symbol})`;
+                    payNetEl.appendChild(opt);
+                });
+                onPayNetworkChange();
+            }
+        }
+
+        function onPayNetworkChange() {
+            const payNetEl = document.getElementById('payNetwork');
+            const payTokenEl = document.getElementById('payToken');
+            const payWalletAddrEl = document.getElementById('payWalletAddress');
+            if (!payNetEl || !payTokenEl) return;
+
+            const netId = payNetEl.value;
+            const net = NETWORKS_CONFIG[netId];
+            if (!net) return;
+
+            payTokenEl.innerHTML = '';
+            const natOpt = document.createElement('option');
+            natOpt.value = net.symbol;
+            natOpt.textContent = `${net.symbol} (Native)`;
+            payTokenEl.appendChild(natOpt);
+
+            if (net.tokens) {
+                net.tokens.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.symbol;
+                    opt.textContent = t.symbol;
+                    payTokenEl.appendChild(opt);
+                });
+            }
+
+            if (payWalletAddrEl) {
+                if (userAccount) {
+                    if (netId === 'solana') {
+                        payWalletAddrEl.innerText = window.__connectedSolanaAddress || "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU";
+                    } else {
+                        payWalletAddrEl.innerText = userAccount;
+                    }
+                } else {
+                    payWalletAddrEl.innerText = "Not Connected";
+                }
             }
         }
 
@@ -1568,6 +1642,7 @@
                 }
             }
             renderBalancesAndAssets();
+            renderTransactionLists();
         }
 
 
@@ -1637,7 +1712,7 @@
             availEl.innerText = Number(bal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
         }
 
-        function setSendPercentage(pct) {
+        function setSendPercentage(pct, btn) {
             const availEl = document.getElementById('sendAvailableBal');
             const amtInput = document.getElementById('directSendAmt');
             if (!availEl || !amtInput) return;
@@ -1645,10 +1720,18 @@
             const avail = parseFloat(rawText) || 0;
             if (avail <= 0) {
                 amtInput.value = "0.00";
-                return;
+            } else {
+                const calc = avail * pct;
+                amtInput.value = (calc < 0.0001) ? calc.toFixed(6) : (pct === 1.0 ? calc.toFixed(4) : calc.toFixed(4));
             }
-            const calc = avail * pct;
-            amtInput.value = (calc < 0.0001) ? calc.toFixed(6) : (pct === 1.0 ? calc.toFixed(4) : calc.toFixed(4));
+
+            // Highlight clicked button and revert others to neutral
+            document.querySelectorAll('.send-pct-btn').forEach(b => {
+                b.className = "send-pct-btn py-2 px-2 bg-slate-100 dark:bg-[#151e2d] hover:bg-emerald-500/15 text-slate-700 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700/60 transition";
+            });
+            if (btn) {
+                btn.className = "send-pct-btn py-2 px-2 bg-emerald-500 text-white dark:bg-emerald-500 dark:text-white rounded-xl text-xs font-extrabold border border-emerald-500 shadow-sm transition";
+            }
         }
 
 
@@ -2307,181 +2390,227 @@ async function syncAllOnChainData() {
         }
 
 
-                function generateInitial30Transactions(address) {
+                function createValidHash(chainKey, index) {
+            if (chainKey === 'solana') {
+                const b58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+                let str = "5" + index;
+                for (let i = 0; i < 86; i++) {
+                    str += b58[(index * 7 + i * 13 + 17) % 58];
+                }
+                return str;
+            } else {
+                const hex = "0123456789abcdef";
+                let str = "0x" + ((index % 9) + 1);
+                for (let i = 0; i < 63; i++) {
+                    str += hex[(index * 5 + i * 11 + 23) % 16];
+                }
+                return str;
+            }
+        }
+
+        function generateChainTransactions(chainKey, count = 30) {
+            const net = NETWORKS_CONFIG[chainKey] || {};
             const now = Math.floor(Date.now() / 1000);
-            const rawTxs = [
-                { chainKey: 'solana', chainName: 'Solana', type: 'Received', token: 'SOL', amt: 2.50, usd: 381.25, minsAgo: 4, from: '7xKX...sAsU', hash: '5UfD...9xKp', exp: 'https://solscan.io/tx/5UfDk2jW7N8a9xKp' },
-                { chainKey: 'solana', chainName: 'Solana', type: 'Sent', token: 'USDC', amt: -85.00, usd: 85.00, minsAgo: 12, from: '4mNp...8yTr', hash: '3KmQ...7vLz', exp: 'https://solscan.io/tx/3KmQ2pL8x9vLz' },
-                { chainKey: 137, chainName: 'Polygon', type: 'Received', token: 'POL', amt: 350.00, usd: 147.00, minsAgo: 28, from: '0x81b...9a41', hash: '0x7b2...9f1e', exp: 'https://polygonscan.com/tx/0x7b29f1e' },
-                { chainKey: 56, chainName: 'BNB Chain', type: 'Sent', token: 'BNB', amt: -0.45, usd: 261.00, minsAgo: 45, from: '0x32c...78e9', hash: '0x12a...45c8', exp: 'https://bscscan.com/tx/0x12a45c8' },
-                { chainKey: 1, chainName: 'Ethereum', type: 'Received', token: 'ETH', amt: 0.85, usd: 2252.50, minsAgo: 72, from: '0x49a...bc12', hash: '0x99e...88ab', exp: 'https://etherscan.io/tx/0x99e88ab' },
-                { chainKey: 5042001, chainName: 'Arc Mainnet', type: 'Received', token: 'USDC', amt: 120.00, usd: 120.00, minsAgo: 110, from: '0xfc3...0d07', hash: '0x88c...66de', exp: 'https://arc-scan.org/tx/0x88c66de' },
-                { chainKey: 'solana', chainName: 'Solana', type: 'Received', token: 'SOL', amt: 1.15, usd: 175.38, minsAgo: 140, from: '9aBv...3wQz', hash: '7XqP...2mLk', exp: 'https://solscan.io/tx/7XqP2mLk' },
-                { chainKey: 42161, chainName: 'Arbitrum One', type: 'Received', token: 'ETH', amt: 0.35, usd: 927.50, minsAgo: 185, from: '0x55d...11aa', hash: '0x44a...33bb', exp: 'https://arbiscan.io/tx/0x44a33bb' },
-                { chainKey: 8453, chainName: 'Base', type: 'Sent', token: 'USDC', amt: -50.00, usd: 50.00, minsAgo: 240, from: '0x92c...00ee', hash: '0x22b...11cc', exp: 'https://basescan.org/tx/0x22b11cc' },
-                { chainKey: 5042001, chainName: 'Arc Mainnet', type: 'Received', token: 'ARC', amt: 75.00, usd: 75.00, minsAgo: 310, from: '0x111...44ff', hash: '0x55f...77aa', exp: 'https://arc-scan.org/tx/0x55f77aa' },
-                { chainKey: 10, chainName: 'Optimism', type: 'Received', token: 'OP', amt: 45.00, usd: 74.25, minsAgo: 380, from: '0x78a...88ff', hash: '0x33c...99dd', exp: 'https://optimistic.etherscan.io/tx/0x33c99dd' },
-                { chainKey: 1, chainName: 'Ethereum', type: 'Sent', token: 'USDT', amt: -250.00, usd: 250.00, minsAgo: 450, from: '0x33f...44ee', hash: '0x11b...66ff', exp: 'https://etherscan.io/tx/0x11b66ff' },
-                { chainKey: 'solana', chainName: 'Solana', type: 'Sent', token: 'SOL', amt: -0.60, usd: 91.50, minsAgo: 530, from: '2tRy...8uIo', hash: '9pLm...1xZa', exp: 'https://solscan.io/tx/9pLm1xZa' },
-                { chainKey: 56, chainName: 'BNB Chain', type: 'Received', token: 'USDT', amt: 180.00, usd: 180.00, minsAgo: 620, from: '0x22b...33cc', hash: '0x77d...22ee', exp: 'https://bscscan.com/tx/0x77d22ee' },
-                { chainKey: 137, chainName: 'Polygon', type: 'Sent', token: 'USDC', amt: -65.00, usd: 65.00, minsAgo: 710, from: '0x88c...99dd', hash: '0x44e...55ff', exp: 'https://polygonscan.com/tx/0x44e55ff' },
-                { chainKey: 'solana', chainName: 'Solana', type: 'Received', token: 'USDT', amt: 95.00, usd: 95.00, minsAgo: 820, from: '5vBn...7mKl', hash: '4rTy...9uIo', exp: 'https://solscan.io/tx/4rTy9uIo' },
-                { chainKey: 1, chainName: 'Ethereum', type: 'Received', token: 'USDC', amt: 300.00, usd: 300.00, minsAgo: 940, from: '0x12d...44aa', hash: '0x66f...88cc', exp: 'https://etherscan.io/tx/0x66f88cc' },
-                { chainKey: 42161, chainName: 'Arbitrum One', type: 'Sent', token: 'ARB', amt: -120.00, usd: 69.60, minsAgo: 1060, from: '0x99a...22bb', hash: '0x55c...77dd', exp: 'https://arbiscan.io/tx/0x55c77dd' },
-                { chainKey: 5042001, chainName: 'Arc Mainnet', type: 'Sent', token: 'USDC', amt: -30.00, usd: 30.00, minsAgo: 1180, from: '0x33e...55cc', hash: '0x22a...99ee', exp: 'https://arc-scan.org/tx/0x22a99ee' },
-                { chainKey: 8453, chainName: 'Base', type: 'Received', token: 'ETH', amt: 0.15, usd: 397.50, minsAgo: 1320, from: '0x44f...88ee', hash: '0x88b...11aa', exp: 'https://basescan.org/tx/0x88b11aa' },
-                { chainKey: 'solana', chainName: 'Solana', type: 'Received', token: 'SOL', amt: 3.20, usd: 488.00, minsAgo: 1480, from: '3wEr...9oPq', hash: '8uIo...2zXv', exp: 'https://solscan.io/tx/8uIo2zXv' },
-                { chainKey: 56, chainName: 'BNB Chain', type: 'Received', token: 'BNB', amt: 0.90, usd: 522.00, minsAgo: 1620, from: '0x77c...11dd', hash: '0x33e...88bb', exp: 'https://bscscan.com/tx/0x33e88bb' },
-                { chainKey: 137, chainName: 'Polygon', type: 'Received', token: 'POL', amt: 210.00, usd: 88.20, minsAgo: 1780, from: '0x66a...44cc', hash: '0x11d...77ff', exp: 'https://polygonscan.com/tx/0x11d77ff' },
-                { chainKey: 10, chainName: 'Optimism', type: 'Sent', token: 'ETH', amt: -0.10, usd: 265.00, minsAgo: 1940, from: '0x55b...99ee', hash: '0x44f...66aa', exp: 'https://optimistic.etherscan.io/tx/0x44f66aa' },
-                { chainKey: 1, chainName: 'Ethereum', type: 'Received', token: 'ETH', amt: 0.50, usd: 1325.00, minsAgo: 2100, from: '0x22c...77dd', hash: '0x99a...33cc', exp: 'https://etherscan.io/tx/0x99a33cc' },
-                { chainKey: 5042001, chainName: 'Arc Mainnet', type: 'Received', token: 'USDC', amt: 80.00, usd: 80.00, minsAgo: 2280, from: '0x88f...22aa', hash: '0x77c...44ee', exp: 'https://arc-scan.org/tx/0x77c44ee' },
-                { chainKey: 'solana', chainName: 'Solana', type: 'Sent', token: 'SOL', amt: -1.25, usd: 190.62, minsAgo: 2450, from: '6tYh...1mNb', hash: '5yTr...8vCx', exp: 'https://solscan.io/tx/5yTr8vCx' },
-                { chainKey: 42161, chainName: 'Arbitrum One', type: 'Received', token: 'USDC', amt: 150.00, usd: 150.00, minsAgo: 2620, from: '0x11e...33cc', hash: '0x66b...99dd', exp: 'https://arbiscan.io/tx/0x66b99dd' },
-                { chainKey: 8453, chainName: 'Base', type: 'Sent', token: 'USDC', amt: -40.00, usd: 40.00, minsAgo: 2800, from: '0x77a...55ff', hash: '0x22d...88bb', exp: 'https://basescan.org/tx/0x22d88bb' },
-                { chainKey: 56, chainName: 'BNB Chain', type: 'Received', token: 'BUSD', amt: 110.00, usd: 110.00, minsAgo: 3000, from: '0x44c...88aa', hash: '0x99f...11ee', exp: 'https://bscscan.com/tx/0x99f11ee' }
+            const tokenList = [net.symbol, ...(net.tokens || []).map(t => t.symbol)];
+            const txs = [];
+
+            // realistic counterparty templates
+            const evmAddrs = [
+                '0x81b7a2e4...9a41', '0x32c45f89...78e9', '0x49a1cd92...bc12', '0xfc37f1ee...0d07',
+                '0x55d39832...11aa', '0x92c41890...00ee', '0x78a1bc44...88ff', '0x33f812a0...44ee',
+                '0x22b498e1...33cc', '0x88c471a2...99dd', '0x12d589e4...44aa', '0x99a32c71...22bb'
+            ];
+            const solAddrs = [
+                '7xKXtg2C...sAsU', '4mNpQr8t...8yTr', '9aBvW2kP...3wQz', '2tRyU9iO...8uIo',
+                '5vBnM1kL...7mKl', '3wErT8oP...9oPq', '6tYhN4mB...1mNb', '8uIoP2zX...2zXv'
             ];
 
-            return rawTxs.map(t => {
-                const ts = now - (t.minsAgo * 60);
-                const isSent = t.amt < 0;
-                const netConfig = NETWORKS_CONFIG[t.chainKey] || {};
-                return {
-                    hash: t.hash,
-                    explorerUrl: t.exp,
-                    chainKey: t.chainKey,
-                    chainName: t.chainName,
-                    chainBadgeClass: netConfig.badgeColor || 'bg-slate-200 dark:bg-slate-800 text-slate-400 border border-slate-700',
+            for (let i = 0; i < count; i++) {
+                const isSent = (i % 3 === 1);
+                const token = tokenList[i % tokenList.length];
+                const minsAgo = (i + 1) * (chainKey === 'solana' ? 4 : (chainKey === 137 ? 6 : 8)) + (i % 5);
+                const ts = now - (minsAgo * 60);
+                const hash = createValidHash(chainKey, i);
+
+                let amt = 1.0;
+                if (token === 'SOL') amt = Number((1.2 + (i % 7) * 0.45).toFixed(2));
+                else if (token === 'ETH') amt = Number((0.15 + (i % 5) * 0.18).toFixed(3));
+                else if (token === 'BNB') amt = Number((0.4 + (i % 6) * 0.35).toFixed(2));
+                else if (token === 'POL') amt = Number((120 + (i % 8) * 45).toFixed(1));
+                else if (token === 'USDC' || token === 'USDT') amt = Number((35 + (i % 10) * 25).toFixed(2));
+                else if (token === 'ARC') amt = Number((50 + (i % 6) * 20).toFixed(1));
+                else amt = Number((2 + (i % 5)).toFixed(2));
+
+                const price = TOKEN_PRICES[token] || 1.0;
+                const usd = amt * price;
+                const counterparty = (chainKey === 'solana') ? solAddrs[i % solAddrs.length] : evmAddrs[i % evmAddrs.length];
+
+                txs.push({
+                    hash: hash,
+                    explorerUrl: `${net.explorer}/tx/${hash}`,
+                    chainKey: chainKey,
+                    chainName: net.name,
+                    chainBadgeClass: net.badgeColor || 'bg-slate-200 dark:bg-slate-800 text-slate-400',
                     type: isSent ? 'Sent' : 'Received',
-                    token: t.token,
-                    amount: (isSent ? '' : '+') + t.amt.toFixed(2) + ' ' + t.token,
-                    amountValue: Math.abs(t.amt),
-                    usdValue: t.usd,
-                    from: t.from,
-                    to: isSent ? t.from : (address ? formatAddress(address) : 'My Wallet'),
+                    token: token,
+                    amount: (isSent ? '-' : '+') + amt.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' ' + token,
+                    amountValue: amt,
+                    usdValue: usd,
+                    from: counterparty,
+                    to: isSent ? counterparty : (userAccount ? formatAddress(userAccount) : 'My Wallet'),
                     timestamp: ts,
                     time: formatTxTime(ts),
                     status: 'Completed',
                     isSent: isSent,
                     color: isSent ? 'text-red-500 dark:text-red-400' : 'text-emerald-500 dark:text-emerald-400'
-                };
+                });
+            }
+            return txs;
+        }
+
+        let multiChainTxRepository = [];
+
+        
+        function generateInitial30Transactions(address) {
+            if (multiChainTxRepository.length === 0) {
+                buildMultiChainRepository();
+            }
+            return multiChainTxRepository.slice(0, 30);
+        }
+
+        function buildMultiChainRepository() {
+            const all = [];
+            const keys = Object.keys(NETWORKS_CONFIG);
+            keys.forEach(k => {
+                all.push(...generateChainTransactions(k, 30));
             });
+            all.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            multiChainTxRepository = all;
+            transactions = all;
         }
 
         async function fetchLiveTransactions() {
-            if (!userAccount) return;
-
-            try {
-                let saved = [];
-                try {
-                    saved = JSON.parse(localStorage.getItem('bullkarry_multichain_txs_' + userAccount) || '[]');
-                } catch (_) { saved = []; }
-
-                if (!saved || saved.length < 30) {
-                    const generated = generateInitial30Transactions(userAccount);
-                    const userMade = saved.filter(s => s.userCreated);
-                    const combined = [...userMade, ...generated];
-                    combined.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    transactions = combined.slice(0, 50);
-                    try {
-                        localStorage.setItem('bullkarry_multichain_txs_' + userAccount, JSON.stringify(transactions));
-                    } catch (_) {}
-                } else {
-                    saved.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    transactions = saved;
-                }
-
-                renderTransactionLists();
-                renderPayments();
-            } catch (err) {
-                console.warn("Transactions setup note:", err);
-                renderTransactionLists();
+            if (multiChainTxRepository.length === 0) {
+                buildMultiChainRepository();
             }
+
+            // Load any user-created transactions
+            if (userAccount) {
+                try {
+                    const saved = JSON.parse(localStorage.getItem('bullkarry_multichain_txs_' + userAccount) || '[]');
+                    const userMade = saved.filter(s => s.userCreated);
+                    if (userMade.length > 0) {
+                        const merged = [...userMade, ...multiChainTxRepository.filter(m => !userMade.some(u => u.hash === m.hash))];
+                        merged.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                        transactions = merged;
+                    }
+                } catch (_) {}
+            }
+
+            renderTransactionLists();
+            renderPayments();
         }
 
         function renderTransactionLists() {
-            if (!isWalletConnected || transactions.length === 0) {
-                document.getElementById('dashTxList').innerHTML = '<div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">Connect wallet to view activity</div>';
-                document.getElementById('fullTxHistory').innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">Connect wallet to view history</div>';
-                return;
-            }
-
-            const filteredTxs = (activeNetworkFilter === 'all')
+            const isAll = (activeNetworkFilter === 'all');
+            const targetTxs = isAll
                 ? transactions
                 : transactions.filter(t => String(t.chainKey) === String(activeNetworkFilter));
 
-            let dashHtml = '';
-            let fullHtml = '';
+            targetTxs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
             const downArrowSvg = '<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>';
             const upArrowSvg = '<svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>';
 
             // 1. Dashboard Recent Activity: Strictly top 5
-            filteredTxs.slice(0, 5).forEach(t => {
-                const iconSvg = t.isSent ? upArrowSvg : downArrowSvg;
-                const bgBox = t.isSent ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20';
-                const chainTag = `<span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold border ${t.chainBadgeClass} ml-1.5 shadow-sm">${t.chainName}</span>`;
+            const dashEl = document.getElementById('dashTxList');
+            if (dashEl) {
+                if (targetTxs.length === 0) {
+                    dashEl.innerHTML = '<div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">No recent activity for this network</div>';
+                } else {
+                    let dashHtml = '';
+                    targetTxs.slice(0, 5).forEach(t => {
+                        const iconSvg = t.isSent ? upArrowSvg : downArrowSvg;
+                        const bgBox = t.isSent ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20';
+                        const chainTag = `<span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold border ${t.chainBadgeClass} ml-1.5 shadow-sm">${t.chainName}</span>`;
 
-                dashHtml += `
-                    <div class="hover:bg-slate-100 dark:hover:bg-slate-800/40 transition rounded-xl p-2.5">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl ${bgBox} flex items-center justify-center shrink-0 shadow-sm">${iconSvg}</div>
-                                <div>
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-sm font-bold text-slate-900 dark:text-white leading-tight">${t.type}</span>
-                                        ${chainTag}
+                        dashHtml += `
+                            <div class="hover:bg-slate-100 dark:hover:bg-slate-800/40 transition rounded-xl p-2.5">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl ${bgBox} flex items-center justify-center shrink-0 shadow-sm">${iconSvg}</div>
+                                        <div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="text-sm font-bold text-slate-900 dark:text-white leading-tight">${t.type}</span>
+                                                ${chainTag}
+                                            </div>
+                                            <p class="text-[11px] text-slate-400 font-mono mt-0.5">${t.from || 'Wallet'}</p>
+                                        </div>
                                     </div>
-                                    <p class="text-[11px] text-slate-400 font-mono mt-0.5">${t.from || 'Wallet'}</p>
+                                    <div class="text-right">
+                                        <p class="text-sm font-bold ${t.color} leading-tight">${t.amount}</p>
+                                        <p class="text-[11px] text-slate-400 mt-0.5">${formatTxTime(t.timestamp)}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-sm font-bold ${t.color} leading-tight">${t.amount}</p>
-                                <p class="text-[11px] text-slate-400 mt-0.5">${formatTxTime(t.timestamp)}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
+                        `;
+                    });
+                    dashEl.innerHTML = dashHtml;
+                }
+            }
 
-            // 2. Full Transactions View: Strictly top 30
-            filteredTxs.slice(0, 30).forEach(t => {
-                const iconSvg = t.isSent ? upArrowSvg : downArrowSvg;
-                const bgBox = t.isSent ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20';
-                const chainTag = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold border ${t.chainBadgeClass} ml-2 shadow-sm">${t.chainName}</span>`;
+            // 2. Full Transactions View: Strictly top 30 matching the headers 100%
+            const fullEl = document.getElementById('fullTxHistory');
+            if (fullEl) {
+                if (targetTxs.length === 0) {
+                    fullEl.innerHTML = '<div class="p-8 text-center text-slate-500 text-xs">No transactions found for this network</div>';
+                } else {
+                    let fullHtml = '';
+                    targetTxs.slice(0, 30).forEach(t => {
+                        const iconSvg = t.isSent ? upArrowSvg : downArrowSvg;
+                        const bgBox = t.isSent ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20';
+                        const chainTag = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold border ${t.chainBadgeClass} ml-1.5 shadow-sm">${t.chainName}</span>`;
 
-                const explorerLink = t.explorerUrl 
-                    ? `<a href="${t.explorerUrl}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-500 hover:text-blue-400 underline font-mono"><i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i> View</a>`
-                    : `<span class="text-[11px] text-slate-400 font-mono">-</span>`;
+                        const explorerLink = t.explorerUrl 
+                            ? `<a href="${t.explorerUrl}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-500 hover:text-blue-400 underline font-mono"><i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i> View</a>`
+                            : `<span class="text-[11px] text-slate-400 font-mono">-</span>`;
 
-                fullHtml += `
-                    <div class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition border-b border-slate-100 dark:border-[#243048]">
-                        <div class="p-4 grid grid-cols-[1.3fr_1.1fr_1.1fr_100px_100px] gap-3 items-center text-xs min-w-[780px]">
-                            <div class="flex items-center gap-2.5 min-w-0">
-                                <div class="w-8 h-8 rounded-lg ${bgBox} flex items-center justify-center shrink-0 shadow-sm">${iconSvg}</div>
-                                <div>
-                                    <div class="flex items-center gap-1">
-                                        <span class="font-bold text-slate-900 dark:text-white">${t.type}</span>
-                                        ${chainTag}
+                        fullHtml += `
+                            <div class="p-4 tx-grid-row hover:bg-slate-100/70 dark:hover:bg-slate-800/40 transition border-b border-slate-100 dark:border-[#243048] text-xs">
+                                <!-- Col 1: TYPE & NETWORK -->
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-lg ${bgBox} flex items-center justify-center shrink-0 shadow-sm">${iconSvg}</div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-1">
+                                            <span class="font-bold text-slate-900 dark:text-white">${t.type}</span>
+                                            ${chainTag}
+                                        </div>
+                                        <span class="block text-[10px] text-slate-400 mt-0.5">${formatTxTime(t.timestamp)}</span>
                                     </div>
-                                    <span class="block text-[10px] text-slate-400 mt-0.5">${formatTxTime(t.timestamp)}</span>
+                                </div>
+                                <!-- Col 2: ASSET & AMOUNT (Centered directly under ASSET & AMOUNT header) -->
+                                <div>
+                                    <span class="${t.color} font-bold text-sm block leading-tight">${t.amount}</span>
+                                    <span class="text-[10px] text-slate-400 mt-0.5 block">≈ $${(t.usdValue || 0).toFixed(2)} USD</span>
+                                </div>
+                                <!-- Col 3: COUNTERPARTY (Directly under COUNTERPARTY header) -->
+                                <div class="min-w-0">
+                                    <span class="font-mono text-slate-600 dark:text-slate-300 truncate text-[11px] block">${t.from || 'Wallet'}</span>
+                                </div>
+                                <!-- Col 4: EXPLORER (Centered directly under EXPLORER header) -->
+                                <div class="text-center">
+                                    ${explorerLink}
+                                </div>
+                                <!-- Col 5: STATUS (Centered directly under STATUS header) -->
+                                <div class="text-center">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Completed</span>
                                 </div>
                             </div>
-                            <div>
-                                <span class="${t.color} font-bold text-sm block">${t.amount}</span>
-                                <span class="text-[10px] text-slate-400">≈ $${(t.usdValue || 0).toFixed(2)} USD</span>
-                            </div>
-                            <span class="font-mono text-slate-600 dark:text-slate-300 truncate text-[11px]">${t.from || 'Wallet'}</span>
-                            <div class="text-center">${explorerLink}</div>
-                            <div class="text-center">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Completed</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('dashTxList').innerHTML = dashHtml || '<div class="p-6 text-center text-slate-500 text-xs">No activity for selected network</div>';
-            document.getElementById('fullTxHistory').innerHTML = fullHtml || '<div class="p-8 text-center text-slate-500 text-xs">No transactions found for selected network</div>';
+                        `;
+                    });
+                    fullEl.innerHTML = fullHtml;
+                }
+            }
         }
 
         function prepareRefund(sourceHash, recipient, amount, token) {
@@ -2580,21 +2709,21 @@ async function syncAllOnChainData() {
 
             const refundRatio = month.receivedCount ? (month.refundCount / month.receivedCount) * 100 : 0;
             summary.innerHTML = `
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div class="rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-4">
-                        <div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500 dark:text-slate-400">Received</span><i class="fa-solid fa-arrow-down text-emerald-500"></i></div>
-                        <div class="payment-stat-value text-2xl font-bold text-emerald-500 mt-2">${month.receivedCount}</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">transactions this month</div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0f1624] p-5 shadow-sm">
+                        <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Received Transactions</span><i class="fa-solid fa-arrow-down text-emerald-500"></i></div>
+                        <div class="text-3xl font-extrabold text-slate-900 dark:text-white mt-3">${month.receivedCount}</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Confirmed payments this month</div>
                     </div>
-                    <div class="rounded-2xl border border-red-500/15 bg-red-500/[0.04] p-4">
-                        <div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500 dark:text-slate-400">Refund</span><i class="fa-solid fa-arrow-up text-red-500"></i></div>
-                        <div class="text-2xl font-extrabold text-red-500 mt-2">${month.refundCount}</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">refund transactions this month</div>
+                    <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0f1624] p-5 shadow-sm">
+                        <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Refund Transactions</span><i class="fa-solid fa-arrow-up text-red-500"></i></div>
+                        <div class="text-3xl font-extrabold text-slate-900 dark:text-white mt-3">${month.refundCount}</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Processed refunds this month</div>
                     </div>
-                    <div class="rounded-2xl border border-blue-500/15 bg-blue-500/[0.04] p-4">
-                        <div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500 dark:text-slate-400">Refund Ratio</span><i class="fa-solid fa-chart-pie text-blue-500"></i></div>
-                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white mt-2">${refundRatio.toFixed(1)}%</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">refunds ÷ received transactions</div>
+                    <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0f1624] p-5 shadow-sm">
+                        <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Refund Ratio</span><i class="fa-solid fa-chart-pie text-blue-500"></i></div>
+                        <div class="text-3xl font-extrabold text-slate-900 dark:text-white mt-3">${refundRatio.toFixed(1)}%</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Refunds ÷ total received</div>
                     </div>
                 </div>`;
         }
@@ -2768,6 +2897,7 @@ async function syncAllOnChainData() {
         function toggleCurrency() {
             isINR = !isINR;
             renderBalancesAndAssets();
+            renderTransactionLists();
         }
 
 
