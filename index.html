@@ -150,7 +150,7 @@
         @media (max-width: 767px) {
             .modal .relative, .modal > div { max-height: 92vh; overflow-y: auto; }
         }
-    .compact-page-heading{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin:0 0 18px}
+        .compact-page-heading{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin:0 0 18px}
         .compact-page-dot{width:7px;height:7px;border-radius:999px;background:#00d182;box-shadow:0 0 0 4px rgba(0,209,130,.08);flex:none}
         .all-minted-badge{font-size:10px;font-weight:800;letter-spacing:.12em;color:#64748b;white-space:nowrap}
         .store-nft-card{background:linear-gradient(145deg,#ffffff,#f8fafc);border:1px solid rgba(148,163,184,.28);border-radius:22px;overflow:hidden;box-shadow:0 14px 30px rgba(15,23,42,.10);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
@@ -163,15 +163,12 @@
         .store-buy-btn{width:100%;border:0;border-radius:11px;padding:9px 10px;background:#2563eb;color:#fff;font-size:11px;font-weight:800;cursor:pointer;transition:.18s ease}.store-buy-btn:hover:not(:disabled){background:#1d4ed8;transform:translateY(-1px)}.store-buy-btn:disabled{background:#334155;color:#94a3b8;cursor:not-allowed}
         .merchant-glass-card{background:radial-gradient(circle at 100% 0%,rgba(37,99,235,.10),transparent 42%),linear-gradient(145deg,#ffffff,#f8fafc);backdrop-filter:blur(14px);border:1px solid rgba(148,163,184,.24);box-shadow:0 18px 40px rgba(15,23,42,.10)}.dark .merchant-glass-card{background:radial-gradient(circle at 100% 0%,rgba(59,130,246,.12),transparent 38%),linear-gradient(145deg,rgba(22,31,48,.72),rgba(8,12,20,.82));border-color:rgba(148,163,184,.13);box-shadow:0 18px 50px rgba(0,0,0,.14)}.merchant-summary-card{border-radius:16px;padding:14px;background:#ffffff;border:1px solid rgba(148,163,184,.22);box-shadow:0 4px 14px rgba(15,23,42,.05)}.dark .merchant-summary-card{background:rgba(15,23,42,.55);border-color:rgba(148,163,184,.12);box-shadow:none}.merchant-record{display:grid;grid-template-columns:1.25fr 1fr 60px 100px 110px;gap:12px;align-items:center}@media(max-width:767px){.merchant-record{grid-template-columns:1fr 1fr;gap:8px}}
     </style>
-
-    <!-- Wallet connection: EIP-6963 multi-wallet discovery + mobile wallet handoff. -->
 </head>
 <body class="h-screen flex overflow-hidden bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-50 transition-colors duration-200">
 
     <!-- Left Sidebar -->
     <div class="w-64 bg-white dark:bg-darkSidebar border-r border-slate-200 dark:border-darkSidebarBorder flex flex-col p-6 hidden md:flex z-10 transition-colors">
         <div class="flex items-center gap-3 mb-10 cursor-pointer" onclick="switchView('dashboard')">
-            <!-- Fast Loading Teal & Black BK Logo (SVG) -->
             <div class="w-10 h-10 rounded-xl bg-black border border-teal-400/30 flex items-center justify-center shadow-lg shadow-teal-500/10 shrink-0">
                 <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22 36H48C52.4 36 56 39.6 56 44C56 48.4 52.4 52 48 52H28V64H48C52.4 64 56 67.6 56 72C56 76.4 52.4 80 48 80H22V36Z" stroke="#00F5B8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
@@ -206,10 +203,13 @@
         <div class="mt-auto bg-slate-50 dark:bg-[#101827] p-3 rounded-2xl border border-slate-200 dark:border-[#1d293a] transition-colors network-card shadow-sm">
             <p class="text-[9px] text-slate-500 dark:text-slate-500 uppercase font-extrabold tracking-[0.12em] mb-2">Network</p>
             <div class="flex items-center gap-2.5 pb-2.5 border-b border-slate-200 dark:border-slate-700/40">
-                <div class="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center shadow-sm border border-emerald-500/30 bg-[#062a2d] network-logo">
-                    <img src="data:image/png;base64,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" alt="Arc Network" class="w-full h-full object-cover" />
+                <div class="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center shadow-sm border border-emerald-500/30 bg-[#062a2d] network-logo" id="sidebarNetworkIcon">
+                    <i class="fa-solid fa-layer-group text-teal-400 text-xs"></i>
                 </div>
-                <span class="font-bold text-slate-900 dark:text-white text-xs network-title">Arc Testnet</span>
+                <div class="min-w-0 flex-1">
+                    <span class="font-bold text-slate-900 dark:text-white text-xs network-title block truncate" id="sidebarNetworkTitle">Multi-Chain</span>
+                    <span class="text-[9px] text-slate-400 block" id="sidebarNetworkSubtitle">7 Chains Active</span>
+                </div>
             </div>
             <div class="network-status flex items-center justify-between pt-2 text-[10px] text-slate-500 dark:text-slate-400">
                 <span>Status</span>
@@ -221,7 +221,7 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50 dark:bg-darkBg transition-colors pb-24 md:pb-0">
         
-        <!-- Header: shown on dashboard only; inner pages start directly at the top -->
+        <!-- Header -->
         <div id="mainHeader" class="flex flex-wrap justify-between items-center gap-3 p-4 md:p-8 pb-4">
             <div class="flex items-center gap-3 min-w-0">
                 <div class="w-9 h-9 rounded-lg bg-black border border-teal-400/30 flex items-center justify-center shrink-0 md:hidden">
@@ -233,7 +233,7 @@
                 </div>
                 <div class="min-w-0">
                     <h1 id="greeting" class="text-xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white truncate">Good afternoon</h1>
-                    <p id="pageSubtitle" class="hidden sm:block text-slate-500 dark:text-slate-400 text-xs mt-1">Welcome back to your Web3 merchant dashboard.</p>
+                    <p id="pageSubtitle" class="hidden sm:block text-slate-500 dark:text-slate-400 text-xs mt-1">Welcome back to your Multi-Chain Web3 merchant dashboard.</p>
                 </div>
             </div>
             <div class="flex items-center gap-2 md:gap-3">
@@ -241,9 +241,22 @@
                     <i id="themeIcon" class="fa-solid fa-sun text-base"></i>
                 </button>
 
-                <div class="hidden sm:flex h-11 items-center gap-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder px-3 rounded-xl text-xs font-semibold text-slate-700 dark:text-white shadow-sm shrink-0">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
-                    <span>Arc Testnet</span>
+                <!-- Interactive Multi-Chain Network Dropdown -->
+                <div class="relative inline-block" id="networkMenuContainer">
+                    <button id="networkSelectBtn" type="button" onclick="toggleNetworkDropdown()" class="hidden sm:flex h-11 items-center gap-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder px-3 rounded-xl text-xs font-semibold text-slate-700 dark:text-white shadow-sm shrink-0 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
+                        <span id="selectedNetworkLabel">All Networks</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                    </button>
+                    <div id="networkDropdown" class="hidden absolute right-0 top-full mt-2 w-56 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl shadow-xl z-50 overflow-hidden text-xs py-1">
+                        <button type="button" onclick="selectNetworkFilter('all')" class="w-full text-left px-3.5 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/50">
+                            <span class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-globe text-blue-500"></i> All Networks
+                            </span>
+                            <span class="text-[10px] text-emerald-500 font-bold px-1.5 py-0.5 rounded bg-emerald-500/10">Aggregated</span>
+                        </button>
+                        <div class="max-h-60 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/40" id="networkDropdownList"></div>
+                    </div>
                 </div>
 
                 <button type="button" aria-label="Notifications" title="Notifications" class="hidden md:flex w-11 h-11 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition items-center justify-center shadow-sm shrink-0">
@@ -279,15 +292,15 @@
                         <div class="flex items-start justify-between gap-5">
                             <div>
                                 <p class="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400 mb-3">
-                                    <i class="fa-solid fa-wallet text-emerald-500 dark:text-teal-300 text-sm"></i> Total Balance
+                                    <i class="fa-solid fa-wallet text-emerald-500 dark:text-teal-300 text-sm"></i> Total Portfolio Balance
                                 </p>
                                 <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                                     <h2 id="balanceDisplay" class="balance-amount text-5xl md:text-6xl font-extrabold text-slate-900 dark:text-white">0.00</h2>
                                     <button type="button" class="text-2xl md:text-3xl font-extrabold text-emerald-600 dark:text-teal-300 flex items-center gap-1.5 hover:text-emerald-500 transition" onclick="toggleCurrency()">
-                                        <span id="currencyLabel">USDC</span> <i class="fa-solid fa-chevron-down text-xs"></i>
+                                        <span id="currencyLabel">USD</span> <i class="fa-solid fa-chevron-down text-xs"></i>
                                     </button>
                                 </div>
-                                <p id="availBal" class="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">≈ $0.00 USD</p>
+                                <p id="availBal" class="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">≈ ₹0.00 INR</p>
                             </div>
                             <button type="button" onclick="refreshDashboard()" aria-label="Refresh balance" title="Refresh balance" class="balance-refresh w-12 h-12 md:w-14 md:h-14 rounded-full bg-slate-200/90 dark:bg-teal-950/60 border border-slate-300 dark:border-teal-200/10 text-slate-700 dark:text-white hover:bg-slate-300 dark:hover:bg-teal-900 transition flex items-center justify-center shrink-0">
                                 <i id="refreshDashIcon" class="fa-solid fa-rotate text-lg"></i>
@@ -350,51 +363,49 @@
                 </div>
 
                 <!-- Right Column -->
-<div class="space-y-6">
-    
-    <!-- 1. Live Exchange Box -->
-    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
-        <div class="flex justify-between items-center mb-4">
-            <div>
-                <h3 class="text-base font-bold text-slate-900 dark:text-white">Live Exchange</h3>
-            </div>
-            <div class="flex -space-x-1.5">
-                <div class="w-6 h-6 rounded-full bg-blue-600 border-2 border-white dark:border-darkCard flex items-center justify-center text-[9px] font-bold text-white">US</div>
-                <div class="w-6 h-6 rounded-full bg-orange-500 border-2 border-white dark:border-darkCard flex items-center justify-center text-[9px] font-bold text-white">IN</div>
-            </div>
-        </div>
-        
-        <div class="p-4 bg-slate-50 dark:bg-[#0f1624] rounded-2xl border border-slate-100 dark:border-[#243048] flex justify-between items-center">
-            <span class="font-bold text-sm text-slate-700 dark:text-slate-300">USDC / INR</span>
-            <div class="text-right">
-                <span class="text-[10px] text-emerald-500 dark:text-emerald-400 block mb-0.5 font-bold uppercase">LIVE RATE</span>
-                <span class="font-bold text-lg text-slate-900 dark:text-white">₹83.45</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. Portfolio Assets Box -->
-    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Assets</h3>
-            <span class="text-xs text-slate-500 dark:text-slate-400">Arc</span>
-        </div>
-        <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-3">Live on-chain balances</p>
-        <div class="flex justify-center mb-6">
-            <div class="w-40 h-40 portfolio-orbit relative" id="portfolioOrbit">
-                <div id="portfolioOrbitGraphic" class="absolute inset-0"></div>
-                <div id="donutInner" class="portfolio-orbit-center donut-inner-light dark:donut-inner-dark transition-colors">
-                    <span class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-[0.18em]">Assets</span>
-                    <span class="text-xl font-bold text-slate-900 dark:text-white" id="ringTotal">0</span>
-                    <span class="text-[8px] text-slate-400 mt-0.5">ON-CHAIN</span>
-                </div>
-            </div>
-        </div>
-        <div class="space-y-3 bg-slate-50 dark:bg-[#0f1624] p-4 rounded-2xl border border-slate-100 dark:border-[#243048]" id="portfolioListContainer">
-                <div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>
-
+                <div class="space-y-6">
+                    
+                    <!-- 1. Live Exchange Box -->
+                    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900 dark:text-white">Live Exchange</h3>
+                            </div>
+                            <div class="flex -space-x-1.5">
+                                <div class="w-6 h-6 rounded-full bg-blue-600 border-2 border-white dark:border-darkCard flex items-center justify-center text-[9px] font-bold text-white">US</div>
+                                <div class="w-6 h-6 rounded-full bg-orange-500 border-2 border-white dark:border-darkCard flex items-center justify-center text-[9px] font-bold text-white">IN</div>
+                            </div>
                         </div>
+                        
+                        <div class="p-4 bg-slate-50 dark:bg-[#0f1624] rounded-2xl border border-slate-100 dark:border-[#243048] flex justify-between items-center">
+                            <span class="font-bold text-sm text-slate-700 dark:text-slate-300">USDC / INR</span>
+                            <div class="text-right">
+                                <span class="text-[10px] text-emerald-500 dark:text-emerald-400 block mb-0.5 font-bold uppercase">LIVE RATE</span>
+                                <span class="font-bold text-lg text-slate-900 dark:text-white">₹83.45</span>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- 2. Portfolio Assets Box -->
+                    <div class="bg-white dark:bg-darkCard rounded-3xl p-6 border border-slate-200 dark:border-darkBorder transition-colors">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Assets</h3>
+                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800/40" id="portfolioChainBadge">Multi-Chain</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-3">Live on-chain balances across networks</p>
+                        <div class="flex justify-center mb-6">
+                            <div class="w-40 h-40 portfolio-orbit relative" id="portfolioOrbit">
+                                <div id="portfolioOrbitGraphic" class="absolute inset-0"></div>
+                                <div id="donutInner" class="portfolio-orbit-center donut-inner-light dark:donut-inner-dark transition-colors">
+                                    <span class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-[0.18em]">Assets</span>
+                                    <span class="text-xl font-bold text-slate-900 dark:text-white" id="ringTotal">0</span>
+                                    <span class="text-[8px] text-slate-400 mt-0.5" id="ringSubtitle">ON-CHAIN</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-3 bg-slate-50 dark:bg-[#0f1624] p-4 rounded-2xl border border-slate-100 dark:border-[#243048]" id="portfolioListContainer">
+                            <div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>
+                        </div>
                     </div>
 
                 </div>
@@ -406,25 +417,26 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Your Assets</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Assets currently held by your connected wallet</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Assets held by your connected wallet across all integrated blockchains</p>
                     </div>
                     <a id="viewOnArcScan" href="https://testnet.arc-scan.org/" target="_blank" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1.5 shrink-0">
-                        <span class="hidden sm:inline">View on ArcScan</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        <span class="hidden sm:inline">View Explorer</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                     </a>
                 </div>
                 
                 <div id="assetsPlaceholder" class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
-                    Connect wallet to view your on-chain assets
+                    Connect wallet to view your on-chain assets across networks
                 </div>
 
                 <div id="assetsTable" class="w-full hidden overflow-x-auto">
-                    <div class="grid grid-cols-12 text-[10px] font-bold text-slate-400 uppercase tracking-wider pb-2 border-b border-slate-200 dark:border-darkBorder px-2 min-w-[420px]">
-                        <div class="col-span-5 md:col-span-4">Asset</div>
-                        <div class="col-span-4 md:col-span-3">Balance</div>
-                        <div class="hidden md:block col-span-2">Value</div>
-                        <div class="col-span-3 text-right">Contract</div>
+                    <div class="grid grid-cols-12 text-[10px] font-bold text-slate-400 uppercase tracking-wider pb-2 border-b border-slate-200 dark:border-darkBorder px-2 min-w-[540px]">
+                        <div class="col-span-4 md:col-span-4">Asset</div>
+                        <div class="col-span-3 md:col-span-2">Network</div>
+                        <div class="col-span-3 md:col-span-3">Balance</div>
+                        <div class="hidden md:block col-span-2">Value (USD)</div>
+                        <div class="col-span-2 md:col-span-1 text-right">Explorer</div>
                     </div>
-                    <div class="divide-y divide-slate-100 dark:divide-[#243048] text-xs min-w-[420px]" id="assetsTableList"></div>
+                    <div class="divide-y divide-slate-100 dark:divide-[#243048] text-xs min-w-[540px]" id="assetsTableList"></div>
                 </div>
             </div>
 
@@ -455,6 +467,8 @@
                         <input type="number" id="payAmount" placeholder="0.00" class="bg-transparent w-full p-2 text-2xl font-bold focus:outline-none text-slate-900 dark:text-white">
                         <select id="payToken" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-[#243048] text-slate-900 dark:text-white rounded-lg px-3 py-2 text-xs font-bold focus:outline-none shadow-sm">
                             <option value="USDC">USDC</option>
+                            <option value="ETH">ETH</option>
+                            <option value="USDT">USDT</option>
                             <option value="BUSD">BUSD</option>
                         </select>
                     </div>
@@ -533,7 +547,7 @@
             <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-2">
                     <div class="p-6 md:p-8 border-b md:border-b-0 md:border-r border-slate-200 dark:border-[#243048] flex flex-col justify-center">
-                        <p class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold mb-1">Your Balance</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold mb-1">Your Arc Balance</p>
                         <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-slate-900 dark:text-white" id="faucetBalance">0.00 <span class="text-lg md:text-xl text-blue-600 dark:text-blue-400">USDC</span></h2>
                         <span class="bg-slate-50 dark:bg-[#0f1624] border border-slate-200 dark:border-[#243048] px-3 py-1 rounded-lg text-xs text-slate-600 dark:text-slate-300 w-fit">USDC on Arc Testnet</span>
                     </div>
@@ -587,7 +601,7 @@
             <div class="compact-page-heading"><span class="compact-page-dot"></span><span>All On-Chain Transactions</span></div>
             <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-darkBorder overflow-hidden shadow-sm overflow-x-auto">
                 <div class="p-4 border-b border-slate-200 dark:border-[#243048] grid grid-cols-[1.1fr_1fr_1.35fr_112px_112px] gap-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase min-w-[720px]">
-                    <div>Type</div>
+                    <div>Type & Network</div>
                     <div>Asset</div>
                     <div>Counterparty</div>
                     <div class="text-center">Refund</div>
@@ -723,19 +737,20 @@
     <div id="sendModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/60 dark:bg-black/80">
         <div class="bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#26334a] w-full max-w-md rounded-[32px] p-7 md:p-8 relative shadow-2xl">
             <button type="button" onclick="closeModal('sendModal')" aria-label="Close" class="absolute top-6 right-6 w-9 h-9 rounded-full bg-slate-100 dark:bg-[#202938] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h2 class="flex items-center gap-3 text-2xl font-extrabold mb-7 text-slate-900 dark:text-white"><i class="fa-solid fa-arrow-up-right-from-square text-emerald-500 dark:text-teal-300"></i> Send Crypto</h2>
+            <h2 class="flex items-center gap-3 text-2xl font-extrabold mb-5 text-slate-900 dark:text-white"><i class="fa-solid fa-arrow-up-right-from-square text-emerald-500 dark:text-teal-300"></i> Send Crypto</h2>
+
+            <!-- Network Selection -->
+            <label for="directSendNetwork" class="block text-[10px] font-extrabold tracking-wide text-slate-500 dark:text-slate-400 mb-2">NETWORK</label>
+            <select id="directSendNetwork" onchange="onSendNetworkChange()" class="w-full h-[50px] bg-slate-100 dark:bg-[#080d15] border border-slate-300 dark:border-[#202b3d] rounded-2xl px-4 text-xs font-bold text-slate-900 dark:text-white mb-4 focus:outline-none focus:border-emerald-500">
+            </select>
 
             <label for="directSendTo" class="block text-[10px] font-extrabold tracking-wide text-slate-500 dark:text-slate-400 mb-2">RECIPIENT ADDRESS</label>
-            <input type="text" id="directSendTo" placeholder="0x..." class="w-full h-[54px] bg-slate-100 dark:bg-[#080d15] border border-slate-300 dark:border-[#202b3d] rounded-2xl px-4 text-xs text-slate-900 dark:text-white mb-6 font-mono placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500">
+            <input type="text" id="directSendTo" placeholder="0x..." class="w-full h-[50px] bg-slate-100 dark:bg-[#080d15] border border-slate-300 dark:border-[#202b3d] rounded-2xl px-4 text-xs text-slate-900 dark:text-white mb-4 font-mono placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500">
 
             <label for="directSendAmt" class="block text-[10px] font-extrabold tracking-wide text-slate-500 dark:text-slate-400 mb-2">AMOUNT</label>
-            <div class="flex items-center bg-slate-100 dark:bg-[#080d15] border border-slate-300 dark:border-[#202b3d] rounded-2xl p-2 mb-8 focus-within:border-emerald-500 transition">
+            <div class="flex items-center bg-slate-100 dark:bg-[#080d15] border border-slate-300 dark:border-[#202b3d] rounded-2xl p-2 mb-6 focus-within:border-emerald-500 transition">
                 <input type="number" id="directSendAmt" placeholder="0.00" class="bg-transparent w-full p-2 text-2xl font-extrabold text-slate-900 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-400 focus:outline-none">
                 <select id="directSendToken" class="h-[42px] bg-white dark:bg-[#252c39] border border-slate-200 dark:border-transparent text-slate-900 dark:text-white rounded-xl px-3 text-xs font-extrabold focus:outline-none shadow-sm">
-                    <option value="USDC">USDC</option>
-                    <option value="BUSD">BUSD</option>
-                    <option value="EURC">EURC</option>
-                    <option value="cirBTC">cirBTC</option>
                 </select>
             </div>
             <button id="sendTxBtn" onclick="executeDirectSend()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-extrabold py-4 rounded-2xl text-sm transition shadow-md">Confirm Transfer</button>
@@ -748,7 +763,7 @@
             <button type="button" onclick="closeModal('receiveModal')" aria-label="Close" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-100 dark:bg-[#202938] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center"><i class="fa-solid fa-xmark text-lg"></i></button>
             <div class="w-14 h-14 rounded-full bg-emerald-500/15 text-emerald-500 dark:text-teal-300 flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-qrcode text-xl"></i></div>
             <h2 class="text-2xl font-extrabold mb-1 text-slate-900 dark:text-white">Receive</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Scan QR code to receive payments</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Scan QR code to receive on any EVM network</p>
             <div class="bg-white p-3 rounded-[22px] w-fit mx-auto mb-6 shadow-md border border-slate-200 dark:border-slate-700">
                 <img id="myRecQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet" class="w-[200px] h-[200px]">
             </div>
@@ -801,7 +816,7 @@
         </div>
     </div>
 
-    <!-- Payment Request Modal (shown when opening a generated payment link) -->
+    <!-- Payment Request Modal -->
     <div id="paymentRequestModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[105]">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
             <button onclick="closeModal('paymentRequestModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -829,7 +844,7 @@
         </div>
     </div>
 
-    <!-- Success Modal for Sending/Receiving -->
+    <!-- Success Modal -->
     <div id="successModal" class="modal fixed inset-0 items-center justify-center p-4 bg-black/50 dark:bg-black/80 z-[110]">
         <div class="bg-white dark:bg-[#191a1a] w-full max-w-[320px] rounded-[24px] p-6 text-center relative shadow-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 scale-95 transform transition-all">
             <div class="w-16 h-16 bg-[#00d182] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
@@ -841,7 +856,7 @@
         </div>
     </div>
 
-    <!-- Reown AppKit integration for Arc Testnet -->
+    <!-- Reown AppKit integration for Multi-Chain EVM + Arc Testnet -->
     <script type="module">
         import { createAppKit } from 'https://esm.sh/@reown/appkit@1.8.23?bundle';
         import { mainnet, defineChain } from 'https://esm.sh/@reown/appkit@1.8.23/networks?bundle';
@@ -849,25 +864,83 @@
 
         const REOWN_PROJECT_ID = '11085fdc7e3488a54a917f03c2167492';
         const BULLKARRY_STORE_RECEIVING_ADDRESS = '0xfc37f1ee234d8037fb7b37b1fc346d0b9f880d07';
+
         const ARC_TESTNET = defineChain({
             id: 5042002,
             caipNetworkId: 'eip155:5042002',
             chainNamespace: 'eip155',
             name: 'Arc Testnet',
             nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-            rpcUrls: {
-                default: { http: ['https://rpc.testnet.arc.network'] }
-            },
-            blockExplorers: {
-                default: { name: 'Arcscan', url: 'https://testnet.arcscan.app' }
-            },
+            rpcUrls: { default: { http: ['https://rpc.testnet.arc.network'] } },
+            blockExplorers: { default: { name: 'Arcscan', url: 'https://testnet.arcscan.app' } },
             testnet: true
         });
+
+        const ETHEREUM_CHAIN = defineChain({
+            id: 1,
+            caipNetworkId: 'eip155:1',
+            chainNamespace: 'eip155',
+            name: 'Ethereum',
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            rpcUrls: { default: { http: ['https://eth.llamarpc.com'] } },
+            blockExplorers: { default: { name: 'Etherscan', url: 'https://etherscan.io' } }
+        });
+
+        const POLYGON_CHAIN = defineChain({
+            id: 137,
+            caipNetworkId: 'eip155:137',
+            chainNamespace: 'eip155',
+            name: 'Polygon',
+            nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
+            rpcUrls: { default: { http: ['https://polygon-rpc.com'] } },
+            blockExplorers: { default: { name: 'Polygonscan', url: 'https://polygonscan.com' } }
+        });
+
+        const ARBITRUM_CHAIN = defineChain({
+            id: 42161,
+            caipNetworkId: 'eip155:42161',
+            chainNamespace: 'eip155',
+            name: 'Arbitrum One',
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            rpcUrls: { default: { http: ['https://arb1.arbitrum.io/rpc'] } },
+            blockExplorers: { default: { name: 'Arbiscan', url: 'https://arbiscan.io' } }
+        });
+
+        const OPTIMISM_CHAIN = defineChain({
+            id: 10,
+            caipNetworkId: 'eip155:10',
+            chainNamespace: 'eip155',
+            name: 'Optimism',
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            rpcUrls: { default: { http: ['https://mainnet.optimism.io'] } },
+            blockExplorers: { default: { name: 'Etherscan', url: 'https://optimistic.etherscan.io' } }
+        });
+
+        const BASE_CHAIN = defineChain({
+            id: 8453,
+            caipNetworkId: 'eip155:8453',
+            chainNamespace: 'eip155',
+            name: 'Base',
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            rpcUrls: { default: { http: ['https://mainnet.base.org'] } },
+            blockExplorers: { default: { name: 'Basescan', url: 'https://basescan.org' } }
+        });
+
+        const BSC_CHAIN = defineChain({
+            id: 56,
+            caipNetworkId: 'eip155:56',
+            chainNamespace: 'eip155',
+            name: 'BNB Smart Chain',
+            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+            rpcUrls: { default: { http: ['https://bsc-dataseed.binance.org'] } },
+            blockExplorers: { default: { name: 'BscScan', url: 'https://bscscan.com' } }
+        });
+
+        const networks = [ETHEREUM_CHAIN, POLYGON_CHAIN, ARBITRUM_CHAIN, OPTIMISM_CHAIN, BASE_CHAIN, BSC_CHAIN, ARC_TESTNET];
 
         let appKit = null;
         let reownInitPromise = null;
         let reownDisconnecting = false;
-        let reownSyncTimer = null;
 
         async function syncReownWalletState() {
             if (!appKit || reownDisconnecting) return;
@@ -885,7 +958,6 @@
                         window.__bullkarryWalletProviderInfo = { name: appKit.getWalletProviderType?.() || 'Wallet' };
                     }
 
-                    // Keep the existing Bullkarry wallet/data logic unchanged.
                     if (typeof window.initializeWallet === 'function') {
                         if (userAccount !== address || !isWalletConnected) {
                             await window.initializeWallet(address);
@@ -913,32 +985,25 @@
 
                 const metadata = {
                     name: 'Bullkarry',
-                    description: 'Bullkarry on Arc Testnet',
-                    // Reown requires metadata.url to match the deployed origin.
-                    // Using the current origin keeps mobile WalletConnect/deep-link
-                    // flows aligned with the approved site the user actually opened.
+                    description: 'Bullkarry Multi-Chain Web3 Dashboard',
                     url: appUrl,
                     icons: ['https://bullkarry.vercel.app/favicon.ico']
                 };
 
-                // Keep a standard EVM network available during WalletConnect session
-                // negotiation. Some mobile/desktop wallets reject a session proposal
-                // when the only requested chain is a custom chain they have not added
-                // yet. Arc remains the default application network and is switched to
-                // after the wallet provider is available.
-                const networks = [mainnet, ARC_TESTNET];
-
                 appKit = createAppKit({
                     adapters: [adapter],
                     networks,
-                    defaultNetwork: ARC_TESTNET,
+                    defaultNetwork: ETHEREUM_CHAIN,
                     metadata,
                     projectId: REOWN_PROJECT_ID,
                     customRpcUrls: {
-                        // AppKit expects an array of RPC objects, not a URL string.
-                        // A URL string here causes its connector UI to call .map() on
-                        // the string and prevents every wallet from opening.
-                        'eip155:5042002': [{ url: 'https://rpc.testnet.arc.network' }]
+                        'eip155:5042002': [{ url: 'https://rpc.testnet.arc.network' }],
+                        'eip155:1': [{ url: 'https://eth.llamarpc.com' }],
+                        'eip155:137': [{ url: 'https://polygon-rpc.com' }],
+                        'eip155:42161': [{ url: 'https://arb1.arbitrum.io/rpc' }],
+                        'eip155:10': [{ url: 'https://mainnet.optimism.io' }],
+                        'eip155:8453': [{ url: 'https://mainnet.base.org' }],
+                        'eip155:56': [{ url: 'https://bsc-dataseed.binance.org' }]
                     },
                     features: {
                         analytics: false,
@@ -968,8 +1033,6 @@
                     }
                 };
 
-                // Reown's provider subscription keeps the existing Bullkarry UI/data
-                // in sync when the user connects, changes account, or changes chain.
                 if (typeof appKit.subscribeProvider === 'function') {
                     appKit.subscribeProvider(async (state) => {
                         try {
@@ -983,10 +1046,6 @@
                                 window.__bullkarryWalletProvider = provider;
                                 window.__bullkarryWalletProviderInfo = { name: state?.providerType || appKit.getWalletProviderType?.() || 'Wallet' };
                             }
-                            // Use the provider callback's connection state directly.
-                            // Do not wait for getIsConnected() on the selected network,
-                            // because a newly negotiated WC session can briefly be on
-                            // the wallet's current chain before Arc is selected.
                             if (connected && address && typeof window.initializeWallet === 'function') {
                                 if (userAccount !== address || !isWalletConnected) {
                                     await window.initializeWallet(address);
@@ -1000,7 +1059,6 @@
                     });
                 }
 
-                // Also listen through the current multi-provider API when available.
                 if (typeof appKit.subscribeProviders === 'function') {
                     appKit.subscribeProviders(async (state) => {
                         const provider = state?.eip155;
@@ -1013,18 +1071,7 @@
                     });
                 }
 
-                if (typeof appKit.subscribeState === 'function') {
-                    appKit.subscribeState((state) => {
-                        if (state?.open === false) {
-                            const error = appKit?.getError?.();
-                            if (error) console.warn('Reown connection error:', error);
-                        }
-                    });
-                }
-
-                // Restore an existing Reown session without requiring a page refresh.
                 await syncReownWalletState();
-
                 return appKit;
             })();
 
@@ -1038,10 +1085,6 @@
             }
         }
 
-        // Expose initialization for the main app script. We intentionally do not
-        // initialize AppKit here because this module lives in <head> and the main
-        // Bullkarry wallet state is declared later in the document. Initializing here
-        // can race that state and break session restoration.
         window.__initializeReown = initializeReown;
 
         async function openReownConnection() {
@@ -1051,37 +1094,159 @@
 
         window.__openReownConnect = async () => {
             try {
-                // Reown AppKit is the single wallet connection path.
-                // It handles EIP-6963 browser wallets on desktop and
-                // WalletConnect/deep-links on mobile.
                 await openReownConnection();
             } catch (error) {
                 console.error('Wallet connection failed:', error);
-                const code = error?.code || error?.data?.code || '';
                 const message = error?.message || 'Wallet connection was cancelled or failed.';
-                alert(`Wallet connection failed${code ? ` (${code})` : ''}: ${message}`);
+                alert(`Wallet connection failed: ${message}`);
             }
         };
     </script>
 
     <script>
-        // Exact On-Chain Contracts
-        const TOKEN_CONTRACTS = {
-            BUSD: { name: "Bullkarry Demo USD", symbol: "BUSD", address: "0xf42c56e47362CECB426B95a65AeCC87d8007ec97", decimals: 18, color: "bg-[#0f1624]" },
-            EURC: { name: "EURC", symbol: "EURC", address: "0x89B508A89A6A12902CA4a51e60A444C3FDaD72a", decimals: 18, color: "bg-blue-600" },
-            cirBTC: { name: "Circle Wrapped Bitcoin", symbol: "cirBTC", address: "0xf0C4a42E0d908c6A4C2533B8E1BcbB8544e332BF", decimals: 18, color: "bg-[#0f1624]" }
+        // Multi-Chain Network Configuration
+        const NETWORKS_CONFIG = {
+            1: {
+                id: 1,
+                name: "Ethereum",
+                symbol: "ETH",
+                nativeName: "Ether",
+                decimals: 18,
+                rpc: "https://eth.llamarpc.com",
+                explorer: "https://etherscan.io",
+                color: "bg-indigo-600",
+                tokens: [
+                    { symbol: "USDT", name: "Tether USD", address: "0xdAC17F958D2ee523a2206206994597C13D831ec7", decimals: 6, color: "bg-emerald-500" },
+                    { symbol: "USDC", name: "USD Coin", address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", decimals: 6, color: "bg-blue-500" },
+                    { symbol: "DAI", name: "Dai Stablecoin", address: "0x6B175474E89094C44Da98b954EedeAC495271d0F", decimals: 18, color: "bg-yellow-500" },
+                    { symbol: "WBTC", name: "Wrapped BTC", address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599", decimals: 8, color: "bg-orange-500" }
+                ]
+            },
+            137: {
+                id: 137,
+                name: "Polygon",
+                symbol: "POL",
+                nativeName: "Polygon",
+                decimals: 18,
+                rpc: "https://polygon-rpc.com",
+                explorer: "https://polygonscan.com",
+                color: "bg-purple-600",
+                tokens: [
+                    { symbol: "USDT", name: "Tether USD", address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F", decimals: 6, color: "bg-emerald-500" },
+                    { symbol: "USDC", name: "USD Coin", address: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359", decimals: 6, color: "bg-blue-500" },
+                    { symbol: "WETH", name: "Wrapped Ether", address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", decimals: 18, color: "bg-indigo-500" }
+                ]
+            },
+            42161: {
+                id: 42161,
+                name: "Arbitrum One",
+                symbol: "ETH",
+                nativeName: "Arbitrum Ether",
+                decimals: 18,
+                rpc: "https://arb1.arbitrum.io/rpc",
+                explorer: "https://arbiscan.io",
+                color: "bg-blue-600",
+                tokens: [
+                    { symbol: "USDC", name: "USD Coin", address: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831", decimals: 6, color: "bg-blue-500" },
+                    { symbol: "USDT", name: "Tether USD", address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9", decimals: 6, color: "bg-emerald-500" },
+                    { symbol: "ARB", name: "Arbitrum", address: "0x912CE59144191C1204E64559FE8253a0e49E6548", decimals: 18, color: "bg-sky-500" }
+                ]
+            },
+            8453: {
+                id: 8453,
+                name: "Base",
+                symbol: "ETH",
+                nativeName: "Base Ether",
+                decimals: 18,
+                rpc: "https://mainnet.base.org",
+                explorer: "https://basescan.org",
+                color: "bg-blue-500",
+                tokens: [
+                    { symbol: "USDC", name: "USD Coin", address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", decimals: 6, color: "bg-blue-500" },
+                    { symbol: "DAI", name: "Dai Stablecoin", address: "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb", decimals: 18, color: "bg-yellow-500" }
+                ]
+            },
+            10: {
+                id: 10,
+                name: "Optimism",
+                symbol: "ETH",
+                nativeName: "OP Ether",
+                decimals: 18,
+                rpc: "https://mainnet.optimism.io",
+                explorer: "https://optimistic.etherscan.io",
+                color: "bg-red-500",
+                tokens: [
+                    { symbol: "USDC", name: "USD Coin", address: "0x0b2C639c533813f4Aa9D7837CA6AD34399288060", decimals: 6, color: "bg-blue-500" },
+                    { symbol: "USDT", name: "Tether USD", address: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58", decimals: 6, color: "bg-emerald-500" },
+                    { symbol: "OP", name: "Optimism", address: "0x4200000000000000000000000000000000000042", decimals: 18, color: "bg-red-500" }
+                ]
+            },
+            56: {
+                id: 56,
+                name: "BNB Smart Chain",
+                symbol: "BNB",
+                nativeName: "BNB",
+                decimals: 18,
+                rpc: "https://bsc-dataseed.binance.org",
+                explorer: "https://bscscan.com",
+                color: "bg-yellow-500",
+                tokens: [
+                    { symbol: "USDT", name: "Tether USD", address: "0x55d398326f99059fF775485246999027B3197955", decimals: 18, color: "bg-emerald-500" },
+                    { symbol: "USDC", name: "USD Coin", address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d", decimals: 18, color: "bg-blue-500" },
+                    { symbol: "BUSD", name: "BUSD Token", address: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56", decimals: 18, color: "bg-yellow-400" }
+                ]
+            },
+            5042002: {
+                id: 5042002,
+                name: "Arc Testnet",
+                symbol: "USDC",
+                nativeName: "USD Coin (Native)",
+                decimals: 18,
+                rpc: "https://rpc.testnet.arc.network",
+                explorer: "https://testnet.arcscan.app",
+                color: "bg-teal-600",
+                testnet: true,
+                tokens: [
+                    { symbol: "BUSD", name: "Bullkarry Demo USD", address: "0xf42c56e47362CECB426B95a65AeCC87d8007ec97", decimals: 18, color: "bg-[#0f1624]" },
+                    { symbol: "EURC", name: "EURC", address: "0x89B508A89A6A12902CA4a51e60A444C3FDaD72a", decimals: 18, color: "bg-blue-600" },
+                    { symbol: "cirBTC", name: "Circle Wrapped Bitcoin", address: "0xf0C4a42E0d908c6A4C2533B8E1BcbB8544e332BF", decimals: 18, color: "bg-[#0f1624]" }
+                ]
+            }
+        };
+
+        const TOKEN_PRICES = {
+            "ETH": 2650.0,
+            "WETH": 2650.0,
+            "BNB": 580.0,
+            "POL": 0.42,
+            "MATIC": 0.42,
+            "ARB": 0.58,
+            "OP": 1.65,
+            "BTC": 64000.0,
+            "WBTC": 64000.0,
+            "cirBTC": 64000.0,
+            "USDC": 1.0,
+            "USDT": 1.0,
+            "DAI": 1.0,
+            "BUSD": 1.0,
+            "EURC": 1.08
         };
 
         const ERC20_ABI = [
             "function balanceOf(address owner) view returns (uint256)",
             "function decimals() view returns (uint8)",
+            "function symbol() view returns (string)",
+            "function name() view returns (string)",
             "function transfer(address to, uint amount) returns (bool)"
         ];
 
         let userAccount = null;
         let isWalletConnected = false;
         let usdcBalance = 0;
+        let totalPortfolioValueUSD = 0;
         let isINR = false;
+        let allMultiChainAssets = [];
+        let activeNetworkFilter = 'all';
         let liveTokens = [];
         let transactions = [];
         let autoSyncInterval;
@@ -1131,14 +1296,100 @@
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            populateNetworkSelectors();
             handleIncomingPaymentLink();
             renderPayments();
-            // Start EIP-6963 discovery immediately so desktop extensions
-            // are available before the user presses Connect Wallet.
             setupWalletDiscovery();
-            // Restore an already-authorized injected wallet when possible.
             setTimeout(() => restoreAuthorizedWallet().catch(() => {}), 900);
         });
+
+        function populateNetworkSelectors() {
+            const listEl = document.getElementById('networkDropdownList');
+            const sendNetEl = document.getElementById('directSendNetwork');
+            if (listEl) {
+                listEl.innerHTML = '';
+                Object.values(NETWORKS_CONFIG).forEach(net => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left px-3.5 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200';
+                    btn.innerHTML = `<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full ${net.color}"></span><span class="font-semibold">${net.name}</span></span><span class="text-[10px] text-slate-400 font-mono">${net.symbol}</span>`;
+                    btn.onclick = () => selectNetworkFilter(net.id);
+                    listEl.appendChild(btn);
+                });
+            }
+
+            if (sendNetEl) {
+                sendNetEl.innerHTML = '';
+                Object.values(NETWORKS_CONFIG).forEach(net => {
+                    const opt = document.createElement('option');
+                    opt.value = net.id;
+                    opt.textContent = `${net.name} (${net.symbol})`;
+                    sendNetEl.appendChild(opt);
+                });
+                onSendNetworkChange();
+            }
+        }
+
+        function toggleNetworkDropdown() {
+            const dropdown = document.getElementById('networkDropdown');
+            if (dropdown) dropdown.classList.toggle('hidden');
+        }
+
+        async function selectNetworkFilter(chainId) {
+            activeNetworkFilter = chainId;
+            const dropdown = document.getElementById('networkDropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+
+            const labelEl = document.getElementById('selectedNetworkLabel');
+            const sideTitle = document.getElementById('sidebarNetworkTitle');
+            const sideSub = document.getElementById('sidebarNetworkSubtitle');
+            const badge = document.getElementById('portfolioChainBadge');
+
+            if (chainId === 'all') {
+                if (labelEl) labelEl.textContent = 'All Networks';
+                if (sideTitle) sideTitle.textContent = 'Multi-Chain';
+                if (sideSub) sideSub.textContent = `${Object.keys(NETWORKS_CONFIG).length} Chains Active`;
+                if (badge) badge.textContent = 'Multi-Chain';
+            } else {
+                const net = NETWORKS_CONFIG[chainId];
+                if (net) {
+                    if (labelEl) labelEl.textContent = net.name;
+                    if (sideTitle) sideTitle.textContent = net.name;
+                    if (sideSub) sideSub.textContent = `Chain ID: ${net.id}`;
+                    if (badge) badge.textContent = net.name;
+                    
+                    const eip1193 = getActiveEip1193Provider();
+                    if (eip1193 && isWalletConnected) {
+                        try { await ensureChain(net.id, eip1193); } catch (_) {}
+                    }
+                }
+            }
+            renderBalancesAndAssets();
+        }
+
+        function onSendNetworkChange() {
+            const sendNetEl = document.getElementById('directSendNetwork');
+            const sendTokenEl = document.getElementById('directSendToken');
+            if (!sendNetEl || !sendTokenEl) return;
+            const netId = sendNetEl.value;
+            const net = NETWORKS_CONFIG[netId];
+            if (!net) return;
+
+            sendTokenEl.innerHTML = '';
+            const natOpt = document.createElement('option');
+            natOpt.value = net.symbol;
+            natOpt.textContent = `${net.symbol} (Native)`;
+            sendTokenEl.appendChild(natOpt);
+
+            if (net.tokens) {
+                net.tokens.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.symbol;
+                    opt.textContent = t.symbol;
+                    sendTokenEl.appendChild(opt);
+                });
+            }
+        }
 
         function setupWalletDiscovery() {
             window.addEventListener('eip6963:announceProvider', (event) => {
@@ -1159,10 +1410,6 @@
                     renderWalletProviders();
                 }
             }, 700);
-            window.addEventListener('eip6963:announceProvider', () => {
-                // Keep the listener alive for wallet extensions that announce later.
-                renderWalletProviders();
-            });
         }
 
         function detectLegacyWalletInfo(provider, index) {
@@ -1178,16 +1425,12 @@
 
         function renderWalletProviders() {
             const host = document.getElementById('walletProviderList');
-            const mobile = document.getElementById('mobileWalletOptions');
             if (!host) return;
             host.innerHTML = '';
             if (discoveredWallets.size === 0) {
-                host.innerHTML = '<div class="rounded-2xl border border-slate-200 dark:border-[#243048] bg-slate-50 dark:bg-[#0f1624] p-4 text-center text-xs text-slate-500 dark:text-slate-400">No injected browser wallet detected.</div>';
-                if (mobile) mobile.classList.remove('hidden');
-                updateWalletQr();
+                host.innerHTML = '<div class="rounded-2xl border border-slate-200 dark:border-[#243048] bg-slate-50 dark:bg-[#0f1624] p-4 text-center text-xs text-slate-500 dark:text-slate-400">No injected browser wallet detected. Use Reown connect.</div>';
                 return;
             }
-            if (mobile) mobile.classList.add('hidden');
             [...discoveredWallets.values()].forEach(detail => {
                 const info = detail.info || {};
                 const button = document.createElement('button');
@@ -1207,19 +1450,11 @@
                 button.addEventListener('click', () => connectDiscoveredWallet(detail));
                 host.appendChild(button);
             });
-            updateWalletQr();
         }
 
         function walletFallbackIcon(name) {
             const label = encodeURIComponent(String(name || 'W').slice(0,1).toUpperCase());
             return 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" rx="22" fill="#2563eb"/><text x="48" y="60" text-anchor="middle" font-family="Arial" font-size="42" font-weight="700" fill="white">${label}</text></svg>`);
-        }
-
-        function updateWalletQr() {
-            const qr = document.getElementById('walletConnectQr');
-            if (!qr) return;
-            const url = window.location.href.split('#')[0];
-            qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(url);
         }
 
         async function connectDiscoveredWallet(detail) {
@@ -1233,9 +1468,7 @@
                 localStorage.setItem('bullkarry_wallet_uuid', detail.info?.uuid || detail.info?.rdns || '');
                 localStorage.setItem('bullkarry_wallet_name', detail.info?.name || 'Browser Wallet');
                 attachWalletProviderListeners(provider);
-                try { await ensureArcTestnet(provider); } catch (networkError) { console.warn('Arc network switch request:', networkError); }
                 await initializeWallet(accounts[0]);
-                
             } catch (error) {
                 console.error('Wallet connection failed:', error);
                 alert(error?.message || 'Wallet connection was cancelled or failed.');
@@ -1273,47 +1506,35 @@
             }
         }
 
-        async function ensureArcTestnet(provider) {
+        async function ensureChain(targetChainId, provider = null) {
+            if (!provider) provider = getActiveEip1193Provider();
             if (!provider) return;
-            const chainId = await provider.request({ method: 'eth_chainId' }).catch(() => null);
-            if (String(chainId).toLowerCase() === '0x4cef52') return;
+            const hexChainId = '0x' + Number(targetChainId).toString(16);
+            const currentChainId = await provider.request({ method: 'eth_chainId' }).catch(() => null);
+            if (String(currentChainId).toLowerCase() === hexChainId.toLowerCase()) return;
+
             try {
-                await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x4cef52' }] });
+                await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hexChainId }] });
             } catch (switchError) {
                 if (switchError?.code === 4902 || /unrecognized|not added|unknown chain/i.test(switchError?.message || '')) {
+                    const net = NETWORKS_CONFIG[targetChainId];
+                    if (!net) throw switchError;
                     await provider.request({
                         method: 'wallet_addEthereumChain',
                         params: [{
-                            chainId: '0x4cef52',
-                            chainName: 'Arc Testnet',
-                            nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-                            rpcUrls: ['https://rpc.testnet.arc.network'],
-                            blockExplorerUrls: ['https://testnet.arcscan.app']
+                            chainId: hexChainId,
+                            chainName: net.name,
+                            nativeCurrency: { name: net.symbol, symbol: net.symbol, decimals: net.decimals },
+                            rpcUrls: [net.rpc],
+                            blockExplorerUrls: [net.explorer]
                         }]
                     });
-                } else throw switchError;
+                } else {
+                    throw switchError;
+                }
             }
         }
 
-        function openMobileWallet(wallet) {
-            const target = window.location.href.split('#')[0];
-            const encoded = encodeURIComponent(target);
-            let url = '';
-            if (wallet === 'metamask') {
-                url = 'https://metamask.app.link/dapp/' + target.replace(/^https?:\/\//, '');
-            } else if (wallet === 'phantom') {
-                url = 'https://phantom.app/ul/browse/' + encoded + '?ref=' + encodeURIComponent(window.location.origin);
-            } else if (wallet === 'okx') {
-                url = 'okx://wallet/dapp/url?dappUrl=' + encoded;
-            } else if (wallet === 'rabby') {
-                url = 'https://rabby.io/';
-            }
-            if (url) window.location.href = url;
-        }
-
-        // Reads ?pay=<address>&amt=<amount>&token=<symbol>&note=<note>
-        // from the URL and shows a Payment Request modal so opening a
-        // generated payment link surfaces the correct details.
         function handleIncomingPaymentLink() {
             const params = new URLSearchParams(window.location.search);
             const payTo = params.get('pay');
@@ -1322,11 +1543,8 @@
             const amt = params.get('amt') || '0';
             const token = params.get('token') || 'USDC';
             let note = '';
-            try {
-                note = params.get('note') ? decodeURIComponent(params.get('note')) : '';
-            } catch (_) {
-                note = params.get('note') || '';
-            }
+            try { note = params.get('note') ? decodeURIComponent(params.get('note')) : ''; }
+            catch (_) { note = params.get('note') || ''; }
 
             document.getElementById('reqToAddress').innerText = payTo;
             document.getElementById('reqAmount').innerText = amt + ' ' + token;
@@ -1353,7 +1571,6 @@
             closeModal('paymentRequestModal');
             document.getElementById('directSendTo').value = to;
             document.getElementById('directSendAmt').value = amount;
-            document.getElementById('directSendToken').value = token;
             openModal('sendModal');
         }
 
@@ -1377,7 +1594,6 @@
             document.getElementById('faucetWalletAddress').innerText = shortAddr;
             document.getElementById('myRecAddr').value = userAccount;
             document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent('ethereum:' + userAccount);
-            updateWalletQr();
 
             document.getElementById('assetsPlaceholder').classList.add('hidden');
             document.getElementById('assetsTable').classList.remove('hidden');
@@ -1385,45 +1601,175 @@
             await syncAllOnChainData();
 
             if (autoSyncInterval) clearInterval(autoSyncInterval);
-            autoSyncInterval = setInterval(syncAllOnChainData, 4000);
+            autoSyncInterval = setInterval(syncAllOnChainData, 6000);
 
             if (window.__pendingPayment) {
                 openModal('paymentRequestModal');
             }
         }
 
+        async function fetchBalancesForNetwork(net, address) {
+            const assets = [];
+            try {
+                const rpcProvider = new ethers.providers.JsonRpcProvider(net.rpc);
+                
+                const nativeBalPromise = rpcProvider.getBalance(address).catch(() => ethers.BigNumber.from(0));
+                const nativeBalWei = await Promise.race([
+                    nativeBalPromise,
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
+                ]).catch(() => ethers.BigNumber.from(0));
+
+                const nativeBalNum = parseFloat(ethers.utils.formatUnits(nativeBalWei, net.decimals));
+                if (nativeBalNum > 0) {
+                    const unitPrice = TOKEN_PRICES[net.symbol] || (net.symbol === 'USDC' ? 1.0 : 0);
+                    assets.push({
+                        chainId: net.id,
+                        chainName: net.name,
+                        name: net.nativeName || net.symbol,
+                        symbol: net.symbol,
+                        balance: nativeBalNum,
+                        decimals: net.decimals,
+                        address: 'native',
+                        isNative: true,
+                        color: net.color,
+                        price: unitPrice,
+                        valueUSD: nativeBalNum * unitPrice,
+                        explorer: `${net.explorer}/address/${address}`
+                    });
+                }
+
+                if (net.tokens && net.tokens.length > 0) {
+                    const tokenPromises = net.tokens.map(async (t) => {
+                        try {
+                            const contract = new ethers.Contract(t.address, ERC20_ABI, rpcProvider);
+                            const balRaw = await Promise.race([
+                                contract.balanceOf(address),
+                                new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
+                            ]);
+                            const balNum = parseFloat(ethers.utils.formatUnits(balRaw, t.decimals));
+                            if (balNum > 0) {
+                                const unitPrice = TOKEN_PRICES[t.symbol] || 1.0;
+                                return {
+                                    chainId: net.id,
+                                    chainName: net.name,
+                                    name: t.name,
+                                    symbol: t.symbol,
+                                    balance: balNum,
+                                    decimals: t.decimals,
+                                    address: t.address,
+                                    isNative: false,
+                                    color: t.color || 'bg-blue-600',
+                                    price: unitPrice,
+                                    valueUSD: balNum * unitPrice,
+                                    explorer: `${net.explorer}/token/${t.address}`
+                                };
+                            }
+                        } catch (_) {
+                            return null;
+                        }
+                        return null;
+                    });
+
+                    const resolvedTokens = await Promise.all(tokenPromises);
+                    resolvedTokens.filter(Boolean).forEach(asset => assets.push(asset));
+                }
+
+                if (net.id === 5042002) {
+                    try {
+                        const arcDiscovered = await fetchAllWalletAssets(rpcProvider);
+                        for (const t of arcDiscovered) {
+                            if (!assets.some(a => a.address.toLowerCase() === t.address.toLowerCase())) {
+                                const unitPrice = TOKEN_PRICES[t.symbol] || 1.0;
+                                assets.push({
+                                    chainId: 5042002,
+                                    chainName: 'Arc Testnet',
+                                    name: t.name,
+                                    symbol: t.symbol,
+                                    balance: t.balance,
+                                    decimals: t.decimals,
+                                    address: t.address,
+                                    isNative: false,
+                                    color: t.color || 'bg-emerald-600',
+                                    price: unitPrice,
+                                    valueUSD: t.balance * unitPrice,
+                                    explorer: `https://testnet.arcscan.app/token/${t.address}`
+                                });
+                            }
+                        }
+                    } catch (_) {}
+                }
+            } catch (err) {
+                console.warn(`Error fetching balances on ${net.name}:`, err);
+            }
+            return assets;
+        }
+
         async function syncAllOnChainData() {
-            const eip1193 = getActiveEip1193Provider();
-            if (!userAccount || !isWalletConnected || !eip1193) return;
+            if (!userAccount || !isWalletConnected) return;
 
             try {
-                const provider = new ethers.providers.Web3Provider(eip1193);
+                const networkKeys = Object.keys(NETWORKS_CONFIG);
+                const fetchPromises = networkKeys.map(chainId => 
+                    fetchBalancesForNetwork(NETWORKS_CONFIG[chainId], userAccount)
+                );
 
-                // Arc uses native USDC as the gas asset. Keep this native balance as
-                // the single USDC balance; do not add an ERC-20 copy of the same asset.
-                const balanceWei = await provider.getBalance(userAccount).catch(() => ethers.BigNumber.from(0));
-                usdcBalance = parseFloat(ethers.utils.formatEther(balanceWei));
+                const results = await Promise.allSettled(fetchPromises);
+                let collectedAssets = [];
+                results.forEach(res => {
+                    if (res.status === 'fulfilled' && Array.isArray(res.value)) {
+                        collectedAssets.push(...res.value);
+                    }
+                });
 
-                // First try Arcscan's address token index. This discovers tokens that
-                // are NOT hard-coded in TOKEN_CONTRACTS. Fall back to the known contracts
-                // only if the index is temporarily unavailable.
-                const discovered = await fetchAllWalletAssets(provider);
-                liveTokens = discovered;
+                collectedAssets.sort((a, b) => b.valueUSD - a.valueUSD || b.balance - a.balance);
+                allMultiChainAssets = collectedAssets;
+
+                totalPortfolioValueUSD = collectedAssets.reduce((sum, a) => sum + (a.valueUSD || 0), 0);
+
+                const arcUsdc = collectedAssets.find(a => a.chainId === 5042002 && a.isNative);
+                usdcBalance = arcUsdc ? arcUsdc.balance : (totalPortfolioValueUSD > 0 ? totalPortfolioValueUSD : 0);
 
                 renderBalancesAndAssets();
                 await fetchLiveTransactions();
             } catch (err) {
-                console.error("Critical Web3 Sync Error:", err);
+                console.error("Critical Multi-Chain Web3 Sync Error:", err);
                 renderBalancesAndAssets();
                 await fetchLiveTransactions();
             }
         }
 
-        // Official Arcscan Testnet API documented for chain 5042002.
         const ARCSCAN_TESTNET_API = "https://api-testnet.arc-scan.org/api";
         const ARCSCAN_TESTNET_V1 = "https://api-testnet.arc-scan.org/v1";
         const ARC_NATIVE_USDC_PRECOMPILE = "0x3600000000000000000000000000000000000000";
-        const tokenMetadataCache = new Map();
+
+        async function fetchAllWalletAssets(provider) {
+            const byAddress = new Map();
+            const arcTokens = NETWORKS_CONFIG[5042002].tokens || [];
+            for (const t of arcTokens) {
+                byAddress.set(t.address.toLowerCase(), { ...t });
+            }
+
+            const entries = [...byAddress.values()];
+            const results = await Promise.all(entries.map(async t => {
+                try {
+                    const contract = new ethers.Contract(t.address, ERC20_ABI, provider);
+                    const [rawBal, decimals] = await Promise.all([
+                        contract.balanceOf(userAccount),
+                        contract.decimals().catch(() => t.decimals || 18)
+                    ]);
+                    const dec = Number(decimals || t.decimals || 18);
+                    const balance = Number(ethers.utils.formatUnits(rawBal, dec));
+                    return { ...t, decimals: dec, balance };
+                } catch (err) {
+                    return null;
+                }
+            }));
+
+            return results
+                .filter(Boolean)
+                .filter(t => Number.isFinite(t.balance) && t.balance > 0)
+                .sort((a, b) => b.balance - a.balance);
+        }
 
         function formatTxTime(timestamp) {
             const now = Math.floor(Date.now() / 1000);
@@ -1438,204 +1784,6 @@
         function formatAddress(address) {
             if (!address) return "Unknown";
             return address.substring(0, 6) + "..." + address.substring(address.length - 4);
-        }
-
-        function formatTokenAmount(raw, decimals) {
-            try {
-                const value = ethers.utils.formatUnits(String(raw || "0"), Number(decimals || 18));
-                return Number(value).toLocaleString(undefined, { maximumFractionDigits: 8 });
-            } catch (_) {
-                return "0";
-            }
-        }
-
-        function normalizeTokenRecord(row) {
-            const address = String(
-                row.token_address || row.address || row.contract_address || row.tokenAddress || ""
-            );
-            const lower = address.toLowerCase();
-            if (!address || lower === ARC_NATIVE_USDC_PRECOMPILE) return null;
-
-            const money = row.balance && typeof row.balance === "object" ? row.balance : null;
-            const raw = money?.raw ?? row.balance_raw ?? row.raw_balance ?? row.raw ?? row.balance ?? "0";
-            const decimals = Number(row.decimals ?? row.token_decimals ?? row.tokenDecimal ?? money?.decimals ?? 18);
-            const symbol = row.symbol || row.token_symbol || row.tokenSymbol || money?.symbol || "TOKEN";
-            const name = row.name || row.token_name || row.tokenName || symbol;
-            const formatted = money?.formatted;
-            const balance = formatted !== undefined && formatted !== null
-                ? Number(String(formatted).replace(/,/g, ""))
-                : Number(ethers.utils.formatUnits(String(raw), decimals));
-
-            if (!Number.isFinite(balance) || balance <= 0) return null;
-
-            return {
-                name,
-                symbol,
-                address,
-                decimals,
-                balance,
-                color: "bg-emerald-600"
-            };
-        }
-
-        async function fetchAllWalletAssets(provider) {
-            const byAddress = new Map();
-
-            // Known contracts are still included, but they are no longer the only
-            // source. We also discover every ERC-20 contract that has transferred
-            // to/from this wallet on Arc Testnet, then read its real balanceOf().
-            for (const key of Object.keys(TOKEN_CONTRACTS)) {
-                const t = TOKEN_CONTRACTS[key];
-                byAddress.set(t.address.toLowerCase(), { ...t });
-            }
-
-            // Discover token contracts from the wallet's actual on-chain transfer history.
-            // This avoids relying on a fragile/undocumented token-inventory endpoint.
-            try {
-                const blockResponse = await fetch(`${ARCSCAN_TESTNET_API}?module=proxy&action=eth_blockNumber&_t=${Date.now()}`, { cache: "no-store" });
-                const blockJson = await blockResponse.json();
-                const latest = parseInt(blockJson?.result || "0", 16);
-
-                if (latest > 0) {
-                    const chunk = 150000;
-                    const requests = [];
-                    const minimumBlock = 0;
-                    for (let end = latest; end >= minimumBlock && requests.length < 12; end -= chunk) {
-                        const from = Math.max(minimumBlock, end - chunk + 1);
-                        requests.push(arcscanRequest({
-                            module: "account", action: "tokentx", address: userAccount,
-                            startblock: String(from), endblock: String(end),
-                            page: "1", offset: "100", sort: "desc"
-                        }).catch(() => []));
-                    }
-
-                    const transferRows = (await Promise.all(requests)).flat();
-                    const addresses = [...new Set(transferRows.map(row =>
-                        String(row.contractAddress || row.contract_address || row.token_address || "").trim()
-                    ).filter(a => /^0x[a-fA-F0-9]{40}$/.test(a)))];
-
-                    for (const address of addresses) {
-                        const lower = address.toLowerCase();
-                        if (byAddress.has(lower)) continue;
-                        const meta = await getTokenMetadata(address);
-                        byAddress.set(lower, {
-                            name: meta.name,
-                            symbol: meta.symbol,
-                            address,
-                            decimals: meta.decimals,
-                            balance: 0,
-                            color: "bg-emerald-600"
-                        });
-                    }
-                }
-            } catch (err) {
-                console.warn("Token contract discovery failed:", err);
-            }
-
-            // Read the current balance directly from each ERC-20 contract. This is
-            // authoritative for quantity and automatically removes zero-balance assets.
-            const entries = [...byAddress.values()];
-            const results = await Promise.all(entries.map(async t => {
-                try {
-                    const contract = new ethers.Contract(t.address, ERC20_ABI, provider);
-                    const [rawBal, decimals] = await Promise.all([
-                        contract.balanceOf(userAccount),
-                        contract.decimals().catch(() => t.decimals || 18)
-                    ]);
-                    const dec = Number(decimals || t.decimals || 18);
-                    const balance = Number(ethers.utils.formatUnits(rawBal, dec));
-                    return { ...t, decimals: dec, balance };
-                } catch (err) {
-                    console.warn("Token balance read failed:", t.symbol, t.address, err);
-                    return null;
-                }
-            }));
-
-            return results
-                .filter(Boolean)
-                .filter(t => Number.isFinite(t.balance) && t.balance > 0)
-                .sort((a, b) => b.balance - a.balance);
-        }
-
-        async function arcscanRequest(params) {
-            const url = new URL(ARCSCAN_TESTNET_API);
-            Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
-            url.searchParams.set("_t", Date.now().toString());
-
-            const response = await fetch(url.toString(), {
-                method: "GET",
-                cache: "no-store",
-                headers: { "Accept": "application/json" }
-            });
-
-            if (!response.ok) throw new Error("Arcscan HTTP " + response.status);
-            const data = await response.json();
-            if (!data || data.status !== "1" || !Array.isArray(data.result)) {
-                throw new Error("Arcscan API: " + String(data?.result || data?.message || "No valid result"));
-            }
-            return data.result;
-        }
-
-        async function getTokenMetadata(address) {
-            const key = address.toLowerCase();
-            if (tokenMetadataCache.has(key)) return tokenMetadataCache.get(key);
-
-            try {
-                const response = await fetch(`${ARCSCAN_TESTNET_V1}/tokens/${address}?_t=${Date.now()}`, { cache: "no-store" });
-                if (response.ok) {
-                    const data = await response.json();
-                    const item = data?.token || data?.data || data;
-                    const meta = {
-                        name: item?.name || item?.token_name || "Token",
-                        symbol: item?.symbol || item?.token_symbol || "TOKEN",
-                        decimals: Number(item?.decimals ?? item?.token_decimals ?? 18)
-                    };
-                    tokenMetadataCache.set(key, meta);
-                    return meta;
-                }
-            } catch (_) {}
-
-            const fallback = { name: "Token", symbol: "TOKEN", decimals: 18 };
-            tokenMetadataCache.set(key, fallback);
-            return fallback;
-        }
-
-        function normalizeTransaction(tx, sourceType, meta = {}) {
-            const me = userAccount.toLowerCase();
-            const from = (tx.from || tx.from_address || "").toLowerCase();
-            const to = (tx.to || tx.to_address || "").toLowerCase();
-            const isSent = from === me;
-            const symbol = sourceType === "native" ? "USDC" : (tx.tokenSymbol || tx.token_symbol || meta.symbol || "Token");
-            const decimals = sourceType === "native" ? 18 : Number(tx.tokenDecimal || tx.token_decimals || meta.decimals || 18);
-            const rawValue = tx.value ?? tx.amount ?? tx.raw_value ?? "0";
-            const amountNumber = Number(ethers.utils.formatUnits(String(rawValue), decimals));
-            const formattedAmount = amountNumber.toLocaleString(undefined, { maximumFractionDigits: 8 });
-            const counterpart = isSent ? to : from;
-
-            return {
-                hash: tx.hash || tx.tx_hash || tx.transactionHash,
-                type: isSent ? "Sent" : "Received",
-                token: symbol,
-                amount: (isSent ? "-" : "+") + formattedAmount + " " + symbol,
-                amountValue: amountNumber,
-                counterparty,
-                from: formatAddress(counterpart),
-                color: isSent ? "text-red-500" : "text-[#00d182]",
-                isSent,
-                isRefund: isKnownRefundHash(tx.hash),
-                isRefunded: isRefundedSource(tx.hash),
-                time: formatTxTime(tx.timeStamp || tx.timestamp || tx.block_timestamp),
-                timestamp: parseInt(tx.timeStamp || tx.timestamp || tx.block_timestamp || 0, 10),
-                blockNumber: parseInt(tx.blockNumber || tx.block_number || 0, 10),
-                status: tx.isError === "1" || tx.txreceipt_status === "0" || tx.status === "failed" ? "Failed" : "Confirmed"
-            };
-        }
-
-        function normalizeInternalTransaction(tx) {
-            const normalized = normalizeTransaction(tx, "native");
-            normalized.token = "USDC";
-            normalized.amount = normalized.amount.replace(/USDC$/, "USDC");
-            return normalized;
         }
 
         const BLOCKSCOUT_V2_BASE = "https://testnet.arcscan.app/api/v2";
@@ -1682,7 +1830,8 @@
                 hash,
                 type: isSent ? "Sent" : "Received",
                 token: symbol,
-                amount: (isSent ? "-" : "+") + amountValue.toLocaleString(undefined, { maximumFractionDigits: 8 }) + " " + symbol,
+                chainName: "Arc Testnet",
+                amount: (isSent ? "-" : "+") + amountValue.toLocaleString(undefined, { maximumFractionDigits: 6 }) + " " + symbol,
                 amountValue,
                 counterparty: isSent ? to : from,
                 from: formatAddress(isSent ? to : from),
@@ -1704,10 +1853,6 @@
                 const allItems = [];
                 let nextParams = {};
 
-                // Blockscout is the current backend behind Arc Testnet Explorer.
-                // It exposes address transactions with embedded token transfers,
-                // so this avoids the old Etherscan-compatible endpoints that were
-                // returning empty data on Arc Testnet.
                 for (let page = 0; page < 5; page++) {
                     const data = await blockscoutFetch(`/addresses/${userAccount}/transactions`, nextParams);
                     const items = Array.isArray(data.items) ? data.items : [];
@@ -1725,7 +1870,6 @@
                             if (normalized) merged.push(normalized);
                         }
                     } else {
-                        // Keep native value transfers as a fallback for simple sends.
                         const normalized = makeBlockscoutTx(tx, null);
                         if (normalized) merged.push(normalized);
                     }
@@ -1762,19 +1906,19 @@
                 renderTransactionLists();
                 renderPayments();
             } catch (err) {
-                console.error("Blockscout transaction history error:", err);
-                // Do not wipe already displayed optimistic/live data if the explorer is temporarily unavailable.
+                console.warn("Transaction history notice:", err);
                 renderTransactionLists();
             }
         }
 
-        function addOptimisticTransaction(txResponse, amount, tokenSymbol, recipient, refundMeta = null) {
+        function addOptimisticTransaction(txResponse, amount, tokenSymbol, recipient, chainName = "Ethereum", refundMeta = null) {
             if (!txResponse || !txResponse.hash || !userAccount) return;
 
             const optimisticTx = {
                 hash: txResponse.hash,
                 type: "Sent",
                 token: tokenSymbol,
+                chainName: chainName,
                 amount: "-" + Number(amount).toLocaleString(undefined, {
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 6
@@ -1802,7 +1946,6 @@
             renderPayments();
         }
 
-
         function updatePortfolioDonut(assetCount, heldTokens = []) {
             const host = document.getElementById("portfolioOrbitGraphic");
             if (!host) return;
@@ -1815,20 +1958,13 @@
             ];
 
             host.innerHTML = '<div class="portfolio-orbit-sweep"></div>';
-
             if (total === 0) return;
 
-            // This graphic intentionally represents asset presence/count, not fake
-            // percentage allocation. Token quantities use different units and
-            // cannot be compared without trustworthy market prices.
-            const items = [
-                { symbol: "USDC", color: palette[0], core: true },
-                ...heldTokens.map((t, i) => ({
-                    symbol: t.symbol || "TOKEN",
-                    color: palette[(i + 1) % palette.length],
-                    core: false
-                }))
-            ];
+            const items = heldTokens.map((t, i) => ({
+                symbol: t.symbol || "TOKEN",
+                color: palette[i % palette.length],
+                core: i === 0
+            }));
 
             const radius = 67;
             items.forEach((item, i) => {
@@ -1842,7 +1978,7 @@
                 node.style.top = y + "px";
                 node.style.background = item.color;
                 node.style.color = item.color;
-                node.title = item.symbol;
+                node.title = `${item.symbol}`;
                 node.setAttribute("aria-label", item.symbol);
                 node.style.animationDelay = (i * 0.12) + "s";
                 host.appendChild(node);
@@ -1850,61 +1986,86 @@
         }
 
         function renderBalancesAndAssets() {
-            const heldTokens = liveTokens.filter(t => Number(t.balance) > 0);
-            const assetCount = 1 + heldTokens.length; // native USDC + ERC-20 assets
+            const displayAssets = (activeNetworkFilter === 'all') 
+                ? allMultiChainAssets 
+                : allMultiChainAssets.filter(a => a.chainId === Number(activeNetworkFilter));
 
-            document.getElementById('balanceDisplay').innerText = usdcBalance.toFixed(2);
-            document.getElementById('availBal').innerText = "≈ $" + usdcBalance.toFixed(2) + " USD";
+            const totalValUSD = displayAssets.reduce((sum, a) => sum + (a.valueUSD || 0), 0);
+            const assetCount = displayAssets.length;
+
+            const displayEl = document.getElementById('balanceDisplay');
+            const availBalEl = document.getElementById('availBal');
+            const curLabelEl = document.getElementById('currencyLabel');
+
+            if (isINR) {
+                const inrVal = (totalValUSD * 83.45);
+                displayEl.innerText = inrVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                curLabelEl.innerText = "INR";
+                availBalEl.innerText = "≈ $" + totalValUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USD";
+            } else {
+                displayEl.innerText = totalValUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                curLabelEl.innerText = "USD";
+                availBalEl.innerText = "≈ ₹" + (totalValUSD * 83.45).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " INR";
+            }
+
             document.getElementById('ringTotal').innerText = String(assetCount);
-            updatePortfolioDonut(assetCount, heldTokens);
+            const ringSub = document.getElementById('ringSubtitle');
+            if (ringSub) {
+                ringSub.innerText = activeNetworkFilter === 'all' ? 'MULTI-CHAIN' : 'ON-CHAIN';
+            }
+
+            updatePortfolioDonut(assetCount, displayAssets);
             document.getElementById('faucetBalance').innerHTML = usdcBalance.toFixed(4) + ' <span class="text-xl text-blue-600 dark:text-blue-400">USDC</span>';
-            document.getElementById('viewOnArcScan').href = "https://testnet.arc-scan.org/address/" + userAccount;
 
-            let portHtml = `
-                <div class="flex justify-between items-center text-xs">
-                    <div class="flex items-center gap-2 min-w-0"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0"></span><span class="font-semibold text-slate-700 dark:text-slate-200">USDC</span></div>
-                    <span class="font-bold text-slate-900 dark:text-white ml-3">${usdcBalance.toLocaleString(undefined, { maximumFractionDigits: 8 })}</span>
-                </div>
-            `;
-
-            heldTokens.forEach(t => {
-                portHtml += `
-                    <div class="flex justify-between items-center text-xs mt-3">
-                        <div class="flex items-center gap-2 min-w-0"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span><span class="font-semibold text-slate-700 dark:text-slate-200 truncate">${t.symbol}</span></div>
-                        <span class="font-bold text-slate-900 dark:text-white ml-3">${t.balance.toLocaleString(undefined, { maximumFractionDigits: 8 })}</span>
-                    </div>
-                `;
-            });
+            let portHtml = '';
+            if (displayAssets.length === 0) {
+                portHtml = '<div class="text-center text-xs text-slate-500 dark:text-slate-400">No assets detected on this network</div>';
+            } else {
+                displayAssets.slice(0, 6).forEach((a, i) => {
+                    const topMargin = i > 0 ? 'mt-3' : '';
+                    portHtml += `
+                        <div class="flex justify-between items-center text-xs ${topMargin}">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-2.5 h-2.5 rounded-full ${a.color || 'bg-blue-500'} shrink-0"></span>
+                                <span class="font-semibold text-slate-700 dark:text-slate-200">${a.symbol}</span>
+                                <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400">${a.chainName}</span>
+                            </div>
+                            <div class="text-right ml-3">
+                                <span class="font-bold text-slate-900 dark:text-white block">${a.balance.toLocaleString(undefined, { maximumFractionDigits: 6 })}</span>
+                                <span class="text-[10px] text-slate-400">≈ $${a.valueUSD.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
             document.getElementById('portfolioListContainer').innerHTML = portHtml;
 
-            let assetHtml = `
-                <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
-                    <div class="col-span-5 md:col-span-4 flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-[#0f1624] border border-[#243048] flex items-center justify-center text-blue-400 font-bold text-xs">U</div>
-                        <div><p class="font-bold text-slate-900 dark:text-white">USD Coin</p><p class="text-[10px] text-slate-400">USDC • Native</p></div>
-                    </div>
-                    <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white">${usdcBalance.toLocaleString(undefined, { maximumFractionDigits: 8 })} USDC</div>
-                    <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
-                    <div class="col-span-3 text-right text-slate-400 text-[10px]">Native</div>
-                </div>
-            `;
-
-            heldTokens.forEach(t => {
-                const initial = (t.symbol || "T").charAt(0).toUpperCase();
-                const shortAddr = t.address.substring(0, 6) + '...' + t.address.substring(t.address.length - 4);
-                assetHtml += `
-                    <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
-                        <div class="col-span-5 md:col-span-4 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full ${t.color || 'bg-emerald-600'} flex items-center justify-center text-white font-bold text-xs shrink-0">${initial}</div>
-                            <div class="truncate pr-2"><p class="font-bold text-slate-900 dark:text-white truncate">${t.name}</p><p class="text-[10px] text-slate-400">${t.symbol}</p></div>
+            let assetHtml = '';
+            if (displayAssets.length === 0) {
+                assetHtml = '<div class="p-6 text-center text-slate-500 text-xs">No assets found for the connected wallet on this view.</div>';
+            } else {
+                displayAssets.forEach(a => {
+                    const initial = (a.symbol || "T").charAt(0).toUpperCase();
+                    assetHtml += `
+                        <div class="py-3 grid grid-cols-12 items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition px-2 rounded-lg">
+                            <div class="col-span-4 md:col-span-4 flex items-center gap-3 min-w-0">
+                                <div class="w-8 h-8 rounded-full ${a.color || 'bg-blue-600'} flex items-center justify-center text-white font-bold text-xs shrink-0">${initial}</div>
+                                <div class="truncate pr-2"><p class="font-bold text-slate-900 dark:text-white truncate">${a.name}</p><p class="text-[10px] text-slate-400">${a.symbol}</p></div>
+                            </div>
+                            <div class="col-span-3 md:col-span-2">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap">${a.chainName}</span>
+                            </div>
+                            <div class="col-span-3 md:col-span-3 font-semibold text-slate-900 dark:text-white">${a.balance.toLocaleString(undefined, { maximumFractionDigits: 6 })} <span class="text-[11px] text-slate-400">${a.symbol}</span></div>
+                            <div class="hidden md:block col-span-2 font-semibold text-slate-700 dark:text-slate-300">≈ $${a.valueUSD.toFixed(2)}</div>
+                            <div class="col-span-2 md:col-span-1 text-right">
+                                <a href="${a.explorer}" target="_blank" class="text-blue-500 hover:underline font-bold text-xs flex items-center justify-end gap-1">
+                                    <span>Scan</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="col-span-4 md:col-span-3 font-medium text-slate-900 dark:text-white">${t.balance.toLocaleString(undefined, { maximumFractionDigits: 8 })} ${t.symbol}</div>
-                        <div class="hidden md:block col-span-2 font-medium text-slate-400">—</div>
-                        <div class="col-span-3 text-right"><a href="https://testnet.arc-scan.org/token/${t.address}" target="_blank" class="text-blue-500 hover:underline font-mono text-[10px]">${shortAddr}</a></div>
-                    </div>
-                `;
-            });
-
+                    `;
+                });
+            }
             document.getElementById('assetsTableList').innerHTML = assetHtml;
         }
 
@@ -1922,17 +2083,18 @@
             transactions.slice(0, 5).forEach(t => {
                 const iconSvg = t.isSent ? upArrowSvg : downArrowSvg;
                 const bgBox = t.isSent ? 'bg-red-500/10 border border-red-500/20' : 'bg-[#0f1624] border border-[#243048]';
+                const chainTag = t.chainName ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 ml-1.5">${t.chainName}</span>` : '';
 
                 dashHtml += `
-                    <a href="https://testnet.arc-scan.org/tx/${t.hash}" target="_blank" class="block hover:bg-slate-100 dark:hover:bg-slate-800/40 transition rounded-xl p-2">
+                    <div class="hover:bg-slate-100 dark:hover:bg-slate-800/40 transition rounded-xl p-2">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-3.5">
                                 <div class="w-10 h-10 rounded-xl ${bgBox} flex items-center justify-center shrink-0 shadow-sm">${iconSvg}</div>
-                                <div><p class="text-sm font-bold text-slate-900 dark:text-white leading-tight">${t.type}</p><p class="text-[11px] text-slate-400 font-mono mt-0.5">${t.from}</p></div>
+                                <div><p class="text-sm font-bold text-slate-900 dark:text-white leading-tight flex items-center">${t.type} ${chainTag}</p><p class="text-[11px] text-slate-400 font-mono mt-0.5">${t.from}</p></div>
                             </div>
                             <div class="text-right"><p class="text-sm font-bold ${t.color} leading-tight">${t.amount}</p><p class="text-[11px] text-slate-400 mt-0.5">${t.time}</p></div>
                         </div>
-                    </a>
+                    </div>
                 `;
             });
 
@@ -1947,12 +2109,18 @@
                         : `<button type="button" onclick="event.preventDefault(); event.stopPropagation(); prepareRefund('${String(t.hash).replace(/'/g, "\'")}','${String(t.counterparty || '').replace(/'/g, "\'")}','${Number(t.amountValue)}','${String(t.token || 'USDC').replace(/'/g, "\'")}')" class="inline-flex items-center justify-center min-w-[78px] px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500/20 text-[10px] font-bold transition">Refund</button>` )
                     : `<span class="text-[10px] text-slate-600 dark:text-slate-500">—</span>`;
 
+                const chainLabel = t.chainName || 'Arc Testnet';
+
                 fullHtml += `
                     <div class="block hover:bg-slate-100 dark:hover:bg-slate-800/50 transition border-b border-slate-100 dark:border-[#243048]">
                         <div class="p-4 grid grid-cols-[1.1fr_1fr_1.35fr_112px_112px] gap-3 items-center text-xs min-w-[780px]">
-                            <a href="https://testnet.arc-scan.org/tx/${t.hash}" target="_blank" class="flex items-center gap-2.5 min-w-0">
-                                <div class="w-7 h-7 rounded-lg ${bgBox} flex items-center justify-center shrink-0">${iconSvg}</div><span class="font-bold text-slate-900 dark:text-white">${t.type}</span>
-                            </a>
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-7 h-7 rounded-lg ${bgBox} flex items-center justify-center shrink-0">${iconSvg}</div>
+                                <div>
+                                    <span class="font-bold text-slate-900 dark:text-white">${t.type}</span>
+                                    <span class="block text-[9px] text-slate-400">${chainLabel}</span>
+                                </div>
+                            </div>
                             <span class="${t.color} font-bold">${t.amount}</span>
                             <span class="font-mono text-slate-500 dark:text-slate-400 truncate">${t.from}</span>
                             <div class="flex items-center justify-center min-w-0">${refundButton}</div>
@@ -1968,11 +2136,10 @@
 
         function prepareRefund(sourceHash, recipient, amount, token) {
             if (!userAccount) return alert('Please connect wallet first');
-            if (!recipient || !/^0x[a-fA-F0-9]{40}$/.test(recipient)) return alert('The sender address for this transaction could not be read safely.');
+            if (!recipient || !/^0x[a-fA-F0-9]{40}$/.test(recipient)) return alert('The sender address could not be read safely.');
             pendingRefund = { sourceHash, recipient, amount: Number(amount), token };
             document.getElementById('directSendTo').value = recipient;
             document.getElementById('directSendAmt').value = Number(amount).toString();
-            document.getElementById('directSendToken').value = token || 'USDC';
             openModal('sendModal');
         }
         window.prepareRefund = prepareRefund;
@@ -1983,12 +2150,12 @@
         }
 
         function paymentPeriodStats(startTs, endTs) {
-            const receivedTxs = transactions.filter(t => !t.isSent && !t.isRefund && t.status !== 'Failed' && t.token === 'USDC' && t.timestamp >= startTs && t.timestamp < endTs);
+            const receivedTxs = transactions.filter(t => !t.isSent && !t.isRefund && t.status !== 'Failed' && t.timestamp >= startTs && t.timestamp < endTs);
             const localRefunds = getRefundRecords().filter(r => {
                 const ts = Number(r.timestamp || 0);
-                return ts >= startTs && ts < endTs && String(r.token || 'USDC') === 'USDC';
+                return ts >= startTs && ts < endTs;
             });
-            const refundTxs = transactions.filter(t => t.isSent && t.isRefund && t.status !== 'Failed' && t.token === 'USDC' && t.timestamp >= startTs && t.timestamp < endTs);
+            const refundTxs = transactions.filter(t => t.isSent && t.isRefund && t.status !== 'Failed' && t.timestamp >= startTs && t.timestamp < endTs);
             const received = receivedTxs.reduce((sum, t) => sum + (Number(t.amountValue) || 0), 0);
             const indexedRefunded = refundTxs.reduce((sum, t) => sum + (Number(t.amountValue) || 0), 0);
             const indexedHashes = new Set(refundTxs.map(t => String(t.hash || '').toLowerCase()));
@@ -2069,12 +2236,6 @@
                         <div class="text-2xl font-extrabold text-slate-900 dark:text-white mt-2">${refundRatio.toFixed(1)}%</div>
                         <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">refunds ÷ received transactions</div>
                     </div>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">Today</div><div class="font-bold text-slate-900 dark:text-white mt-1">${today.receivedCount} received</div><div class="text-xs text-red-500 mt-1">${today.refundCount} refunded</div></div>
-                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">Yesterday</div><div class="font-bold text-slate-900 dark:text-white mt-1">${yesterday.receivedCount} received</div><div class="text-xs text-red-500 mt-1">${yesterday.refundCount} refunded</div></div>
-                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">This Month</div><div class="font-bold text-slate-900 dark:text-white mt-1">${month.receivedCount} received</div><div class="text-xs text-red-500 mt-1">${month.refundCount} refunded</div></div>
-                    <div class="rounded-xl border border-slate-200 dark:border-[#243048] p-3"><div class="text-[10px] uppercase font-bold text-slate-500">Net Txn</div><div class="font-bold text-slate-900 dark:text-white mt-1">${Math.max(0, month.receivedCount - month.refundCount)}</div><div class="text-xs text-slate-500 mt-1">after refunds</div></div>
                 </div>`;
         }
 
@@ -2091,7 +2252,6 @@
                 renderPayments();
             } catch (err) {
                 console.error('Payments refresh error:', err);
-                renderPayments();
             } finally {
                 if (icon) icon.classList.remove('fa-spin');
                 if (btn) btn.disabled = false;
@@ -2149,7 +2309,7 @@
             const subEl = document.getElementById('pageSubtitle');
             if (viewName === 'dashboard') {
                 greetingEl.innerText = timeGreeting;
-                subEl.innerText = "Welcome back to your Web3 merchant dashboard.";
+                subEl.innerText = "Welcome back to your Multi-Chain Web3 merchant dashboard.";
             } else {
                 const titles = {
                     'paymentLink': ['Create Payment Link', 'Request crypto securely'],
@@ -2184,15 +2344,13 @@
         function simulateScan() {
             closeModal('scanModal');
             openModal('sendModal');
-            document.getElementById('directSendTo').value = "0x8F9a43212b...2B4c";
+            document.getElementById('directSendTo').value = "0x8F9a43212b4e876C...542A";
         }
 
         function switchView(viewName) {
             const mainContent = document.querySelector('body > .flex-1');
             const mainHeader = document.getElementById('mainHeader');
 
-            // Inner pages are intentionally full-width from the top. The dashboard
-            // keeps the global greeting + theme/network/wallet controls.
             if (mainHeader) mainHeader.classList.toggle('hidden', viewName !== 'dashboard');
             if (mainContent) { mainContent.scrollTop = 0; mainContent.querySelectorAll('.overflow-y-auto').forEach(el => { try { el.scrollTop = 0; } catch (_) {} }); }
             window.scrollTo(0, 0);
@@ -2230,17 +2388,7 @@
 
         function toggleCurrency() {
             isINR = !isINR;
-            const display = document.getElementById("balanceDisplay");
-            const label = document.getElementById("currencyLabel");
-            if (isINR) {
-                display.innerText = (usdcBalance * 83.45).toFixed(2);
-                label.innerText = "INR";
-                document.getElementById("availBal").innerText = "≈ ₹" + (usdcBalance * 83.45).toFixed(2) + " INR";
-            } else {
-                display.innerText = usdcBalance.toFixed(2);
-                label.innerText = "USDC";
-                document.getElementById("availBal").innerText = "≈ $" + usdcBalance.toFixed(2) + " USD";
-            }
+            renderBalancesAndAssets();
         }
 
         let currentWeb3URI = "";
@@ -2248,25 +2396,23 @@
 
         function generateLink() {
             const amt = document.getElementById('payAmount').value;
+            const token = document.getElementById('payToken').value;
             const note = document.getElementById('payNote').value.trim();
             if (!amt || !userAccount) return alert("Connect wallet and enter an amount");
 
             document.getElementById('previewEmpty').classList.add('hidden');
             document.getElementById('previewGenerated').classList.remove('hidden');
             document.getElementById('genAmount').innerText = amt;
-            document.getElementById('genToken').innerText = "USDC";
+            document.getElementById('genToken').innerText = token;
 
             const weiAmt = ethers.utils.parseUnits(amt.toString(), 18).toString();
             currentWeb3URI = "ethereum:" + userAccount + "?value=" + weiAmt;
 
-            // Build a shareable HTTPS link that encodes the actual payment info
-            // (recipient, amount, token, note) so opening it anywhere shows the
-            // correct payment request details.
             const base = window.location.origin + window.location.pathname;
             const qs = new URLSearchParams();
             qs.set('pay', userAccount);
             qs.set('amt', amt);
-            qs.set('token', 'USDC');
+            qs.set('token', token);
             if (note) qs.set('note', encodeURIComponent(note));
             currentShareLink = base + '?' + qs.toString();
 
@@ -2296,7 +2442,7 @@
             if (navigator.share) {
                 try {
                     await navigator.share({ title: 'Bullkarry Payment Request', text: 'Payment request via Bullkarry', url: currentShareLink });
-                } catch (e) { /* user cancelled share */ }
+                } catch (e) { }
             } else {
                 copyGeneratedLink();
             }
@@ -2325,7 +2471,11 @@
 
             knownTxHashes.clear();
             isFirstTxLoad = true;
-            liveTokens = [];
+            allMultiChainAssets = [];
+            totalPortfolioValueUSD = 0;
+            usdcBalance = 0;
+            transactions = [];
+            pendingRefund = null;
 
             document.getElementById('walletAddress').innerText = "Connect Wallet";
             document.getElementById('payWalletAddress').innerText = "Not Connected";
@@ -2333,17 +2483,13 @@
             document.getElementById('myRecAddr').value = "Connect wallet to view";
             document.getElementById('myRecQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ConnectWallet";
 
-            usdcBalance = 0;
-            transactions = [];
-            pendingRefund = null;
-            renderPayments();
-
             document.getElementById('assetsPlaceholder').classList.remove('hidden');
             document.getElementById('assetsTable').classList.add('hidden');
             document.getElementById('portfolioListContainer').innerHTML = '<div class="text-center text-xs text-slate-500 dark:text-slate-400">Connect wallet to view</div>';
 
             renderBalancesAndAssets();
             renderTransactionLists();
+            renderPayments();
             document.getElementById('profileDropdown').classList.add('hidden');
             if (showAlert) alert("Wallet disconnected successfully");
         }
@@ -2371,18 +2517,17 @@
             }
         });
 
-        async function connectWalletProvider() {
-            if (window.__openReownConnect) {
-                return window.__openReownConnect();
-            }
-            alert('Wallet connection is still loading. Please try again.');
-        }
-
         window.addEventListener('click', (e) => {
             const container = document.getElementById('profileMenuContainer');
             const dropdown = document.getElementById('profileDropdown');
             if (container && !container.contains(e.target)) {
                 if (dropdown) dropdown.classList.add('hidden');
+            }
+
+            const netContainer = document.getElementById('networkMenuContainer');
+            const netDropdown = document.getElementById('networkDropdown');
+            if (netContainer && !netContainer.contains(e.target)) {
+                if (netDropdown) netDropdown.classList.add('hidden');
             }
         });
 
@@ -2390,10 +2535,14 @@
             const to = document.getElementById('directSendTo').value;
             const amt = document.getElementById('directSendAmt').value;
             const tokenSymbol = document.getElementById('directSendToken').value;
+            const networkId = Number(document.getElementById('directSendNetwork').value);
             const btn = document.getElementById('sendTxBtn');
 
             if (!to || !amt) return alert("Please enter recipient address and amount");
             if (!userAccount) return alert("Please connect wallet first");
+
+            const net = NETWORKS_CONFIG[networkId];
+            if (!net) return alert("Invalid network selection");
 
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processing...';
             btn.disabled = true;
@@ -2401,35 +2550,41 @@
             try {
                 const eip1193 = getActiveEip1193Provider();
                 if (!eip1193) throw new Error('No active wallet provider');
+
+                await ensureChain(networkId, eip1193);
+
                 const provider = new ethers.providers.Web3Provider(eip1193);
                 const signer = provider.getSigner();
 
                 let tx;
-                if (tokenSymbol === 'USDC') {
-                    const parsedAmt = ethers.utils.parseEther(amt.toString());
+                const isNative = (tokenSymbol === net.symbol);
+                if (isNative) {
+                    const parsedAmt = ethers.utils.parseUnits(amt.toString(), net.decimals);
                     tx = await signer.sendTransaction({ to: to, value: parsedAmt });
                 } else {
-                    const contractAddr = TOKEN_CONTRACTS[tokenSymbol].address;
-                    const contract = new ethers.Contract(contractAddr, ERC20_ABI, signer);
-                    const parsedAmt = ethers.utils.parseUnits(amt.toString(), 18);
+                    const tokenObj = (net.tokens || []).find(t => t.symbol === tokenSymbol);
+                    if (!tokenObj) throw new Error("Selected token contract not found");
+                    const contract = new ethers.Contract(tokenObj.address, ERC20_ABI, signer);
+                    const parsedAmt = ethers.utils.parseUnits(amt.toString(), tokenObj.decimals);
                     tx = await contract.transfer(to, parsedAmt);
                 }
 
                 const confirmedTx = await tx.wait();
 
-                // Show the confirmed transaction immediately. Arcscan's indexer can
-                // take a few seconds to expose a just-mined transaction.
                 const refundWasSubmitted = pendingRefund &&
                     pendingRefund.recipient.toLowerCase() === to.toLowerCase() &&
                     Number(pendingRefund.amount) === Number(amt) &&
                     String(pendingRefund.token) === String(tokenSymbol);
+
                 addOptimisticTransaction(
                     confirmedTx,
                     amt,
                     tokenSymbol,
                     to,
+                    net.name,
                     refundWasSubmitted ? pendingRefund : null
                 );
+
                 if (refundWasSubmitted) {
                     markRefundCompleted(confirmedTx.hash, amt, tokenSymbol, pendingRefund.sourceHash, to);
                     const refundedSource = transactions.find(t => String(t.hash || '').toLowerCase() === String(pendingRefund.sourceHash || '').toLowerCase());
@@ -2439,21 +2594,18 @@
                 }
                 pendingRefund = null;
 
-                // Reconcile with the explorer/indexer in the background.
                 setTimeout(() => {
-                    syncAllOnChainData().catch(err =>
-                        console.error("Post-send history sync error:", err)
-                    );
-                }, 500);
+                    syncAllOnChainData().catch(err => console.error("Post-send sync error:", err));
+                }, 1000);
 
                 document.getElementById('successModalTitle').innerText = "Transaction Successful!";
-                document.getElementById('successModalMsg').innerText = `Sent ${amt} ${tokenSymbol} to ${to.substring(0, 6)}...${to.substring(to.length - 4)}`;
+                document.getElementById('successModalMsg').innerText = `Sent ${amt} ${tokenSymbol} on ${net.name} to ${to.substring(0, 6)}...${to.substring(to.length - 4)}`;
                 openModal('successModal');
 
                 closeModal('sendModal');
             } catch (e) {
                 console.error(e);
-                alert("Transaction Failed: User rejected or error occurred");
+                alert("Transaction Failed: " + (e?.message || "User rejected or error occurred"));
             }
 
             btn.innerHTML = 'Confirm Transfer';
@@ -2534,8 +2686,6 @@
 
                 const meta = decodeBullkarryPurchaseData(merchantTxRawInput(tx));
                 if (!meta) continue;
-                // Ignore arbitrary transaction metadata so the holder panel only
-                // shows products that actually exist in this store.
                 if (!STORE_PRODUCTS[meta.item]) continue;
 
                 let amount = 0;
@@ -2565,9 +2715,6 @@
 
             for (const purchase of purchases) {
                 const wallet = String(purchase?.buyer || '').toLowerCase();
-                // Only expose a holder row when the explorer returned a valid EVM
-                // wallet address. Purchase quantities come from confirmed on-chain
-                // Bullkarry payment records; this app does not invent NFT balances.
                 if (!ethers.utils.isAddress(wallet)) continue;
 
                 const key = `${wallet}:${purchase.item}`;
@@ -2644,25 +2791,26 @@
             const button = btn || null; const originalText = button ? button.innerText : 'Buy';
             if (button) { button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; button.disabled = true; }
             try {
-                // Fresh on-chain check: one wallet can buy each NFT only once.
+                const eip1193 = getActiveEip1193Provider(); if (!eip1193) throw new Error('No active wallet provider');
+                await ensureChain(5042002, eip1193);
+
                 const purchases = await fetchMerchantPurchaseHistory();
                 const wallet = String(userAccount).toLowerCase();
                 if (purchases.some(p => String(p.buyer).toLowerCase() === wallet && p.item === itemName)) throw new Error('You already purchased this NFT. One wallet can purchase each NFT only once.');
                 const sold = purchases.filter(p => p.item === itemName).reduce((sum, p) => sum + Number(p.qty || 1), 0);
                 if (product.total - sold <= 0) throw new Error('Sold Out');
-                const eip1193 = getActiveEip1193Provider(); if (!eip1193) throw new Error('No active wallet provider');
+                
                 const provider = new ethers.providers.Web3Provider(eip1193); const signer = provider.getSigner();
                 const data = encodeBullkarryPurchaseData(itemName, 1, product.price);
                 const tx = await signer.sendTransaction({ to: BULLKARRY_STORE_RECEIVING_ADDRESS, value: ethers.utils.parseEther(String(product.price)), data });
                 await tx.wait();
                 document.getElementById('successModalTitle').innerText = 'Purchase Successful!';
-                document.getElementById('successModalMsg').innerText = `Successfully purchased ${itemName} for ${product.price.toFixed(3)} USDC`;
+                document.getElementById('successModalMsg').innerText = `Successfully purchased ${itemName} for ${product.price.toFixed(3)} USDC on Arc Testnet`;
                 openModal('successModal'); await renderMerchantSales();
             } catch (e) { console.error(e); alert(e?.message || 'Purchase Failed or Rejected by User'); }
             finally { if (button) { button.innerText = originalText; button.disabled = false; } try { renderStoreInventory(await fetchMerchantPurchaseHistory()); } catch (_) {} }
         }
-
-
     </script>
 </body>
 </html>
+
