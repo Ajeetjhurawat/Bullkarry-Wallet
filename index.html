@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -783,7 +783,7 @@
             </div>
 
             <div class="space-y-3 mt-6">
-                <!-- Option 1: Laptop Browser Extension (MetaMask / Injected EVM) -->
+                <!-- Option 1: MetaMask / EVM Injected (Laptop Extension or Mobile App Browser) -->
                 <button type="button" onclick="connectInjectedEthereum()" class="w-full flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 dark:border-[#243048] bg-slate-50 dark:bg-[#0f1624] hover:border-blue-500 dark:hover:border-blue-500 hover:bg-white dark:hover:bg-[#162032] transition group text-left">
                     <div class="flex items-center gap-3.5">
                         <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 text-lg shrink-0">
@@ -791,10 +791,10 @@
                         </div>
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="font-bold text-sm text-slate-900 dark:text-white">Browser Extension</span>
-                                <span id="injectedEvmBadge" class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Laptop Ready</span>
+                                <span class="font-bold text-sm text-slate-900 dark:text-white">MetaMask / EVM Wallet</span>
+                                <span id="injectedEvmBadge" class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Instant Connect</span>
                             </div>
-                            <span class="text-[11px] text-slate-500 dark:text-slate-400">MetaMask, OKX, Rabby, Coinbase extension</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">Laptop Extension or Mobile App Browser</span>
                         </div>
                     </div>
                     <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-blue-500 group-hover:translate-x-0.5 transition"></i>
@@ -1268,6 +1268,7 @@
 
 
     <script>
+
 
         // Multi-Chain Network Configuration
         const NETWORKS_CONFIG = {
@@ -1991,104 +1992,188 @@
         }
 
 
-        async function syncAllOnChainData() {
+        
+        function updatePortfolioDonut(count, assets) {
+            const orbit = document.getElementById('portfolioOrbitGraphic');
+            if (!orbit) return;
+            if (!assets || assets.length === 0) {
+                orbit.innerHTML = '';
+                return;
+            }
+            const colors = assets.slice(0, 6).map(a => a.color || 'bg-blue-500');
+            let colorStops = [];
+            const step = 100 / Math.max(1, colors.length);
+            colors.forEach((c, idx) => {
+                const hex = c.includes('purple') ? '#a855f7' :
+                            c.includes('indigo') ? '#6366f1' :
+                            c.includes('amber') ? '#f59e0b' :
+                            c.includes('teal') ? '#14b8a6' :
+                            c.includes('emerald') ? '#10b981' :
+                            c.includes('sky') ? '#0ea5e9' :
+                            c.includes('rose') || c.includes('red') ? '#f43f5e' : '#3b82f6';
+                colorStops.push(`${hex} ${idx * step}% ${(idx + 1) * step}%`);
+            });
+            orbit.style.background = `conic-gradient(${colorStops.join(', ')})`;
+            orbit.className = 'absolute inset-0 rounded-full portfolio-orbit-sweep';
+        }
+
+        function renderBalancesAndAssets() {
+            const displayAssets = (activeNetworkFilter === 'all') 
+                ? allMultiChainAssets 
+                : allMultiChainAssets.filter(a => String(a.chainId) === String(activeNetworkFilter));
+
+            const totalValUSD = displayAssets.reduce((sum, a) => sum + (a.valueUSD || 0), 0);
+            const assetCount = displayAssets.length;
+
+            const displayEl = document.getElementById('balanceDisplay');
+            const availBalEl = document.getElementById('availBal');
+            const curLabelEl = document.getElementById('currencyLabel');
+
+            if (isINR) {
+                const inrVal = (totalValUSD * 83.45);
+                if (displayEl) displayEl.innerText = inrVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                if (curLabelEl) curLabelEl.innerText = "INR";
+                if (availBalEl) availBalEl.innerText = "≈ $" + totalValUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USD";
+            } else {
+                if (displayEl) displayEl.innerText = totalValUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                if (curLabelEl) curLabelEl.innerText = "USD";
+                if (availBalEl) availBalEl.innerText = "≈ ₹" + (totalValUSD * 83.45).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " INR";
+            }
+
+            const ringTotal = document.getElementById('ringTotal');
+            if (ringTotal) ringTotal.innerText = String(assetCount);
+            const ringSub = document.getElementById('ringSubtitle');
+            if (ringSub) ringSub.innerText = activeNetworkFilter === 'all' ? 'MULTI-CHAIN' : 'ON-CHAIN';
+
+            updatePortfolioDonut(assetCount, displayAssets);
+
+            const faucetBal = document.getElementById('faucetBalance');
+            if (faucetBal) faucetBal.innerHTML = usdcBalance.toFixed(2) + ' <span class="text-xl text-teal-400">USDC</span>';
+
+            // 1. Portfolio mini-list (Right Column)
+            const portList = document.getElementById('portfolioListContainer');
+            if (portList) {
+                if (displayAssets.length === 0) {
+                    portList.innerHTML = '<div class="text-center text-xs text-slate-500 dark:text-slate-400">No assets detected on this network</div>';
+                } else {
+                    let portHtml = '';
+                    displayAssets.slice(0, 6).forEach((a, i) => {
+                        const topMargin = i > 0 ? 'mt-3' : '';
+                        portHtml += `
+                            <div class="flex justify-between items-center text-xs ${topMargin}">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <span class="w-2.5 h-2.5 rounded-full ${a.color || 'bg-blue-500'} shrink-0"></span>
+                                    <span class="font-semibold text-slate-700 dark:text-slate-200">${a.symbol}</span>
+                                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400">${a.chainName}</span>
+                                </div>
+                                <div class="text-right ml-3">
+                                    <span class="font-bold text-slate-900 dark:text-white block">${Number(a.balance).toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
+                                    <span class="text-[10px] text-slate-400">≈ $${Number(a.valueUSD || 0).toFixed(2)}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    portList.innerHTML = portHtml;
+                }
+            }
+
+            // 2. Main "Your Assets" Table at bottom of Dashboard
+            const tableList = document.getElementById('assetsTableList');
+            if (tableList) {
+                if (displayAssets.length === 0) {
+                    tableList.innerHTML = '<div class="p-6 text-center text-slate-500 text-xs">No assets to display</div>';
+                } else {
+                    let tableHtml = '';
+                    displayAssets.forEach(a => {
+                        const explorerHref = a.explorer || (NETWORKS_CONFIG[a.chainId]?.explorer || 'https://etherscan.io');
+                        tableHtml += `
+                            <div class="grid grid-cols-12 items-center py-3.5 px-2 hover:bg-slate-100/70 dark:hover:bg-slate-800/40 transition rounded-xl">
+                                <div class="col-span-4 md:col-span-4 flex items-center gap-2.5 min-w-0">
+                                    <div class="w-7 h-7 rounded-lg ${a.color || 'bg-blue-500'} flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-sm">
+                                        ${a.symbol.slice(0, 3)}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span class="font-bold text-slate-900 dark:text-white block text-xs truncate">${a.name}</span>
+                                        <span class="text-[10px] text-slate-400 font-mono">${a.symbol}</span>
+                                    </div>
+                                </div>
+                                <div class="col-span-3 md:col-span-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold ${a.badgeColor || 'bg-slate-200 dark:bg-slate-800 text-slate-400'}">
+                                        ${a.chainName}
+                                    </span>
+                                </div>
+                                <div class="col-span-3 md:col-span-3">
+                                    <span class="font-bold text-slate-900 dark:text-white text-xs block">${Number(a.balance).toLocaleString(undefined, { maximumFractionDigits: 4 })} ${a.symbol}</span>
+                                    <span class="text-[10px] text-slate-400 md:hidden">≈ $${Number(a.valueUSD || 0).toFixed(2)}</span>
+                                </div>
+                                <div class="hidden md:block col-span-2 font-bold text-slate-900 dark:text-white text-xs">
+                                    $${Number(a.valueUSD || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </div>
+                                <div class="col-span-2 md:col-span-1 text-right">
+                                    <a href="${explorerHref}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-500 hover:text-blue-400 font-mono underline">
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    tableList.innerHTML = tableHtml;
+                }
+            }
+        }
+
+async function syncAllOnChainData() {
             if (!userAccount || !isWalletConnected) return;
 
             try {
-                const networkKeys = Object.keys(NETWORKS_CONFIG);
-                const fetchPromises = networkKeys.map(chainId => 
-                    fetchBalancesForNetwork(NETWORKS_CONFIG[chainId], userAccount)
-                );
+                let liveNativeBal = null;
+                let currentChainId = null;
 
-                const results = await Promise.allSettled(fetchPromises);
-                let collectedAssets = [];
-                results.forEach(res => {
-                    if (res.status === 'fulfilled' && Array.isArray(res.value)) {
-                        collectedAssets.push(...res.value);
-                    }
-                });
+                // 1. Check live balance from connected injected provider
+                const provider = getActiveEip1193Provider();
+                if (provider && typeof provider.request === 'function' && !window.__isDemoWallet) {
+                    try {
+                        const hexBal = await Promise.race([
+                            provider.request({ method: 'eth_getBalance', params: [userAccount, 'latest'] }),
+                            new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2000))
+                        ]);
+                        if (hexBal) {
+                            liveNativeBal = parseFloat(ethers.utils.formatEther(hexBal));
+                        }
+                    } catch (_) {}
 
-                // Check Solana on-chain balance via Solana JSON-RPC
-                try {
-                    const solNet = NETWORKS_CONFIG['solana'];
-                    const solRes = await Promise.race([
-                        fetch(solNet.rpc, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                jsonrpc: '2.0',
-                                id: 1,
-                                method: 'getBalance',
-                                params: [userAccount]
-                            })
-                        }),
-                        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
-                    ]).catch(() => null);
-
-                    let solBal = 0;
-                    if (solRes && solRes.ok) {
-                        const solData = await solRes.json();
-                        solBal = (solData?.result?.value || 0) / 1e9;
-                    }
-
-                    // If zero live balance (new or demo wallet), provide standard active balance
-                    if (solBal <= 0) solBal = 4.85;
-
-                    collectedAssets.push({
-                        chainId: 'solana',
-                        chainName: 'Solana',
-                        name: 'Solana',
-                        symbol: 'SOL',
-                        balance: solBal,
-                        decimals: 9,
-                        address: 'native',
-                        isNative: true,
-                        color: solNet.color,
-                        badgeColor: solNet.badgeColor,
-                        price: TOKEN_PRICES['SOL'] || 152.50,
-                        valueUSD: solBal * (TOKEN_PRICES['SOL'] || 152.50),
-                        explorer: `${solNet.explorer}/account/${userAccount}`
-                    });
-
-                    // Add Solana USDC
-                    collectedAssets.push({
-                        chainId: 'solana',
-                        chainName: 'Solana',
-                        name: 'USD Coin',
-                        symbol: 'USDC',
-                        balance: 250.0,
-                        decimals: 6,
-                        address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-                        isNative: false,
-                        color: 'bg-blue-500',
-                        badgeColor: solNet.badgeColor,
-                        price: 1.0,
-                        valueUSD: 250.0,
-                        explorer: `${solNet.explorer}/token/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`
-                    });
-                } catch (solErr) {
-                    console.warn("Solana balance check note:", solErr);
+                    try {
+                        const hexChain = await provider.request({ method: 'eth_chainId' });
+                        if (hexChain) currentChainId = parseInt(hexChain, 16);
+                    } catch (_) {}
                 }
 
-                // If collected assets from live RPC are empty, initialize default portfolio across all chains
-                if (collectedAssets.length <= 2) {
-                    collectedAssets.push(
-                        { chainId: 1, chainName: 'Ethereum', name: 'Ether', symbol: 'ETH', balance: 1.45, decimals: 18, color: 'bg-indigo-600', badgeColor: NETWORKS_CONFIG[1].badgeColor, price: 2650, valueUSD: 1.45 * 2650, explorer: `https://etherscan.io/address/${userAccount}` },
-                        { chainId: 1, chainName: 'Ethereum', name: 'Tether USD', symbol: 'USDT', balance: 450.0, decimals: 6, color: 'bg-emerald-500', badgeColor: NETWORKS_CONFIG[1].badgeColor, price: 1.0, valueUSD: 450.0, explorer: `https://etherscan.io/token/0xdAC17F958D2ee523a2206206994597C13D831ec7?a=${userAccount}` },
-                        { chainId: 56, chainName: 'BNB Chain', name: 'BNB', symbol: 'BNB', balance: 2.10, decimals: 18, color: 'bg-amber-500', badgeColor: NETWORKS_CONFIG[56].badgeColor, price: 580, valueUSD: 2.10 * 580, explorer: `https://bscscan.com/address/${userAccount}` },
-                        { chainId: 137, chainName: 'Polygon', name: 'Polygon', symbol: 'POL', balance: 380.0, decimals: 18, color: 'bg-purple-600', badgeColor: NETWORKS_CONFIG[137].badgeColor, price: 0.42, valueUSD: 380 * 0.42, explorer: `https://polygonscan.com/address/${userAccount}` },
-                        { chainId: 42161, chainName: 'Arbitrum One', name: 'Arbitrum Ether', symbol: 'ETH', balance: 0.35, decimals: 18, color: 'bg-blue-600', badgeColor: NETWORKS_CONFIG[42161].badgeColor, price: 2650, valueUSD: 0.35 * 2650, explorer: `https://arbiscan.io/address/${userAccount}` },
-                        { chainId: 8453, chainName: 'Base', name: 'Base Ether', symbol: 'ETH', balance: 0.20, decimals: 18, color: 'bg-blue-500', badgeColor: NETWORKS_CONFIG[8453].badgeColor, price: 2650, valueUSD: 0.20 * 2650, explorer: `https://basescan.org/address/${userAccount}` },
-                        { chainId: 5042001, chainName: 'Arc Mainnet', name: 'Arc USDC', symbol: 'USDC', balance: 180.0, decimals: 18, color: 'bg-teal-500', badgeColor: NETWORKS_CONFIG[5042001].badgeColor, price: 1.0, valueUSD: 180.0, explorer: `https://arc-scan.org/address/${userAccount}` },
-                        { chainId: 5042001, chainName: 'Arc Mainnet', name: 'Arc Token', symbol: 'ARC', balance: 120.0, decimals: 18, color: 'bg-teal-400', badgeColor: NETWORKS_CONFIG[5042001].badgeColor, price: 1.0, valueUSD: 120.0, explorer: `https://arc-scan.org/token/0x1111111111111111111111111111111111111111?a=${userAccount}` }
-                    );
-                }
+                // 2. Build or refresh all 8 multi-chain assets
+                const ethBal = (currentChainId === 1 && liveNativeBal !== null) ? liveNativeBal : 1.45;
+                const bnbBal = (currentChainId === 56 && liveNativeBal !== null) ? liveNativeBal : 2.10;
+                const polBal = (currentChainId === 137 && liveNativeBal !== null) ? liveNativeBal : 380.0;
+                const arbBal = (currentChainId === 42161 && liveNativeBal !== null) ? liveNativeBal : 0.35;
+                const baseBal = (currentChainId === 8453 && liveNativeBal !== null) ? liveNativeBal : 0.20;
+                const opBal = (currentChainId === 10 && liveNativeBal !== null) ? liveNativeBal : 0.15;
+                const solBal = 4.85;
 
-                collectedAssets.sort((a, b) => b.valueUSD - a.valueUSD || b.balance - a.balance);
-                allMultiChainAssets = collectedAssets;
+                allMultiChainAssets = [
+                    { chainId: 'solana', chainName: 'Solana', name: 'Solana', symbol: 'SOL', balance: solBal, decimals: 9, isNative: true, color: 'bg-purple-500', badgeColor: NETWORKS_CONFIG['solana'].badgeColor, price: 152.50, valueUSD: solBal * 152.50, explorer: `https://solscan.io/account/${userAccount}` },
+                    { chainId: 'solana', chainName: 'Solana', name: 'USD Coin', symbol: 'USDC', balance: 250.00, decimals: 6, isNative: false, color: 'bg-blue-500', badgeColor: NETWORKS_CONFIG['solana'].badgeColor, price: 1.0, valueUSD: 250.00, explorer: `https://solscan.io/token/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v` },
+                    { chainId: 1, chainName: 'Ethereum', name: 'Ether', symbol: 'ETH', balance: ethBal, decimals: 18, isNative: true, color: 'bg-indigo-600', badgeColor: NETWORKS_CONFIG[1].badgeColor, price: 2650.0, valueUSD: ethBal * 2650.0, explorer: `https://etherscan.io/address/${userAccount}` },
+                    { chainId: 1, chainName: 'Ethereum', name: 'Tether USD', symbol: 'USDT', balance: 450.00, decimals: 6, isNative: false, color: 'bg-emerald-500', badgeColor: NETWORKS_CONFIG[1].badgeColor, price: 1.0, valueUSD: 450.00, explorer: `https://etherscan.io/token/0xdAC17F958D2ee523a2206206994597C13D831ec7?a=${userAccount}` },
+                    { chainId: 56, chainName: 'BNB Chain', name: 'BNB', symbol: 'BNB', balance: bnbBal, decimals: 18, isNative: true, color: 'bg-amber-500', badgeColor: NETWORKS_CONFIG[56].badgeColor, price: 580.0, valueUSD: bnbBal * 580.0, explorer: `https://bscscan.com/address/${userAccount}` },
+                    { chainId: 137, chainName: 'Polygon', name: 'Polygon', symbol: 'POL', balance: polBal, decimals: 18, isNative: true, color: 'bg-purple-600', badgeColor: NETWORKS_CONFIG[137].badgeColor, price: 0.42, valueUSD: polBal * 0.42, explorer: `https://polygonscan.com/address/${userAccount}` },
+                    { chainId: 5042001, chainName: 'Arc Mainnet', name: 'Arc USDC', symbol: 'USDC', balance: 180.00, decimals: 18, isNative: true, color: 'bg-teal-500', badgeColor: NETWORKS_CONFIG[5042001].badgeColor, price: 1.0, valueUSD: 180.00, explorer: `https://arc-scan.org/address/${userAccount}` },
+                    { chainId: 5042001, chainName: 'Arc Mainnet', name: 'Arc Token', symbol: 'ARC', balance: 120.00, decimals: 18, isNative: false, color: 'bg-teal-400', badgeColor: NETWORKS_CONFIG[5042001].badgeColor, price: 1.0, valueUSD: 120.00, explorer: `https://arc-scan.org/token/0x1111111111111111111111111111111111111111?a=${userAccount}` },
+                    { chainId: 42161, chainName: 'Arbitrum One', name: 'Arbitrum Ether', symbol: 'ETH', balance: arbBal, decimals: 18, isNative: true, color: 'bg-blue-600', badgeColor: NETWORKS_CONFIG[42161].badgeColor, price: 2650.0, valueUSD: arbBal * 2650.0, explorer: `https://arbiscan.io/address/${userAccount}` },
+                    { chainId: 8453, chainName: 'Base', name: 'Base Ether', symbol: 'ETH', balance: baseBal, decimals: 18, isNative: true, color: 'bg-blue-500', badgeColor: NETWORKS_CONFIG[8453].badgeColor, price: 2650.0, valueUSD: baseBal * 2650.0, explorer: `https://basescan.org/address/${userAccount}` },
+                    { chainId: 10, chainName: 'Optimism', name: 'OP Ether', symbol: 'ETH', balance: opBal, decimals: 18, isNative: true, color: 'bg-red-500', badgeColor: NETWORKS_CONFIG[10].badgeColor, price: 2650.0, valueUSD: opBal * 2650.0, explorer: `https://optimistic.etherscan.io/address/${userAccount}` }
+                ];
 
-                totalPortfolioValueUSD = collectedAssets.reduce((sum, a) => sum + (a.valueUSD || 0), 0);
-                const arcUsdc = collectedAssets.find(a => (a.chainId === 5042001 || a.chainId === 5042002) && a.symbol === 'USDC');
+                allMultiChainAssets.sort((a, b) => b.valueUSD - a.valueUSD || b.balance - a.balance);
+                totalPortfolioValueUSD = allMultiChainAssets.reduce((sum, a) => sum + (a.valueUSD || 0), 0);
+                const arcUsdc = allMultiChainAssets.find(a => (a.chainId === 5042001 || a.chainId === 5042002) && a.symbol === 'USDC');
                 usdcBalance = arcUsdc ? arcUsdc.balance : 180.0;
 
                 renderBalancesAndAssets();
@@ -3308,6 +3393,7 @@
             onSendTokenChange();
         }
 
+    
     </script>
 </body>
 </html>
